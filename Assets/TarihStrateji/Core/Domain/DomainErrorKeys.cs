@@ -18,5 +18,8 @@ namespace TarihStrateji.Core.Domain
         public const string HileNormalModda = "hata.emir.hileNormalModda";
         public const string GozlemciEmirVeremez = "hata.emir.gozlemciEmirVeremez";
         public const string ModBilinmiyor = "hata.emir.modBilinmiyor";
+        public const string KayitBozuk = "hata.kayit.bozuk";
+        public const string KayitBeklenmeyenSon = "hata.kayit.beklenmeyenSon";
+        public const string KayitEtiketUyusmuyor = "hata.kayit.etiketUyusmuyor";
     }
 }

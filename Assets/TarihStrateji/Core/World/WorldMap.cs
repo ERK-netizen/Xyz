@@ -116,6 +116,12 @@ namespace TarihStrateji.Core.World
             return ValidationResult.Ok;
         }
 
+        /// <summary>Altyapı değişikliğini uygulamadan doğrular (emir doğrulaması için).</summary>
+        public ValidationResult CheckInfrastructure(HexCoord coord, HexInfrastructure infrastructure)
+        {
+            return Grid.Contains(coord) ? ValidateInfrastructure(Cell(coord), infrastructure) : ValidationResult.Fail(WorldErrorKeys.HucreDisinda);
+        }
+
         /// <summary>
         /// Sektörün fiili kontrolcüsünü değiştirir (işgal, geri alma). Merkez sektör değişirse
         /// şehir hücresinin ve bölgenin kontrolcüsü yeniden türetilir. Sahiplik değişmez.
