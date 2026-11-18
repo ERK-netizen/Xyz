@@ -194,6 +194,26 @@ Yeni bir Core modülü eklemek anayasa değişikliğidir.
 - Kayıtlar atomik yazılır (geçici dosya → flush → yeniden adlandırma) ve **SHA-256** bütünlük
   özeti taşır; özet tutmayan kayıt yüklenmez, son sağlam yedek önerilir.
 
+**Uygulama kararları (Adım 4, `Core.Population`, `Core.Economy`, `Core.Content`):**
+- Nüfus bölge başına 17 adet 5 yıllık yaş bandıdır; çalışma çağı 15–64. Akışlar günün başındaki
+  değerlerden hesaplanıp birlikte uygulanır; kesirli kişi carry'de birikir (kayda girer).
+  Yıllık ölüm olasılığı `a` yüklemede hazarda çevrilir (`H = −ln(1−a)`, tamsayı serisi);
+  günlük akış `MulDiv(kişi, H, 365)`. Günlük oran asla saklanmaz (10⁻⁶ çözünürlük yetmez).
+- İş gücü = (çalışma çağı − seferber) × katılım; P7'de bölgenin tesislerine `FacilityId`
+  sırasıyla dağıtılır. Seferberlik/kayıp API'si `PopulationRules`'tadır (Adım 6 kullanır).
+- Ortak envanter ülke başınadır. Üretim = kadro × verim (etkiler), en kıt girdiyle sınırlı;
+  girdi kıtlığında küçük `FacilityId` önce alır. Katalog, askerî malların (ekipman, gemi,
+  uçak) girdisiz tesisten çıkmasını reddeder.
+- İnşaat bedeli sipariş anında ödenir, slotlar ayrılır; ilerleme yalnız sektör sahip+kontrol
+  sipariş verende iken artar. Değişmez: her sektörde (tesis + inşaat slotları) ==
+  `BuildingSlotsUsed`.
+- Dünya pazarı: fiyat günde bir adım `fiyat × (1 + adım × (B−S)/(B+S))`; eşleşme ve para
+  bölüşümü `ProRata` ile tam yapılır, ticaret para/mal yaratmaz. Bütçe: vergi = üretim değeri ×
+  oran × verim; bakım ölçekle büyür; gıdayı bölgenin fiili kontrolcüsü karşılar, açık ertesi
+  gün ölümü artırır. `BudgetLedger.Net` her gün hazine değişimine eşittir (testle doğrulanır).
+- Tanım verisi `Core.Content`'tedir (`BaselineContent`); sayılar kodda değil veride değişir.
+  `StandardRules.Install(setup, içerik)` tüm sistem, emir ve değişmezleri kurar.
+
 ---
 
 ## 3. Depo düzeni
