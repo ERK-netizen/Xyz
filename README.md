@@ -29,6 +29,22 @@ dotnet test Tools/HeadlessTests/TarihStrateji.Core.Tests -c Release
    dosyalarını hemen commit edin**; GUID'ler bir kez commit edildikten sonra asla yeniden üretilmez.
 3. Window → General → Test Runner → EditMode altında `TarihStrateji.Tests.EditMode` testlerini çalıştırın.
 
+## Unity CI: derleme, EditMode testleri ve `.meta` üretimi
+
+`.github/workflows/unity-tests.yml`, Unity 6000.3.28f1'i resmi game-ci imajında
+(`unityci/editor:ubuntu-6000.3.28f1-base-3.2.2`) çalıştırır. Lisans sırları tanımlı değilse
+iş atlanır. Tanımlamak için:
+
+1. Unity Hub ile kişisel lisansı bir kez etkinleştirin. Oluşan `Unity_lic.ulf` dosyası:
+   Windows `C:\ProgramData\Unity\Unity_lic.ulf`, macOS
+   `/Library/Application Support/Unity/Unity_lic.ulf`, Linux `~/.local/share/unity3d/Unity/Unity_lic.ulf`.
+2. GitHub → depo → Settings → Secrets and variables → Actions altında üç sır ekleyin:
+   `UNITY_LICENSE` (dosyanın tam içeriği), `UNITY_EMAIL`, `UNITY_PASSWORD`.
+3. Actions → "Unity EditMode testleri" → Run workflow.
+4. İş bitince `unity-uretilen-dosyalar` yapıtını indirin. İçindeki `.meta` dosyalarını ve
+   `Packages/packages-lock.json` dosyasını (varsa Unity'nin düzelttiği `manifest.json` ile)
+   aynı yollara kopyalayıp **bir kez** commit edin. Bundan sonra GUID'ler sabittir.
+
 ## Yapı
 
 | Klasör | İçerik |

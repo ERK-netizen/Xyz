@@ -270,4 +270,7 @@ dotnet test Tools/HeadlessTests/TarihStrateji.Core.Tests -c Release
 ```
 
 Unity Editor gerektiren kontroller (derleme, EditMode testleri, APK) yerel makinede veya
-lisanslı CI çalıştırıcısında koşar; koşamadığında bu açıkça belirtilir.
+`.github/workflows/unity-tests.yml` (game-ci, `UNITY_LICENSE`/`UNITY_EMAIL`/`UNITY_PASSWORD`
+sırları) üzerinde koşar; koşamadığında bu açıkça belirtilir. Unity'nin ilk içe aktarmada
+ürettiği `.meta` dosyaları ve `packages-lock.json` bu işin `unity-uretilen-dosyalar`
+yapıtından alınıp bir kez commit edilir (§4.1).

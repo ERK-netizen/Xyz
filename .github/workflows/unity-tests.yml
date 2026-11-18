@@ -1,0 +1,122 @@
+name: Unity EditMode testleri
+
+# Unity 6000.3.28f1 içinde gerçek derleme + EditMode testleri (game-ci). Ayrıca Unity'nin
+# ilk içe aktarmada ürettiği .meta dosyalarını ve çözdüğü paket kilidini (packages-lock.json)
+# "unity-uretilen-dosyalar" yapıtı olarak verir: bunlar indirilip depoya commit edilir.
+#
+# Gerekli depo sırları (Settings → Secrets and variables → Actions):
+#   UNITY_LICENSE   Unity_lic.ulf dosyasının tam içeriği
+#   UNITY_EMAIL     Unity hesabı e-postası
+#   UNITY_PASSWORD  Unity hesabı parolası
+# Sırlar yoksa iş hata vermeden atlanır ve özet sayfasına not düşülür.
+on:
+  push:
+    paths:
+      - "Assets/**"
+      - "Packages/**"
+      - "ProjectSettings/**"
+      - ".github/workflows/unity-tests.yml"
+  pull_request:
+    paths:
+      - "Assets/**"
+      - "Packages/**"
+      - "ProjectSettings/**"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  checks: write
+
+concurrency:
+  group: unity-tests-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  # ProjectSettings/ProjectVersion.txt ile aynı sürüm; imaj etiketi tam sabittir.
+  UNITY_IMAGE: unityci/editor:ubuntu-6000.3.28f1-base-3.2.2
+
+jobs:
+  lisans:
+    name: Unity lisansı tanımlı mı
+    runs-on: ubuntu-24.04
+    outputs:
+      var: ${{ steps.denetim.outputs.var }}
+    steps:
+      - id: denetim
+        env:
+          UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
+          UNITY_EMAIL: ${{ secrets.UNITY_EMAIL }}
+          UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
+        run: |
+          if [ -n "$UNITY_LICENSE" ] && [ -n "$UNITY_EMAIL" ] && [ -n "$UNITY_PASSWORD" ]; then
+            echo "var=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "var=false" >> "$GITHUB_OUTPUT"
+            echo "::notice::Unity lisans sırları tanımlı değil; Unity EditMode işi atlandı."
+            {
+              echo "### Unity EditMode testleri atlandı"
+              echo "UNITY_LICENSE, UNITY_EMAIL ve UNITY_PASSWORD depo sırlarını ekleyin (bkz. README)."
+            } >> "$GITHUB_STEP_SUMMARY"
+          fi
+
+  editmode:
+    name: Unity 6000.3.28f1 derleme + EditMode
+    needs: lisans
+    if: needs.lisans.outputs.var == 'true'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 60
+    steps:
+      - name: Depoyu al
+        uses: actions/checkout@v4
+
+      - name: Library önbelleği
+        uses: actions/cache@v4
+        with:
+          path: Library
+          key: Library-6000.3.28f1-${{ hashFiles('Assets/**', 'Packages/**', 'ProjectSettings/**') }}
+          restore-keys: |
+            Library-6000.3.28f1-
+
+      - name: EditMode testlerini çalıştır
+        id: testler
+        uses: game-ci/unity-test-runner@v4
+        env:
+          UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
+          UNITY_EMAIL: ${{ secrets.UNITY_EMAIL }}
+          UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
+        with:
+          customImage: ${{ env.UNITY_IMAGE }}
+          projectPath: .
+          testMode: editmode
+          artifactsPath: unity-test-sonuclari
+          githubToken: ${{ secrets.GITHUB_TOKEN }}
+          checkName: Unity EditMode testleri
+
+      - name: Unity'nin ürettiği .meta ve paket dosyalarını topla
+        if: always()
+        run: |
+          mkdir -p unity-uretilen-dosyalar
+          {
+            git ls-files --others --exclude-standard -- Assets Packages ProjectSettings
+            git diff --name-only -- Packages ProjectSettings
+          } | sort -u > unity-uretilen-dosyalar/LISTE.txt
+          while IFS= read -r f; do
+            [ -f "$f" ] && install -D -m 0644 "$f" "unity-uretilen-dosyalar/$f"
+          done < unity-uretilen-dosyalar/LISTE.txt
+          echo "Unity'nin ürettiği/değiştirdiği dosya sayısı: $(wc -l < unity-uretilen-dosyalar/LISTE.txt)" >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Üretilen dosyaları yükle
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: unity-uretilen-dosyalar
+          path: unity-uretilen-dosyalar/
+          if-no-files-found: ignore
+
+      - name: Test sonuçlarını yükle
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: unity-test-sonuclari
+          path: ${{ steps.testler.outputs.artifactsPath }}
+          if-no-files-found: ignore

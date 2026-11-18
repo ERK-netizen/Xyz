@@ -35,6 +35,11 @@ jobs:
         with:
           global-json-file: Tools/HeadlessTests/global.json
 
+      - name: İş akışı dosyalarını denetle (actionlint)
+        run: |
+          python3 -m pip install --quiet actionlint-py==1.7.12.25
+          actionlint .github/workflows/*.yml
+
       - name: Core projeleri .asmdef ile eşleşiyor mu
         run: python3 Tools/HeadlessTests/sync_core_projects.py --check
 
