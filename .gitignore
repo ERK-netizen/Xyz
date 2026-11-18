@@ -1,0 +1,64 @@
+# ---------- Unity (Unity 6.3 LTS) ----------
+/[Ll]ibrary/
+/[Tt]emp/
+/[Oo]bj/
+/[Bb]uild/
+/[Bb]uilds/
+/[Ll]ogs/
+/[Uu]ser[Ss]ettings/
+/[Mm]emoryCaptures/
+/[Rr]ecordings/
+/Assets/Plugins/Editor/JetBrains*
+/Assets/AddressableAssetsData/*/*.bin*
+/Assets/StreamingAssets/aa.meta
+/Assets/StreamingAssets/aa/*
+
+# Unity'nin ürettiği IDE dosyaları
+.vs/
+.vscode/
+.idea/
+.gradle/
+ExportedObj/
+.consulo/
+*.csproj
+!/Tools/HeadlessTests/**/*.csproj
+*.unityproj
+*.sln
+!/Tools/HeadlessTests/*.sln
+*.suo
+*.tmp
+*.user
+*.userprefs
+*.pidb
+*.booproj
+*.svd
+*.pdb
+*.mdb
+*.opendb
+*.VC.db
+*.pidb.meta
+*.pdb.meta
+*.mdb.meta
+
+# Çökme raporları ve derleme çıktıları
+sysinfo.txt
+crashlytics-build.properties
+*.apk
+*.aab
+*.unitypackage
+*.app
+/[Aa]ssets/[Ss]treamingAssets/aa/*
+
+# ---------- .NET 8 headless testler ----------
+/Tools/HeadlessTests/**/bin/
+/Tools/HeadlessTests/**/obj/
+/Tools/HeadlessTests/**/TestResults/
+*.trx
+
+# ---------- Python (beceri betikleri) ----------
+__pycache__/
+*.py[cod]
+
+# ---------- İşletim sistemi ----------
+.DS_Store
+Thumbs.db
