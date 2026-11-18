@@ -1,0 +1,57 @@
+name: Core testleri (headless)
+
+# Unity açılmadan: .asmdef ↔ .csproj eşleşmesi, .meta/GUID denetimi ve saf C# Core testleri.
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: core-tests-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  headless:
+    name: .NET 8 NUnit + .meta denetimi
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    env:
+      DOTNET_CLI_TELEMETRY_OPTOUT: "1"
+      DOTNET_NOLOGO: "1"
+    steps:
+      - name: Depoyu al
+        uses: actions/checkout@v4
+
+      - name: Python kur
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: .NET SDK kur (global.json)
+        uses: actions/setup-dotnet@v4
+        with:
+          global-json-file: Tools/HeadlessTests/global.json
+
+      - name: Core projeleri .asmdef ile eşleşiyor mu
+        run: python3 Tools/HeadlessTests/sync_core_projects.py --check
+
+      - name: Unity .meta / GUID denetimi
+        run: python3 .claude/skills/unity-csharp-scripting/scripts/check_unity_project.py . --max-issues 200
+
+      - name: Derle ve test et
+        working-directory: Tools/HeadlessTests
+        run: >
+          dotnet test TarihStrateji.Core.Tests -c Release
+          --logger "trx;LogFileName=core-tests.trx"
+          --results-directory TestResults
+
+      - name: Test sonuçlarını yükle
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: core-test-results
+          path: Tools/HeadlessTests/TestResults/
+          if-no-files-found: ignore

@@ -40,10 +40,11 @@ yolları bu düz yapıya eşleyin.
 | `game-ui-ux` | Dikey mobil HUD/panel, güvenli alan, dokunma hedefleri |
 | `performance-optimization` | Profil, GC, harita chunk LOD |
 | `game-docs` | GDD / mimari belge yalnız istendiğinde veya `Docs/` güncellenirken |
+| `game-balance` | **Projeye özel.** Hedef bantlar, çok tohumlu başsız taramalar, ekonomi giriş/çıkış defteri, kartopu denetimi (Adım 4–9) |
 
-**Boşluk:** Görevde istenen `skills/disciplines/game-balance` kaynak repoda **yoktur**; kurulmadı.
-Denge çalışmaları (Adım 9) başsız simülasyon metrikleri ve `game-ai` +
-`ai-behavior-trees-utility-ai` ile yürütülür. Var olmayan bir beceri adı uydurulmaz.
+**Yerel beceri:** İstenen `skills/disciplines/game-balance` kaynak repoda **yoktur**. Bu yüzden
+`.claude/skills/game-balance/SKILL.md` bu depo için sıfırdan yazıldı. Üst kaynaktan gelmez;
+kaynak repo güncellenirken üzerine yazılmaz. Var olmayan bir beceri adı uydurulmaz.
 
 Okuma disiplini: yalnız seçilen becerinin `SKILL.md` gövdesi okunur; `references/` yalnız
 ihtiyaç anında açılır. Bir becerinin "Gotchas" maddeleri bu anayasanın parçası sayılır.
@@ -81,6 +82,12 @@ Domain, Simulation ← Persistence
 Unity.Presentation → yalnız Domain (sözleşmeler); Unity.Bootstrap → Simulation, Persistence, Content
 ```
 
+Unity `.asmdef` referansları **geçişli değildir**: her `.asmdef` kullandığı tüm modülleri
+(yukarıdaki grafın geçişli kapanışı içinden) açıkça listeler. Headless projeler de geçişsiz
+referansla (`DisableTransitiveProjectReferences`) derlenir. Böylece Unity'nin göreceği derleme
+grafı CI'da birebir denetlenir. İzinli kapanışın dışındaki bir referans `ConstitutionTests`
+tarafından reddedilir.
+
 Derleme adları: `TarihStrateji.Core.Domain`, `.World`, `.Effects`, `.Population`, `.Economy`,
 `.Research`, `.Politics`, `.Characters`, `.Diplomacy`, `.Intelligence`, `.Logistics`,
 `.Warfare`, `.AI`, `.Simulation`, `.Content`, `.Persistence`; sunum: `TarihStrateji.Unity.*`.
@@ -96,7 +103,9 @@ Yeni bir Core modülü eklemek anayasa değişikliğidir.
 - Harita boylamda ±180°'de dikişlidir (sarmalanır); mesafeler km tablosundan okunur.
 
 ### 2.4 Sabit noktalı matematik ve determinizm
-- Oyun kararlarında yalnız `Fixed64` kullanılır: `long` ham değer, **tek ölçek `S = 1_000_000`**.
+- Oyun kararlarında yalnız `Fixed64` (`TarihStrateji.Core.Domain.Numerics`) kullanılır: `long`
+  ham değer, **tek ölçek `S = 1_000_000`**. Oran hesaplarında tek yuvarlamalı `Fixed64.MulDiv`
+  tercih edilir.
 - Çarpma/bölme 128-bit ara sonuçla yapılır; yuvarlama **en yakına, yarıda sıfırdan uzağa**;
   taşma **`OverflowException`** fırlatır (sessiz sarmalama yasak).
 - Rastgelelik yalnız deterministik, durumsuz PRNG'den gelir; anahtar
@@ -163,13 +172,29 @@ Assets/Tests/EditMode/             Unity içi EditMode testleri (UNITY_INCLUDE_T
 Packages/manifest.json             Unity paketleri
 ProjectSettings/                   Unity proje ayarları (ProjectVersion.txt sabit)
 Tools/HeadlessTests/               .NET 8 NUnit; Core kaynaklarını Unity olmadan derler
+  CoreProjects/                    .asmdef başına üretilmiş netstandard2.1 projeleri (elle düzenlenmez)
+  sync_core_projects.py            .asmdef → .csproj üreteci (--check: CI denetimi)
+  BannedSymbols.txt                derleme hatasına dönüşen yasak API listesi
+  TarihStrateji.Core.Tests/        net8.0 NUnit testleri (+ Architecture/ConstitutionTests)
 .github/workflows/                 CI: headless testler, .meta denetimi, Android derleme
 Docs/                              tasarım ve mimari belgeleri (game-docs becerisi)
 ```
 
-`Tools/HeadlessTests/TarihStrateji.Core` projesi `netstandard2.1` + `LangVersion 9` ile Core
-kaynaklarını **doğrudan** `Assets/TarihStrateji/Core/**/*.cs` üzerinden derler; böylece Unity'nin
-dil sınırı CI'da zorlanır. Test projesi `net8.0` + NUnit'tir.
+Her Core modülünün headless projesi (`CoreProjects/TarihStrateji.Core.<Modül>`) `netstandard2.1`
+ve `LangVersion 9` ile o modülün kaynaklarını **doğrudan** `Assets/TarihStrateji/Core/<Modül>/`
+altından derler. Böylece Unity'nin dil sınırı ve modül sınırları CI'da zorlanır. Yeni modül veya
+referans eklendiğinde önce `.asmdef` düzenlenir, sonra `sync_core_projects.py` çalıştırılır.
+Test projesi `net8.0` + NUnit'tir.
+
+**Otomatik anayasa denetimleri** (kural ihlali derleme veya test hatası verir):
+- `BannedSymbols.txt` (derleme hatası RS0030): `System.Random`, `DateTime.Now`, `Stopwatch`,
+  `Thread`, `Task`, `Parallel`, kayan noktalı `Math.*` ve `float`/`double`/`decimal` tipleri.
+- `ConstitutionTests`: `.asmdef` bayrakları, izinli bağımlılık kapanışı ve döngüsüzlük,
+  `.asmdef` ↔ `.csproj` eşleşmesi, modül isim alanı, `float`/`double`/`decimal` anahtar
+  sözcükleri ve literalleri, `UnityEngine`, `TODO`/`FIXME`, `NotImplementedException`,
+  Unity sürüm sabiti.
+- Altın determinizm testleri (`Support/GoldenValues.cs`): değer değişimi kayıt ve yeniden
+  oynatma uyumluluğunu kırar; yalnız bilinçli olarak ve gerekçesi commit'te yazılarak güncellenir.
 
 ---
 
@@ -237,8 +262,11 @@ dil sınırı CI'da zorlanır. Test projesi `net8.0` + NUnit'tir.
 # .meta / GUID denetimi (Python 3.10+, Unity gerekmez)
 python3 .claude/skills/unity-csharp-scripting/scripts/check_unity_project.py .
 
-# Saf C# Core testleri (Unity gerekmez)
-dotnet test Tools/HeadlessTests/TarihStrateji.HeadlessTests.sln -c Release
+# .asmdef ↔ headless proje eşleşmesi (üretmek için --check olmadan çalıştırın)
+python3 Tools/HeadlessTests/sync_core_projects.py --check
+
+# Saf C# Core testleri (Unity gerekmez; .NET 8 SDK)
+dotnet test Tools/HeadlessTests/TarihStrateji.Core.Tests -c Release
 ```
 
 Unity Editor gerektiren kontroller (derleme, EditMode testleri, APK) yerel makinede veya
