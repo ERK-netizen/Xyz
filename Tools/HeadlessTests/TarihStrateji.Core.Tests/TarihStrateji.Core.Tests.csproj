@@ -1,0 +1,40 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <!--
+    Unity açılmadan koşan .NET 8 NUnit testleri. Core derlemeleri CoreProjects altındaki
+    üretilmiş projelerden gelir (bkz. ../sync_core_projects.py). Testlerin kendisi Core
+    kısıtlarına tabi değildir: BigInteger/DateTime gibi kâhinler (oracle) burada serbesttir.
+  -->
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <LangVersion>12.0</LangVersion>
+    <IsPackable>false</IsPackable>
+    <IsTestProject>true</IsTestProject>
+    <AssemblyName>TarihStrateji.Core.Tests</AssemblyName>
+    <RootNamespace>TarihStrateji.Core.Tests</RootNamespace>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.11.1" />
+    <PackageReference Include="NUnit" Version="4.2.2" />
+    <PackageReference Include="NUnit3TestAdapter" Version="4.6.0" />
+  </ItemGroup>
+
+  <ItemGroup Label="CoreProjects (sync_core_projects.py)">
+    <ProjectReference Include="../CoreProjects/TarihStrateji.Core.AI/TarihStrateji.Core.AI.csproj" />
+    <ProjectReference Include="../CoreProjects/TarihStrateji.Core.Characters/TarihStrateji.Core.Characters.csproj" />
+    <ProjectReference Include="../CoreProjects/TarihStrateji.Core.Content/TarihStrateji.Core.Content.csproj" />
+    <ProjectReference Include="../CoreProjects/TarihStrateji.Core.Diplomacy/TarihStrateji.Core.Diplomacy.csproj" />
+    <ProjectReference Include="../CoreProjects/TarihStrateji.Core.Domain/TarihStrateji.Core.Domain.csproj" />
+    <ProjectReference Include="../CoreProjects/TarihStrateji.Core.Economy/TarihStrateji.Core.Economy.csproj" />
+    <ProjectReference Include="../CoreProjects/TarihStrateji.Core.Effects/TarihStrateji.Core.Effects.csproj" />
+    <ProjectReference Include="../CoreProjects/TarihStrateji.Core.Intelligence/TarihStrateji.Core.Intelligence.csproj" />
+    <ProjectReference Include="../CoreProjects/TarihStrateji.Core.Logistics/TarihStrateji.Core.Logistics.csproj" />
+    <ProjectReference Include="../CoreProjects/TarihStrateji.Core.Persistence/TarihStrateji.Core.Persistence.csproj" />
+    <ProjectReference Include="../CoreProjects/TarihStrateji.Core.Politics/TarihStrateji.Core.Politics.csproj" />
+    <ProjectReference Include="../CoreProjects/TarihStrateji.Core.Population/TarihStrateji.Core.Population.csproj" />
+    <ProjectReference Include="../CoreProjects/TarihStrateji.Core.Research/TarihStrateji.Core.Research.csproj" />
+    <ProjectReference Include="../CoreProjects/TarihStrateji.Core.Simulation/TarihStrateji.Core.Simulation.csproj" />
+    <ProjectReference Include="../CoreProjects/TarihStrateji.Core.Warfare/TarihStrateji.Core.Warfare.csproj" />
+    <ProjectReference Include="../CoreProjects/TarihStrateji.Core.World/TarihStrateji.Core.World.csproj" />
+  </ItemGroup>
+</Project>

@@ -1,0 +1,28 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <!-- OTOMATİK ÜRETİLDİ: Tools/HeadlessTests/sync_core_projects.py. Elle düzenlemeyin;
+       kaynak: Assets/TarihStrateji/Core/Persistence/TarihStrateji.Core.Persistence.asmdef -->
+  <PropertyGroup>
+    <AssemblyName>TarihStrateji.Core.Persistence</AssemblyName>
+    <RootNamespace>TarihStrateji.Core.Persistence</RootNamespace>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="$(RepoRoot)Assets/TarihStrateji/Core/Persistence/**/*.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="../TarihStrateji.Core.Domain/TarihStrateji.Core.Domain.csproj" />
+    <ProjectReference Include="../TarihStrateji.Core.World/TarihStrateji.Core.World.csproj" />
+    <ProjectReference Include="../TarihStrateji.Core.Effects/TarihStrateji.Core.Effects.csproj" />
+    <ProjectReference Include="../TarihStrateji.Core.Population/TarihStrateji.Core.Population.csproj" />
+    <ProjectReference Include="../TarihStrateji.Core.Economy/TarihStrateji.Core.Economy.csproj" />
+    <ProjectReference Include="../TarihStrateji.Core.Research/TarihStrateji.Core.Research.csproj" />
+    <ProjectReference Include="../TarihStrateji.Core.Politics/TarihStrateji.Core.Politics.csproj" />
+    <ProjectReference Include="../TarihStrateji.Core.Characters/TarihStrateji.Core.Characters.csproj" />
+    <ProjectReference Include="../TarihStrateji.Core.Diplomacy/TarihStrateji.Core.Diplomacy.csproj" />
+    <ProjectReference Include="../TarihStrateji.Core.Intelligence/TarihStrateji.Core.Intelligence.csproj" />
+    <ProjectReference Include="../TarihStrateji.Core.Logistics/TarihStrateji.Core.Logistics.csproj" />
+    <ProjectReference Include="../TarihStrateji.Core.Warfare/TarihStrateji.Core.Warfare.csproj" />
+    <ProjectReference Include="../TarihStrateji.Core.AI/TarihStrateji.Core.AI.csproj" />
+    <ProjectReference Include="../TarihStrateji.Core.Content/TarihStrateji.Core.Content.csproj" />
+    <ProjectReference Include="../TarihStrateji.Core.Simulation/TarihStrateji.Core.Simulation.csproj" />
+  </ItemGroup>
+</Project>

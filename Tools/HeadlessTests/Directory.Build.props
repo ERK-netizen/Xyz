@@ -1,0 +1,12 @@
+<Project>
+  <!-- Tools/HeadlessTests altındaki tüm projeler için ortak ayarlar. -->
+  <PropertyGroup>
+    <Deterministic>true</Deterministic>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <ImplicitUsings>disable</ImplicitUsings>
+    <Nullable>disable</Nullable>
+    <InvariantGlobalization>true</InvariantGlobalization>
+    <GenerateDocumentationFile>false</GenerateDocumentationFile>
+    <RepoRoot>$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)../../'))</RepoRoot>
+  </PropertyGroup>
+</Project>

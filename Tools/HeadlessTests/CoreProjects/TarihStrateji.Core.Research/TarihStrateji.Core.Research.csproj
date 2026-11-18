@@ -1,0 +1,15 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <!-- OTOMATİK ÜRETİLDİ: Tools/HeadlessTests/sync_core_projects.py. Elle düzenlemeyin;
+       kaynak: Assets/TarihStrateji/Core/Research/TarihStrateji.Core.Research.asmdef -->
+  <PropertyGroup>
+    <AssemblyName>TarihStrateji.Core.Research</AssemblyName>
+    <RootNamespace>TarihStrateji.Core.Research</RootNamespace>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="$(RepoRoot)Assets/TarihStrateji/Core/Research/**/*.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="../TarihStrateji.Core.Domain/TarihStrateji.Core.Domain.csproj" />
+    <ProjectReference Include="../TarihStrateji.Core.Effects/TarihStrateji.Core.Effects.csproj" />
+  </ItemGroup>
+</Project>

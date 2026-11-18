@@ -1,0 +1,11 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <!-- OTOMATİK ÜRETİLDİ: Tools/HeadlessTests/sync_core_projects.py. Elle düzenlemeyin;
+       kaynak: Assets/TarihStrateji/Core/Domain/TarihStrateji.Core.Domain.asmdef -->
+  <PropertyGroup>
+    <AssemblyName>TarihStrateji.Core.Domain</AssemblyName>
+    <RootNamespace>TarihStrateji.Core.Domain</RootNamespace>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="$(RepoRoot)Assets/TarihStrateji/Core/Domain/**/*.cs" />
+  </ItemGroup>
+</Project>

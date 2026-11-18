@@ -1,0 +1,26 @@
+T:System.Single;CLAUDE.md §2.4: oyun kararlarında float yasak, Fixed64 kullanın
+T:System.Double;CLAUDE.md §2.4: oyun kararlarında double yasak, Fixed64 kullanın
+T:System.Decimal;CLAUDE.md §2.4: decimal yasak, Fixed64 kullanın
+T:System.Random;CLAUDE.md §2.4: deterministik PRNG kullanın
+P:System.DateTime.Now;CLAUDE.md §2.1: gerçek saat kural kodunda yasak, GameDate kullanın
+P:System.DateTime.UtcNow;CLAUDE.md §2.1: gerçek saat kural kodunda yasak, GameDate kullanın
+P:System.DateTime.Today;CLAUDE.md §2.1: gerçek saat kural kodunda yasak, GameDate kullanın
+P:System.DateTimeOffset.Now;CLAUDE.md §2.1: gerçek saat kural kodunda yasak
+P:System.DateTimeOffset.UtcNow;CLAUDE.md §2.1: gerçek saat kural kodunda yasak
+P:System.Environment.TickCount;CLAUDE.md §2.1: gerçek saat kural kodunda yasak
+T:System.Diagnostics.Stopwatch;CLAUDE.md §2.1: gerçek saat kural kodunda yasak
+M:System.Guid.NewGuid;CLAUDE.md §2.4: kimlikler StableIdAllocator ile verilir
+T:System.Threading.Thread;CLAUDE.md §2.5: tek yazıcı, iş parçacığı yasak
+T:System.Threading.ThreadPool;CLAUDE.md §2.5: tek yazıcı, iş parçacığı yasak
+T:System.Threading.Tasks.Task;CLAUDE.md §2.5: tek yazıcı, görev paralelliği yasak
+T:System.Threading.Tasks.Task`1;CLAUDE.md §2.5: tek yazıcı, görev paralelliği yasak
+T:System.Threading.Tasks.Parallel;CLAUDE.md §2.5: tek yazıcı, paralel döngü yasak
+T:System.Threading.Timer;CLAUDE.md §2.1: gerçek saat kural kodunda yasak
+M:System.Math.Sqrt(System.Double);CLAUDE.md §2.4: Fixed64.Sqrt kullanın
+M:System.Math.Pow(System.Double,System.Double);CLAUDE.md §2.4: Fixed64.Pow kullanın
+M:System.Math.Sin(System.Double);CLAUDE.md §2.4: kayan noktalı trigonometri yasak
+M:System.Math.Cos(System.Double);CLAUDE.md §2.4: kayan noktalı trigonometri yasak
+M:System.Math.Tan(System.Double);CLAUDE.md §2.4: kayan noktalı trigonometri yasak
+M:System.Math.Atan2(System.Double,System.Double);CLAUDE.md §2.4: kayan noktalı trigonometri yasak
+M:System.Math.Log(System.Double);CLAUDE.md §2.4: kayan noktalı logaritma yasak
+M:System.Math.Exp(System.Double);CLAUDE.md §2.4: kayan noktalı üstel yasak

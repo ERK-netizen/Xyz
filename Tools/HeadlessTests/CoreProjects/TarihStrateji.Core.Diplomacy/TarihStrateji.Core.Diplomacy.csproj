@@ -1,0 +1,15 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <!-- OTOMATİK ÜRETİLDİ: Tools/HeadlessTests/sync_core_projects.py. Elle düzenlemeyin;
+       kaynak: Assets/TarihStrateji/Core/Diplomacy/TarihStrateji.Core.Diplomacy.asmdef -->
+  <PropertyGroup>
+    <AssemblyName>TarihStrateji.Core.Diplomacy</AssemblyName>
+    <RootNamespace>TarihStrateji.Core.Diplomacy</RootNamespace>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="$(RepoRoot)Assets/TarihStrateji/Core/Diplomacy/**/*.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="../TarihStrateji.Core.Domain/TarihStrateji.Core.Domain.csproj" />
+    <ProjectReference Include="../TarihStrateji.Core.World/TarihStrateji.Core.World.csproj" />
+  </ItemGroup>
+</Project>
