@@ -1,5 +1,7 @@
 using System;
 using System.Collections.Generic;
+using TarihStrateji.Core.Characters;
+using TarihStrateji.Core.Characters.State;
 using TarihStrateji.Core.Domain;
 using TarihStrateji.Core.Domain.Commands;
 using TarihStrateji.Core.Domain.Ids;
@@ -7,7 +9,11 @@ using TarihStrateji.Core.Domain.Serialization;
 using TarihStrateji.Core.Economy;
 using TarihStrateji.Core.Economy.State;
 using TarihStrateji.Core.Effects;
+using TarihStrateji.Core.Politics;
+using TarihStrateji.Core.Politics.State;
 using TarihStrateji.Core.Population;
+using TarihStrateji.Core.Research;
+using TarihStrateji.Core.Research.State;
 using TarihStrateji.Core.Simulation.Commands;
 using TarihStrateji.Core.Simulation.State;
 using TarihStrateji.Core.World;
@@ -60,6 +66,9 @@ namespace TarihStrateji.Core.Simulation.Persistence
             EffectSnapshotCodec.Write(state.Effects, w);
             PopulationSnapshotCodec.Write(state.Population, w);
             EconomySnapshotCodec.Write(state.Economy, w);
+            ResearchSnapshotCodec.Write(state.Research, w);
+            PoliticsSnapshotCodec.Write(state.Politics, w);
+            CharacterSnapshotCodec.Write(state.Characters, w);
 
             w.WriteTag(JournalTag);
             IReadOnlyList<JournalEntry> pending = state.Journal.Pending;
@@ -173,7 +182,26 @@ namespace TarihStrateji.Core.Simulation.Persistence
                 return Result<GameState>.Failure(economy.ErrorKey);
             }
 
-            var state = new GameState(seed, mode, today, player, world.Value, effects.Value, population.Value, economy.Value, commandIds, resolutionIds)
+            Result<ResearchState> research = ResearchSnapshotCodec.Read(r);
+            if (!research.IsSuccess)
+            {
+                return Result<GameState>.Failure(research.ErrorKey);
+            }
+
+            Result<PoliticsState> politics = PoliticsSnapshotCodec.Read(r);
+            if (!politics.IsSuccess)
+            {
+                return Result<GameState>.Failure(politics.ErrorKey);
+            }
+
+            Result<CharacterState> characters = CharacterSnapshotCodec.Read(r);
+            if (!characters.IsSuccess)
+            {
+                return Result<GameState>.Failure(characters.ErrorKey);
+            }
+
+            var state = new GameState(seed, mode, today, player, world.Value, effects.Value, population.Value, economy.Value,
+                research.Value, politics.Value, characters.Value, commandIds, resolutionIds)
             {
                 StateVersion = stateVersion,
             };

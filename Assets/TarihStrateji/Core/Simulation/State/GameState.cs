@@ -1,11 +1,14 @@
 using System;
+using TarihStrateji.Core.Characters.State;
 using TarihStrateji.Core.Domain.Commands;
 using TarihStrateji.Core.Domain.Ids;
 using TarihStrateji.Core.Domain.Randomness;
 using TarihStrateji.Core.Domain.Time;
 using TarihStrateji.Core.Economy.State;
 using TarihStrateji.Core.Effects;
+using TarihStrateji.Core.Politics.State;
 using TarihStrateji.Core.Population;
+using TarihStrateji.Core.Research.State;
 using TarihStrateji.Core.World;
 
 namespace TarihStrateji.Core.Simulation.State
@@ -25,6 +28,9 @@ namespace TarihStrateji.Core.Simulation.State
             EffectEngine effects,
             PopulationState population,
             EconomyState economy,
+            ResearchState research,
+            PoliticsState politics,
+            CharacterState characters,
             StableIdAllocator commandIds,
             StableIdAllocator resolutionIds)
         {
@@ -36,6 +42,9 @@ namespace TarihStrateji.Core.Simulation.State
             Effects = effects ?? throw new ArgumentNullException(nameof(effects));
             Population = population ?? throw new ArgumentNullException(nameof(population));
             Economy = economy ?? throw new ArgumentNullException(nameof(economy));
+            Research = research ?? throw new ArgumentNullException(nameof(research));
+            Politics = politics ?? throw new ArgumentNullException(nameof(politics));
+            Characters = characters ?? throw new ArgumentNullException(nameof(characters));
             CommandIds = commandIds;
             ResolutionIds = resolutionIds;
             Journal = new CommandJournal();
@@ -57,6 +66,12 @@ namespace TarihStrateji.Core.Simulation.State
         public PopulationState Population { get; }
 
         public EconomyState Economy { get; }
+
+        public ResearchState Research { get; }
+
+        public PoliticsState Politics { get; }
+
+        public CharacterState Characters { get; }
 
         public CommandJournal Journal { get; }
 
@@ -82,7 +97,7 @@ namespace TarihStrateji.Core.Simulation.State
                 throw new ArgumentException("Oyuncu ülkesi gerekli.", nameof(playerCountry));
             }
 
-            return new GameState(worldSeed, mode, startDate, playerCountry, world, new EffectEngine(), new PopulationState(), new EconomyState(), new StableIdAllocator(), new StableIdAllocator());
+            return new GameState(worldSeed, mode, startDate, playerCountry, world, new EffectEngine(), new PopulationState(), new EconomyState(), new ResearchState(), new PoliticsState(), new CharacterState(), new StableIdAllocator(), new StableIdAllocator());
         }
 
         /// <summary>Bugünün anahtarıyla PRNG akışı.</summary>
