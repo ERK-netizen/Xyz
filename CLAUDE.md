@@ -158,6 +158,26 @@ Yeni bir Core modülü eklemek anayasa değişikliğidir.
 | P14 | Kontrol/işgal/kuşatma, istihbarat (`ObservedWorld`) güncellemesi |
 | P15 | YZ kararları, değişmez (invariant) denetimleri, durum hash'i, otomatik kayıt |
 
+**Uygulama kararları (Adım 3, `Core.Simulation`, `Core.Effects`, `Core.Persistence`):**
+- `SimulationKernel.Submit`: mod kuralı → oyuncu ülkesi denetimi → işleyici doğrulaması.
+  Normal emir P1 kuyruğuna girer ve bir sonraki `AdvanceDay`'de `CommandId` sırasıyla, yeniden
+  doğrulanarak uygulanır. `ResolvesImmediately` işleyicileri hemen uygulanır, `ResolutionId`
+  alır, `ResolutionLedger`'a yazılır ve P1 kuyruğuna girmez; defter P15 sonunda boşalır.
+- `AdvanceDay`: P0 tarihi ilerletir, P1 emirleri uygular, P2 süresi dolan etkileri kaldırır;
+  her fazda kayıtlı sistemler kayıt sırasıyla çalışır. Sistem istisnası veya değişmez ihlali
+  simülasyonu **durdurur**; hash ve otomatik kayıt yalnız temiz günde yapılır.
+- PRNG: `DeterministicRng.Value(seed, RngSubsystem, gün, eventId, entityId, çekiliş)`;
+  `RngSubsystem` değerleri asla değiştirilmez. Emir uygulamasında `eventId = CommandId`.
+- Etkiler: `(taban + Σtoplam) × max(0, 1 + Σyüzde)`; sonuç ekleme sırasından bağımsızdır.
+- Durum hash'i = saf C# SHA-256 (`Domain.Hashing.Sha256`) üzerinden kanonik ikili anlık
+  görüntü (`GameStateCodec`, arayüz sürümü hariç). Kayıt yükü aynı baytlardır (sürüm dahil).
+- Kayıt dosyası: sabit 52 baytlık başlık (sihirli dizi, biçim sürümü, uzunluklar, SHA-256),
+  ardından üst veri ve yük. Yazım `.tmp` + `Flush(true)` → `.bak` → yeniden adlandırma;
+  yükleme ana → `.tmp` → `.bak`; daha yeni sürüm reddedilir; göçler `ISaveMigration` zinciri.
+  Otomatik kayıt `otomatik_0..n` halkasıdır, elle alınan yuvaları ezmez.
+- Ölçüm (masaüstü, 230 bin hücre, boş sistemler): günlük adım ≈ 51 ms, anlık görüntü 7,9 MB.
+  Cihazda `HashIntervalDays` bootstrap tarafından ayarlanır (Adım 10).
+
 ### 2.6 Bütünleşik sistem kuralları
 - Nüfus kohortlardır: `populationTotal == sum(cohorts)` her gün sonunda doğrulanır.
   Seferberlik iş gücünü azaltır.
