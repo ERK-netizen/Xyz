@@ -11,9 +11,12 @@ namespace TarihStrateji.Core.Tests.Support
 
         public const ulong WorldMapAndPaths = 0xF55FC836AFFB48B1UL; // maliyetler testte Dijkstra kâhiniyle doğrulanır
 
-        // Adım 4: durum şemasına nüfus ve ekonomi bölümleri eklendi (kurallar değişmedi) → yeni değer.
-        public const string KernelDay60 = "469da00c4109169fe85afcd00c079411dbf2597e09272df0bbf6d45d30803b0e"; // PRNG ve SHA-256 ayrıca kâhinlerle doğrulanır
+        // Adım 4–5: durum şemasına nüfus/ekonomi, sonra araştırma/siyaset/karakter bölümleri eklendi.
+        // Kurallar değişmedi: 120. gün hazine/nüfus/stok değerleri eski ve yeni kodda birebir aynı ölçüldü.
+        public const string KernelDay60 = "ecad9f1df53196e7c9a4e4a9db4af314aa45abdd56b99dcff96625fc348ac62b"; // PRNG ve SHA-256 ayrıca kâhinlerle doğrulanır
 
-        public const string EconomyDay120 = "4fea483a32500519b7400c9eec733f19fb0c767a5a57bd130d0965a10f371bbd"; // defter/korunum aynı testlerde doğrulanır
+        public const string EconomyDay120 = "0690b7930918b963c930b178d9f18ce77366b10291307f6cfe515624affe7eb6"; // defter/korunum aynı testlerde doğrulanır
+
+        public const string StatecraftDay200 = "3216d3639b67129e8368e5d9df8eaa8db608d365ccfed500cffcd0f591eeeb9a"; // defter, araştırma günü ve kaydet/yükle aynı dosyada doğrulanır
     }
 }

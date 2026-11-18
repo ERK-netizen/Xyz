@@ -212,7 +212,23 @@ Yeni bir Core modülü eklemek anayasa değişikliğidir.
   oran × verim; bakım ölçekle büyür; gıdayı bölgenin fiili kontrolcüsü karşılar, açık ertesi
   gün ölümü artırır. `BudgetLedger.Net` her gün hazine değişimine eşittir (testle doğrulanır).
 - Tanım verisi `Core.Content`'tedir (`BaselineContent`); sayılar kodda değil veride değişir.
-  `StandardRules.Install(setup, içerik)` tüm sistem, emir ve değişmezleri kurar.
+  `StandardRules.Install(setup, StandardContent)` tüm sistem, emir ve değişmezleri kurar.
+
+**Uygulama kararları (Adım 5, `Core.Research`, `Core.Politics`, `Core.Characters`):**
+- Çağlar sıralıdır; ülke bir sonraki çağa tarih + kapı teknolojileriyle geçer (`EraRules`).
+  Teknoloji ağacı Kahn algoritmasıyla doğrulanır (eşitlikte küçük `TechnologyId`); teknolojiye
+  başlamak için: araştırılmamış, ön koşullar tamam, çağ ulaşılmış, `AvailableFrom` geçmiş.
+  Proje değiştirmek ilerlemeyi silmez; tamamlanan teknolojinin etkileri kalıcıdır.
+- İstikrar her gün hedefe yaklaşır: yönetim tabanı + Σ kurum gücü × katkı + etkiler − kıtlık
+  cezası. Parti desteği normalize edilmemiş ağırlıktır; seçim ağırlıklı PRNG çekilişidir
+  (`RngSubsystem.Politics`, `eventId` = 0); kriz eşiğin altında `eventId` = kriz kimliğiyle
+  çekilir, süreli etki uygular. Kurum yatırımı hazineden `TreasuryRules` ile deftere yazılır.
+- Karakter ataması: ülkenin karakteri, rol pozisyona uygun, hizmet penceresi içinde, çağ
+  yeterli, başka pozisyonda değil. Özellikler atandığı sürece etkidir; pencere bitince P4'te
+  otomatik görevden alınır.
+- **Bağımlılık notu:** Content, §2.2 grafı gereği Politics/Characters'a başvuramaz. Bu yüzden
+  siyaset ve karakter katalogları `Simulation.Scenario.StandardContent` bileşimindedir. Content'e
+  bu iki modülü eklemek bir anayasa değişikliğidir ve depo sahibinin onayını bekler.
 
 ---
 

@@ -10,6 +10,7 @@ using TarihStrateji.Core.Economy;
 using TarihStrateji.Core.Economy.State;
 using TarihStrateji.Core.Simulation;
 using TarihStrateji.Core.Simulation.Commands.Economy;
+using TarihStrateji.Core.Simulation.Scenario;
 using TarihStrateji.Core.Simulation.State;
 using TarihStrateji.Core.Simulation.Systems;
 using TarihStrateji.Core.Tests.Economy;
@@ -24,7 +25,7 @@ namespace TarihStrateji.Core.Tests.Simulation
     {
         private static readonly GameContent Content = EconomyScenario.Content;
 
-        private static SimulationSetup Setup() => StandardRules.Install(new SimulationSetup(), Content);
+        private static SimulationSetup Setup() => StandardRules.Install(new SimulationSetup(), EconomyScenario.Standard);
 
         private static SimulationKernel NewKernel(CountryId player, ulong seed = 1920)
         {

@@ -31,6 +31,11 @@ dotnet test Tools/HeadlessTests/TarihStrateji.Core.Tests -c Release
 
 ## Unity CI: derleme, EditMode testleri ve `.meta` üretimi
 
+**Lisans:** Unity Editor lisans etkinleştirmesi olmadan çalışmaz; lisanssız sürüm yoktur.
+Ücretsiz yol **Unity Personal**'dır: ücret yoktur, ücretsiz bir Unity hesabıyla bir kez
+etkinleştirilir. Oyun kurallarının tamamı Unity olmadan derlenir ve test edilir; Unity yalnız
+sunum katmanı (Adım 10) ve APK için gerekir.
+
 `.github/workflows/unity-tests.yml`, Unity 6000.3.28f1'i resmi game-ci imajında
 (`unityci/editor:ubuntu-6000.3.28f1-base-3.2.2`) çalıştırır. Lisans sırları tanımlı değilse
 iş atlanır. Tanımlamak için:
