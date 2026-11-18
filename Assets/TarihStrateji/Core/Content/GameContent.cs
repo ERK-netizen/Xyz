@@ -1,5 +1,7 @@
 using System;
+using TarihStrateji.Core.Characters.Definitions;
 using TarihStrateji.Core.Economy.Definitions;
+using TarihStrateji.Core.Politics.Definitions;
 using TarihStrateji.Core.Population;
 using TarihStrateji.Core.Research.Definitions;
 using TarihStrateji.Core.World.Pathfinding;
@@ -7,10 +9,8 @@ using TarihStrateji.Core.World.Pathfinding;
 namespace TarihStrateji.Core.Content
 {
     /// <summary>
-    /// Content modülünün yükleyebildiği tanım verisi (DEF): ekonomi, demografi, hareket, teknoloji.
-    /// Siyaset ve karakter katalogları, bağımlılık grafı (CLAUDE.md §2.2) gereği Simulation'daki
-    /// <c>StandardContent</c> bileşiminde tutulur. Durum değildir; kayda girmez. Aynı kayıt aynı içerikle
-    /// yüklenmelidir (içerik sürümü Adım 10'da kayıt üst verisine eklenir).
+    /// Oyunun tüm tanım verisi (DEF): ekonomi, demografi, hareket, teknoloji, siyaset, karakterler.
+    /// Durum değildir; kayda girmez.
     /// </summary>
     public sealed class GameContent
     {
@@ -18,12 +18,16 @@ namespace TarihStrateji.Core.Content
             EconomyCatalog economy,
             DemographyParameters demography,
             TerrainMovementTable movement,
-            TechCatalog technology)
+            TechCatalog technology,
+            PoliticsCatalog politics,
+            CharacterCatalog characters)
         {
             Economy = economy ?? throw new ArgumentNullException(nameof(economy));
             Demography = demography ?? throw new ArgumentNullException(nameof(demography));
             Movement = movement ?? throw new ArgumentNullException(nameof(movement));
             Technology = technology ?? throw new ArgumentNullException(nameof(technology));
+            Politics = politics ?? throw new ArgumentNullException(nameof(politics));
+            Characters = characters ?? throw new ArgumentNullException(nameof(characters));
         }
 
         public EconomyCatalog Economy { get; }
@@ -33,5 +37,9 @@ namespace TarihStrateji.Core.Content
         public TerrainMovementTable Movement { get; }
 
         public TechCatalog Technology { get; }
+
+        public PoliticsCatalog Politics { get; }
+
+        public CharacterCatalog Characters { get; }
     }
 }

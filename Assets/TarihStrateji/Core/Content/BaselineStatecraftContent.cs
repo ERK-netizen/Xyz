@@ -1,26 +1,19 @@
 using System;
 using TarihStrateji.Core.Characters.Definitions;
-using TarihStrateji.Core.Content;
 using TarihStrateji.Core.Domain;
 using TarihStrateji.Core.Domain.Numerics;
 using TarihStrateji.Core.Domain.Time;
 using TarihStrateji.Core.Effects;
 using TarihStrateji.Core.Politics.Definitions;
 
-namespace TarihStrateji.Core.Simulation.Scenario
+namespace TarihStrateji.Core.Content
 {
     /// <summary>
-    /// Temel içerik + 1920'ler Türk–Yunan cephesi siyaset ve karakterleri. Hizmet pencereleri
+    /// 1920'ler Türk–Yunan cephesi siyaset ve karakterleri. Hizmet pencereleri
     /// tarihsel görev başlangıcı ile ölüm/emeklilik tarihleridir.
     /// </summary>
-    public static class BaselineStandardContent
+    public static class BaselineStatecraftContent
     {
-        public static StandardContent Create()
-        {
-            GameContent core = BaselineContent.Create();
-            return new StandardContent(core, CreatePolitics(), CreateCharacters(core.Technology.Eras.Count));
-        }
-
         public static PoliticsCatalog CreatePolitics()
         {
             var forms = new[]

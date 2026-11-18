@@ -12,7 +12,6 @@ using TarihStrateji.Core.Domain.Time;
 using TarihStrateji.Core.Effects;
 using TarihStrateji.Core.Research.Definitions;
 using TarihStrateji.Core.Research.State;
-using TarihStrateji.Core.Simulation.Scenario;
 
 namespace TarihStrateji.Core.Tests.Statecraft
 {
@@ -20,7 +19,7 @@ namespace TarihStrateji.Core.Tests.Statecraft
     public class CharacterTests
     {
         private static readonly TechCatalog Tech = BaselineContent.CreateTechnology();
-        private static readonly CharacterCatalog Catalog = BaselineStandardContent.CreateCharacters(Tech.Eras.Count);
+        private static readonly CharacterCatalog Catalog = BaselineStatecraftContent.CreateCharacters(Tech.Eras.Count);
         private static readonly GameDate Start = GameDate.FromYmd(1920, 4, 23);
         private static readonly CountryId Tr = BaselineStatecraft.Turkey;
 

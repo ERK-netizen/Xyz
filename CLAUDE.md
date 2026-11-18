@@ -76,7 +76,7 @@ Population, Effects, World ← Economy
 Economy, World ← Logistics
 Logistics, World, Effects ← Warfare
 (Intelligence + tüm alan modülleri) ← AI       // AI yalnız ObservedWorld okur
-Domain, World, Research, Economy ← Content     // tanım verisi (DEF) yükleme
+Domain, World, Research, Economy, Politics, Characters ← Content   // tanım verisi (DEF)
 Tüm modüller + Content ← Simulation            // SimulationKernel tek yazıcı
 Domain, Simulation ← Persistence
 Unity.Presentation → yalnız Domain (sözleşmeler); Unity.Bootstrap → Simulation, Persistence, Content
@@ -226,9 +226,9 @@ Yeni bir Core modülü eklemek anayasa değişikliğidir.
 - Karakter ataması: ülkenin karakteri, rol pozisyona uygun, hizmet penceresi içinde, çağ
   yeterli, başka pozisyonda değil. Özellikler atandığı sürece etkidir; pencere bitince P4'te
   otomatik görevden alınır.
-- **Bağımlılık notu:** Content, §2.2 grafı gereği Politics/Characters'a başvuramaz. Bu yüzden
-  siyaset ve karakter katalogları `Simulation.Scenario.StandardContent` bileşimindedir. Content'e
-  bu iki modülü eklemek bir anayasa değişikliğidir ve depo sahibinin onayını bekler.
+- **Anayasa değişikliği (depo sahibinin onayıyla, Adım 5 sonrası):** Content artık Politics ve
+  Characters'a da başvurur; tüm tanım verisi `GameContent`'te toplanır
+  (`BaselineContent.Create()`); `StandardRules.Install(setup, GameContent)`.
 
 ---
 

@@ -7,7 +7,9 @@
         "TarihStrateji.Core.Effects",
         "TarihStrateji.Core.Population",
         "TarihStrateji.Core.Research",
-        "TarihStrateji.Core.Economy"
+        "TarihStrateji.Core.Economy",
+        "TarihStrateji.Core.Politics",
+        "TarihStrateji.Core.Characters"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],

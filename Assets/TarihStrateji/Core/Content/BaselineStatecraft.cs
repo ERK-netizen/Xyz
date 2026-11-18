@@ -1,6 +1,6 @@
 using TarihStrateji.Core.Domain.Ids;
 
-namespace TarihStrateji.Core.Simulation.Scenario
+namespace TarihStrateji.Core.Content
 {
     /// <summary>Temel siyaset/karakter içeriğinin kimlikleri (kayıt biçiminin parçası; değiştirilmez).</summary>
     public static class BaselineStatecraft

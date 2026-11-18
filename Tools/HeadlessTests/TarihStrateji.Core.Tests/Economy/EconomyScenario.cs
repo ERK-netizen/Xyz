@@ -5,7 +5,6 @@ using TarihStrateji.Core.Domain.Numerics;
 using TarihStrateji.Core.Economy.Rules;
 using TarihStrateji.Core.Economy.State;
 using TarihStrateji.Core.Population;
-using TarihStrateji.Core.Simulation.Scenario;
 using TarihStrateji.Core.Tests.World;
 using TarihStrateji.Core.World;
 using TarihStrateji.Core.World.Cities;
@@ -20,9 +19,6 @@ namespace TarihStrateji.Core.Tests.Economy
     {
         public static readonly GameContent Content = BaselineContent.Create();
 
-        /// <summary>Aynı temel içerik örneğini paylaşan standart içerik (siyaset + karakterler eklenmiş).</summary>
-        public static readonly StandardContent Standard = new StandardContent(
-            Content, BaselineStandardContent.CreatePolitics(), BaselineStandardContent.CreateCharacters(Content.Technology.Eras.Count));
 
         public EconomyScenario()
             : this(TestWorlds.Coastal(out _, out _), new PopulationState(), new EconomyState())

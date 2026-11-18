@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using NUnit.Framework;
+using TarihStrateji.Core.Content;
 using TarihStrateji.Core.Domain;
 using TarihStrateji.Core.Domain.Collections;
 using TarihStrateji.Core.Domain.Ids;
@@ -10,14 +11,13 @@ using TarihStrateji.Core.Effects;
 using TarihStrateji.Core.Politics;
 using TarihStrateji.Core.Politics.Definitions;
 using TarihStrateji.Core.Politics.State;
-using TarihStrateji.Core.Simulation.Scenario;
 
 namespace TarihStrateji.Core.Tests.Statecraft
 {
     [TestFixture]
     public class PoliticsTests
     {
-        private static readonly PoliticsCatalog Catalog = BaselineStandardContent.CreatePolitics();
+        private static readonly PoliticsCatalog Catalog = BaselineStatecraftContent.CreatePolitics();
         private static readonly GameDate Start = GameDate.FromYmd(1920, 4, 23);
         private static readonly CountryId Tr = BaselineStatecraft.Turkey;
 

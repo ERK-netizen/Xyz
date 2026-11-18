@@ -11,7 +11,6 @@ using TarihStrateji.Core.Domain.Numerics;
 using TarihStrateji.Core.Economy.State;
 using TarihStrateji.Core.Simulation;
 using TarihStrateji.Core.Simulation.Commands.Statecraft;
-using TarihStrateji.Core.Simulation.Scenario;
 using TarihStrateji.Core.Simulation.State;
 using TarihStrateji.Core.Tests.Economy;
 using TarihStrateji.Core.Tests.World;
@@ -22,7 +21,7 @@ namespace TarihStrateji.Core.Tests.Simulation
     [TestFixture]
     public class StatecraftSimulationTests
     {
-        private static readonly StandardContent Standard = EconomyScenario.Standard;
+        private static readonly GameContent Standard = EconomyScenario.Content;
         private static readonly CountryId Tr = BaselineStatecraft.Turkey;
         private static readonly CountryId Gr = BaselineStatecraft.Greece;
 
@@ -34,8 +33,8 @@ namespace TarihStrateji.Core.Tests.Simulation
             _ = new EconomyScenario(state.World, state.Population, state.Economy);
             Assert.That(TestWorlds.CountryA, Is.EqualTo(Tr));
             Assert.That(TestWorlds.CountryB, Is.EqualTo(Gr));
-            state.Research.AddCountry(Tr, Standard.Core.Technology, new[] { BaselineTechnologies.ModernBureaucracy }, state.Effects, state.Today);
-            state.Research.AddCountry(Gr, Standard.Core.Technology, new[] { BaselineTechnologies.MachineGun, BaselineTechnologies.AssemblyLine }, state.Effects, state.Today);
+            state.Research.AddCountry(Tr, Standard.Technology, new[] { BaselineTechnologies.ModernBureaucracy }, state.Effects, state.Today);
+            state.Research.AddCountry(Gr, Standard.Technology, new[] { BaselineTechnologies.MachineGun, BaselineTechnologies.AssemblyLine }, state.Effects, state.Today);
             state.Politics.AddCountry(Tr, Standard.Politics, BaselineStatecraft.Republic, BaselineStatecraft.RepublicanPeoples,
                 new[] { Pair(BaselineStatecraft.RepublicanPeoples, "7"), Pair(BaselineStatecraft.Progressive, "3") }, Fixed64.Parse("0.45"), state.Today);
             state.Politics.AddCountry(Gr, Standard.Politics, BaselineStatecraft.ConstitutionalMonarchy, BaselineStatecraft.GreekLiberal,
