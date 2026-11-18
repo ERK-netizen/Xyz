@@ -4,7 +4,10 @@ using TarihStrateji.Core.Domain;
 using TarihStrateji.Core.Domain.Commands;
 using TarihStrateji.Core.Domain.Ids;
 using TarihStrateji.Core.Domain.Serialization;
+using TarihStrateji.Core.Economy;
+using TarihStrateji.Core.Economy.State;
 using TarihStrateji.Core.Effects;
+using TarihStrateji.Core.Population;
 using TarihStrateji.Core.Simulation.Commands;
 using TarihStrateji.Core.Simulation.State;
 using TarihStrateji.Core.World;
@@ -55,6 +58,8 @@ namespace TarihStrateji.Core.Simulation.Persistence
             w.WriteUInt64(state.ResolutionIds.NextValue);
             WorldSnapshotCodec.Write(state.World, w);
             EffectSnapshotCodec.Write(state.Effects, w);
+            PopulationSnapshotCodec.Write(state.Population, w);
+            EconomySnapshotCodec.Write(state.Economy, w);
 
             w.WriteTag(JournalTag);
             IReadOnlyList<JournalEntry> pending = state.Journal.Pending;
@@ -156,7 +161,19 @@ namespace TarihStrateji.Core.Simulation.Persistence
                 return Result<GameState>.Failure(effects.ErrorKey);
             }
 
-            var state = new GameState(seed, mode, today, player, world.Value, effects.Value, commandIds, resolutionIds)
+            Result<PopulationState> population = PopulationSnapshotCodec.Read(r);
+            if (!population.IsSuccess)
+            {
+                return Result<GameState>.Failure(population.ErrorKey);
+            }
+
+            Result<EconomyState> economy = EconomySnapshotCodec.Read(r);
+            if (!economy.IsSuccess)
+            {
+                return Result<GameState>.Failure(economy.ErrorKey);
+            }
+
+            var state = new GameState(seed, mode, today, player, world.Value, effects.Value, population.Value, economy.Value, commandIds, resolutionIds)
             {
                 StateVersion = stateVersion,
             };

@@ -3,7 +3,9 @@ using TarihStrateji.Core.Domain.Commands;
 using TarihStrateji.Core.Domain.Ids;
 using TarihStrateji.Core.Domain.Randomness;
 using TarihStrateji.Core.Domain.Time;
+using TarihStrateji.Core.Economy.State;
 using TarihStrateji.Core.Effects;
+using TarihStrateji.Core.Population;
 using TarihStrateji.Core.World;
 
 namespace TarihStrateji.Core.Simulation.State
@@ -21,6 +23,8 @@ namespace TarihStrateji.Core.Simulation.State
             CountryId playerCountry,
             WorldMap world,
             EffectEngine effects,
+            PopulationState population,
+            EconomyState economy,
             StableIdAllocator commandIds,
             StableIdAllocator resolutionIds)
         {
@@ -30,6 +34,8 @@ namespace TarihStrateji.Core.Simulation.State
             PlayerCountry = playerCountry;
             World = world ?? throw new ArgumentNullException(nameof(world));
             Effects = effects ?? throw new ArgumentNullException(nameof(effects));
+            Population = population ?? throw new ArgumentNullException(nameof(population));
+            Economy = economy ?? throw new ArgumentNullException(nameof(economy));
             CommandIds = commandIds;
             ResolutionIds = resolutionIds;
             Journal = new CommandJournal();
@@ -47,6 +53,10 @@ namespace TarihStrateji.Core.Simulation.State
         public WorldMap World { get; }
 
         public EffectEngine Effects { get; }
+
+        public PopulationState Population { get; }
+
+        public EconomyState Economy { get; }
 
         public CommandJournal Journal { get; }
 
@@ -72,7 +82,7 @@ namespace TarihStrateji.Core.Simulation.State
                 throw new ArgumentException("Oyuncu ülkesi gerekli.", nameof(playerCountry));
             }
 
-            return new GameState(worldSeed, mode, startDate, playerCountry, world, new EffectEngine(), new StableIdAllocator(), new StableIdAllocator());
+            return new GameState(worldSeed, mode, startDate, playerCountry, world, new EffectEngine(), new PopulationState(), new EconomyState(), new StableIdAllocator(), new StableIdAllocator());
         }
 
         /// <summary>Bugünün anahtarıyla PRNG akışı.</summary>
