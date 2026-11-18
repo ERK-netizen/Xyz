@@ -1,0 +1,16 @@
+{
+    "name": "TarihStrateji.Unity.Presentation",
+    "rootNamespace": "TarihStrateji.Unity.Presentation",
+    "references": [
+        "TarihStrateji.Core.Domain"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": false,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

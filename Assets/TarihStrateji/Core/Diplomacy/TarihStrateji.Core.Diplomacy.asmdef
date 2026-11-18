@@ -1,0 +1,17 @@
+{
+    "name": "TarihStrateji.Core.Diplomacy",
+    "rootNamespace": "TarihStrateji.Core.Diplomacy",
+    "references": [
+        "TarihStrateji.Core.Domain",
+        "TarihStrateji.Core.World"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": false,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": true
+}

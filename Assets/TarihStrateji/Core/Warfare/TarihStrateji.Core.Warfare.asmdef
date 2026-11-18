@@ -1,0 +1,21 @@
+{
+    "name": "TarihStrateji.Core.Warfare",
+    "rootNamespace": "TarihStrateji.Core.Warfare",
+    "references": [
+        "TarihStrateji.Core.Domain",
+        "TarihStrateji.Core.World",
+        "TarihStrateji.Core.Effects",
+        "TarihStrateji.Core.Population",
+        "TarihStrateji.Core.Economy",
+        "TarihStrateji.Core.Logistics"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": false,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": true
+}

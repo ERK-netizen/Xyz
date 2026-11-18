@@ -1,0 +1,19 @@
+{
+    "name": "TarihStrateji.Core.Economy",
+    "rootNamespace": "TarihStrateji.Core.Economy",
+    "references": [
+        "TarihStrateji.Core.Domain",
+        "TarihStrateji.Core.World",
+        "TarihStrateji.Core.Effects",
+        "TarihStrateji.Core.Population"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": false,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": true
+}

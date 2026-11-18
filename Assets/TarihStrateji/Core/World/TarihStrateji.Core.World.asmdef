@@ -1,0 +1,16 @@
+{
+    "name": "TarihStrateji.Core.World",
+    "rootNamespace": "TarihStrateji.Core.World",
+    "references": [
+        "TarihStrateji.Core.Domain"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": false,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": true
+}

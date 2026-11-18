@@ -1,0 +1,17 @@
+{
+    "name": "TarihStrateji.Core.Population",
+    "rootNamespace": "TarihStrateji.Core.Population",
+    "references": [
+        "TarihStrateji.Core.Domain",
+        "TarihStrateji.Core.World"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": false,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": true
+}

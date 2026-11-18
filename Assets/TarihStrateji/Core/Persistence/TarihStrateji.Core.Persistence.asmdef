@@ -1,0 +1,30 @@
+{
+    "name": "TarihStrateji.Core.Persistence",
+    "rootNamespace": "TarihStrateji.Core.Persistence",
+    "references": [
+        "TarihStrateji.Core.Domain",
+        "TarihStrateji.Core.World",
+        "TarihStrateji.Core.Effects",
+        "TarihStrateji.Core.Population",
+        "TarihStrateji.Core.Economy",
+        "TarihStrateji.Core.Research",
+        "TarihStrateji.Core.Politics",
+        "TarihStrateji.Core.Characters",
+        "TarihStrateji.Core.Diplomacy",
+        "TarihStrateji.Core.Intelligence",
+        "TarihStrateji.Core.Logistics",
+        "TarihStrateji.Core.Warfare",
+        "TarihStrateji.Core.AI",
+        "TarihStrateji.Core.Content",
+        "TarihStrateji.Core.Simulation"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": false,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": true
+}
