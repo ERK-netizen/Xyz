@@ -102,6 +102,21 @@ Yeni bir Core modülü eklemek anayasa değişikliğidir.
 - Altyapı (yol, demiryolu, liman bağlantısı) **bina slotu tüketmez**.
 - Harita boylamda ±180°'de dikişlidir (sarmalanır); mesafeler km tablosundan okunur.
 
+**Uygulama kararları (Adım 2, `TarihStrateji.Core.World`):**
+- Izgara sivri tepeli altıgen, "odd-r" düzen; yön sırası E, NE, NW, W, SW, SE sabittir.
+  `HexId = satır × genişlik + sütun + 1` (kimlik sırası = satır-sütun sırası). Sütunlar
+  sarmalanır, kutup satırları sarmalanmaz.
+- Komşu km tablosu `Height × 6` boyutundadır ve deterministik tamsayı trigonometriyle
+  (`FixedTrig`, iç hassasiyet 10⁻⁹) bir kez hesaplanır. Uzun mesafe = büyük çember (kiriş yöntemi).
+- Şehir sektörleri ebeveyn hücre içindeki 7 yuvalı çiçeğe yerleşir: merkez yuvada tek
+  `Administrative`, halka yuvaları `facing` yönünden saat yönünün tersine ardışık. Halka yuvası
+  aynı yöndeki dünya komşusuna bakar; `Port` yalnız suya bakan yuvada olur.
+- Şehir hücresinin kontrolcüsü merkez sektörün kontrolcüsüdür; bölge kontrolcüsü hücre
+  çoğunluğudur (eşitlikte mevcut korunur, yoksa en küçük `CountryId`). Sahiplik yalnız
+  `TransferRegionOwnership` (barış/antlaşma) ile değişir.
+- Rota: A* (`HexPathfinder`), kabul edilebilir sezgisel, bileşen etiketiyle erken ret,
+  genişletme sınırı. Hareket çarpanları veridir (`TerrainMovementTable`), kodda sabit değildir.
+
 ### 2.4 Sabit noktalı matematik ve determinizm
 - Oyun kararlarında yalnız `Fixed64` (`TarihStrateji.Core.Domain.Numerics`) kullanılır: `long`
   ham değer, **tek ölçek `S = 1_000_000`**. Oran hesaplarında tek yuvarlamalı `Fixed64.MulDiv`

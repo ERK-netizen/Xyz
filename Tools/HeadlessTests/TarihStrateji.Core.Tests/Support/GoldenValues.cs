@@ -8,5 +8,7 @@ namespace TarihStrateji.Core.Tests.Support
     public static class GoldenValues
     {
         public const ulong Fixed64Chain = 0x3CC2B9F2A0D61353UL; // Python tamsayı kâhiniyle bağımsız doğrulandı
+
+        public const ulong WorldMapAndPaths = 0xF55FC836AFFB48B1UL; // maliyetler testte Dijkstra kâhiniyle doğrulanır
     }
 }
