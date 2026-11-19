@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using TarihStrateji.Core.Domain.Geography;
 using TarihStrateji.Core.Domain.Ids;
 using TarihStrateji.Core.Domain.Numerics;
 using TarihStrateji.Core.Warfare.Definitions;
@@ -17,6 +18,16 @@ namespace TarihStrateji.Core.Warfare.State
             Owner = owner;
             Type = type;
             Hex = hex;
+            HomeRegion = homeRegion;
+        }
+
+        internal LandUnit(LandUnitId id, CountryId owner, UnitTypeId type, TransportNodeId node, RegionId homeRegion)
+        {
+            Id = id;
+            Owner = owner;
+            Type = type;
+            Hex = HexId.None;
+            Node = node;
             HomeRegion = homeRegion;
         }
 
@@ -60,6 +71,22 @@ namespace TarihStrateji.Core.Warfare.State
         public FleetId Carrier { get; internal set; }
 
         public bool IsEmbarked => Carrier.IsValid;
+
+        /// <summary>
+        /// Coğrafi model (ADR-011): son ulaşılan ulaşım düğümü. Altıgen modelde <see cref="TransportNodeId.None"/>.
+        /// </summary>
+        public TransportNodeId Node { get; internal set; }
+
+        internal List<TransportEdgeId> RouteList { get; } = new List<TransportEdgeId>();
+
+        /// <summary>Kalan rota kenarları (sıradaki önce); ilk kenarda <see cref="RouteProgress"/> kadar yol alınmıştır.</summary>
+        public IReadOnlyList<TransportEdgeId> Route => RouteList;
+
+        /// <summary>Rotanın ilk kenarında harcanmış hareket maliyeti (kenar üstündeki ara konum).</summary>
+        public long RouteProgress { get; internal set; }
+
+        /// <summary>Coğrafi saldırı emri hedefi (birlik veya şehir); yoksa <see cref="TargetRef.None"/>.</summary>
+        public TargetRef GeoAttackTarget { get; internal set; }
 
         public Fixed64 Strength(UnitTypeDefinition type)
         {

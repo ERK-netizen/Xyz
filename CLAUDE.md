@@ -493,8 +493,8 @@ Adım 1–10 tamamlandı (altıgen model). TS-GDD-TDD-3.1 ile devam planı (ayr�
 | Adım | Kapsam |
 |------|--------|
 | 11 | Core.World coğrafi çekirdek: GeoPoint, sabit noktalı mesafe, Polygon/MultiPolygon, BorderGraph, TransportGraph + A*, sektörsüz tekil şehir, bölge kontrol aşamaları, TargetRef |
-| 12 | Kural göçü: Economy, Logistics, Warfare (konumlu birlik, rota, hedefli saldırı, kuşatma, deniz bölgesi, hava menzili); altıgen kural dosyalarının silinmesi |
-| 13 | Simulation, Intelligence, AI, Content, Persistence göçü; kayıt şeması 4 |
+| 12 | Coğrafi kurallar (altıgen kurallarla yan yana, `*.Geo`): ikmal ağı, konumlu birlik ve rota, hedefli saldırı, garnizon/kuşatma, bölge kontrolü, deniz yolu/abluka, hava menzili, şehir slotları |
+| 13 | Simulation, Intelligence, AI, Content, Persistence yeni kurallara geçer; altıgen kod ve testleri silinir (MAP-G10); kayıt şeması 4 |
 | 14 | ContentCompiler + 1914 MVP bölgesi (ülke/bölge çokgenleri, şehirler, ulaşım grafı, kaynak envanteri) |
 | 15 | Unity çokgen harita çizicisi, LOD, ikonlar, mekânsal indeksli dokunma |
 | 16 | Mobil emir akışı: seç → hedef → önizleme → onay; şehir kartı, diplomasi, zaman kontrolü |

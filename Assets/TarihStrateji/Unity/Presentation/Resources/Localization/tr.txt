@@ -414,3 +414,4 @@ hata.ulasim.kenarKendisine = Yol aynı noktaya bağlanamaz.
 hata.ulasim.kenarTekrar = Bu yol zaten tanımlı.
 hata.ulasim.kenarUzunluguGecersiz = Yol uzunluğu gerçek mesafeden kısa olamaz.
 hata.ulasim.rotaYok = Bu hedefe geçerli bir rota yok.
+bilgi.savas.temas = Birlik düşmanla temas kurdu ve durdu.

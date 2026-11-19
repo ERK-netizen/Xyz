@@ -107,4 +107,9 @@ Her adım headless testleriyle gelir; altıgen kodu yalnız yerine geçen sistem
 
 | Adım | Durum |
 |---|---|
-| 11 coğrafi çekirdek | CODED + TESTED (headless 365/365); Unity derlemesi CI'da |
+| 11 coğrafi çekirdek | TESTED (headless) + Unity EditMode geçti |
+| 12/1 ikmal ağı, toplama, hareket | CODED + TESTED (headless 372/372) |
+
+Not: Altıgen kural dosyaları Adım 12'de değil 13'te silinir; çünkü Simulation onlara bağlıdır ve her
+commit derlenebilir kalmalıdır (§4 "sıfır eksik kod"). Adım 12 yeni kuralları `*.Geo` isim alanlarında
+yan yana kurar ve testler; Adım 13 Simulation'ı geçirip eskileri siler.

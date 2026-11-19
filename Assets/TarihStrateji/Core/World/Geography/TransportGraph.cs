@@ -23,6 +23,7 @@ namespace TarihStrateji.Core.World.Geography
         private readonly Dictionary<TransportNodeId, TransportNode> _nodes = new Dictionary<TransportNodeId, TransportNode>();
         private readonly Dictionary<TransportEdgeId, TransportEdge> _edges = new Dictionary<TransportEdgeId, TransportEdge>();
         private readonly Dictionary<TransportNodeId, List<TransportEdge>> _adjacency = new Dictionary<TransportNodeId, List<TransportEdge>>();
+        private readonly List<TransportNodeId> _nodeOrder = new List<TransportNodeId>();
         private readonly RegionAtlas _atlas;
         private readonly BorderGraph _borders;
 
@@ -54,6 +55,7 @@ namespace TarihStrateji.Core.World.Geography
             }
 
             _nodes.Add(node.Id, node);
+            _nodeOrder.Insert(~_nodeOrder.BinarySearch(node.Id), node.Id);
             return ValidationResult.Ok;
         }
 
@@ -114,6 +116,9 @@ namespace TarihStrateji.Core.World.Geography
             Attach(edge.B, edge);
             return ValidationResult.Ok;
         }
+
+        /// <summary>Düğümler kimlik sırasıyla.</summary>
+        public IReadOnlyList<TransportNodeId> Nodes => _nodeOrder;
 
         public bool TryGetNode(TransportNodeId id, out TransportNode node) => _nodes.TryGetValue(id, out node);
 
