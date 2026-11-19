@@ -63,15 +63,28 @@ Yerelde de ücretsizdir: Unity Hub → Personal lisans → projeyi 6000.3.28f1 i
    `Packages/packages-lock.json` dosyasını (varsa Unity'nin düzelttiği `manifest.json` ile)
    aynı yollara kopyalayıp **bir kez** commit edin. Bundan sonra GUID'ler sabittir.
 
+## APK (Android telefona kurulum)
+
+1. Yukarıdaki Yol A sırları (`UNITY_EMAIL`, `UNITY_PASSWORD`) tanımlı olmalıdır.
+2. Actions → "Android derlemesi" iş akışı; geliştirme dalına oyun dosyası gönderildiğinde (push)
+   kendiliğinden, varsayılan dalda ise "Run workflow" ile çalışır (Play Store için `aab` seçeneği).
+3. İş bitince `tarih-strateji-android` yapıtını indirin; içindeki `TarihStrateji.apk` dosyasını
+   telefona kopyalayıp açın ("bilinmeyen kaynaklardan yükleme" izni istenir). Android 7.1+ ve
+   64 bit (ARM64) cihaz gerekir. APK hata ayıklama anahtarıyla imzalıdır; mağaza yayını için
+   ayrı bir yayın anahtarı (keystore) gerekir.
+
+Unity Editor'de: menü **Tarih Strateji → Android APK derle** aynı ayarlarla `Build/Android/`
+altına derler.
+
 ## Yapı
 
 | Klasör | İçerik |
 |--------|--------|
 | `Assets/TarihStrateji/Core/` | 16 saf C# modülü, her biri `noEngineReferences` `.asmdef` ile |
-| `Assets/TarihStrateji/Unity/` | Sunum katmanı (yalnız `IGameCommandGateway` / `IGameReadModel`) |
+| `Assets/TarihStrateji/Unity/` | Bootstrap (oturum), sunum (harita, dokunmatik, UI Toolkit; yalnız Domain sözleşmeleri), Editor (Android derleme) |
 | `Tools/HeadlessTests/` | .NET 8 NUnit testleri ve `.asmdef` aynası projeler |
 | `.claude/skills/` | Ajan becerileri (router, Unity, YZ, kayıt, arayüz, performans, denge) |
-| `.github/workflows/` | CI: headless testler ve `.meta` denetimi |
+| `.github/workflows/` | CI: headless testler, `.meta` denetimi, Unity EditMode, Android APK |
 
 ## Lisanslar
 

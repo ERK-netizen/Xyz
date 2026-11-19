@@ -335,6 +335,30 @@ Yeni bir Core modülü eklemek anayasa değişikliğidir.
   ≤ 0,40; her tohumda ≥ 1 savaş, ≥ 1 barış, > 0 muharebe. Ayrıca aynı tohum → aynı hash ve
   180. gün kaydet/yükle sürekliliği; ölçüm masaüstünde ≈ 2 s / 365 gün (17 bin hücre).
 
+**Uygulama kararları (Adım 10, `Unity.Bootstrap`, `Unity.Presentation`, `Unity.Editor`):**
+- Sunum yalnız Domain sözleşmelerini görür: `IGameSession` (okuma modeli, emir kapısı,
+  `IGameCommandFactory`, oyun hızı) Bootstrap'te uygulanır ve sunumca arayüz üzerinden bulunur.
+  Okuma modeli salt-okunur görünümler (`CellView`, `CityView`, `CountryView`, `UnitView`) döner
+  ve savaş sisini uygular (`ReadModelProjection`); yabancı birlik yalnız temas olarak görünür.
+- Bootstrap (`BeforeSceneLoad`): son oturum yuvası (`son_oturum`) varsa yükler, yoksa "Ege 1925"
+  (`AegeanScenario`, Türkiye) kurar; kare başına ≤ 4 gün; cihazda `HashIntervalDays` = 30,
+  otomatik kayıt 30 günde bir; arka plana alınınca/kapanınca atomik kayıt.
+- Harita: 16×16 hücrelik parçalar, köşe rengi ağları, tek ışıksız gölgelendirici
+  (`Resources/Shaders/HaritaRenk`). LOD 0 tam altıgen, LOD 1–3 2^L blok dörtgeni; eşikler
+  ortografik yarı boy 26/60/140, %15 histerezis. Renkler en çok 4 Hz yeniden hesaplanır; yalnız
+  değişen parçalar, karede ≤ 12 (önce görünenler) kurulur. ±180° dikişi: kamera x'i sarmalanır,
+  her parça kameraya en yakın kopyaya kaydırılır. Satır 0 kuzeyde, y = −1,5 × satır.
+- Giriş eski Input Manager'dır (`activeInputHandler` 0): tek parmak kaydırma, iki parmak
+  yakınlaştırma (orta nokta sabit), dokunuş ≤ 0,35 s ve ≤ 0,08 inç; panel üstündeki dokunuş
+  haritaya geçmez. Seçim: hücre → kendi birliği → hedef hücre (yürü/saldır).
+- Arayüz UI Toolkit, koddan kurulur; `PanelSettings` çalışma zamanında, tema
+  `Resources/UI/TarihTema.tss`; referans 1080×1920, dokunma hedefi ≥ 112 px; güvenli alan iç
+  boşluk. Düğmeler emri `Validate` ile ön doğrular; sonuç `tr.txt`'den Türkçe bildirim.
+- Android: `AndroidBuild.BuildFromCommandLine` (IL2CPP, ARM64, Medium stripping + `link.xml`,
+  dikey, Development yok, boş `Assets/TarihStrateji/Scenes/Ana.unity` yoksa oluşturulur);
+  `.github/workflows/android-build.yml` APK'yı (isteğe bağlı AAB) `tarih-strateji-android`
+  yapıtı olarak verir. APK hata ayıklama anahtarıyla imzalıdır; Play için yayın anahtarı ayrıdır.
+
 ---
 
 ## 3. Depo düzeni
@@ -448,6 +472,7 @@ dotnet test Tools/HeadlessTests/TarihStrateji.Core.Tests -c Release
 Unity Editor gerektiren kontroller (derleme, EditMode testleri, APK) yerel makinede veya
 `.github/workflows/unity-tests.yml` üzerinde ücretsiz Unity Personal ile koşar (Yol A:
 yalnız `UNITY_EMAIL`/`UNITY_PASSWORD` sırları, editör runner'a kurulur; Yol B: game-ci +
-`UNITY_LICENSE`); koşamadığında bu açıkça belirtilir. Unity'nin ilk içe aktarmada
+`UNITY_LICENSE`); koşamadığında bu açıkça belirtilir. APK `.github/workflows/android-build.yml`
+ile aynı sırlarla üretilir. Unity'nin ilk içe aktarmada
 ürettiği `.meta` dosyaları ve `packages-lock.json` bu işin `unity-uretilen-dosyalar`
 yapıtından alınıp bir kez commit edilir (§4.1).

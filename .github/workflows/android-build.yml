@@ -1,6 +1,6 @@
 # Android APK/AAB derlemesi (CLAUDE.md §4.2): Unity 6.3 LTS, IL2CPP, ARM64, Managed Stripping +
 # link.xml, Development bayrağı yok. Ücretsiz Unity Personal (Yol A): yalnız UNITY_EMAIL ve
-# UNITY_PASSWORD depo sırları gerekir. Elle (workflow_dispatch) veya "v*" etiketiyle çalışır;
+# UNITY_PASSWORD depo sırları gerekir. Elle (workflow_dispatch), "v*" etiketi veya geliştirme dalına push ile çalışır;
 # çıktı "tarih-strateji-android" yapıtıdır. APK Unity'nin hata ayıklama anahtarıyla imzalanır
 # (cihaza doğrudan kurulum için); Play Store için AAB ve yayın anahtarı ayrıca gerekir.
 name: Android derlemesi
@@ -12,9 +12,18 @@ on:
         description: "APK yerine AAB (Play Store paketi) üret"
         type: boolean
         default: false
+  # Elle tetikleme yalnız varsayılan dalda bulunan iş akışlarında çalışır; geliştirme dalında
+  # derleme, oyun dosyaları değişince push ile başlar (eşzamanlı eski çalıştırma iptal edilir).
   push:
     tags:
       - "v*"
+    branches:
+      - "claude/quirky-babbage-tv692b"
+    paths:
+      - "Assets/**"
+      - "Packages/**"
+      - "ProjectSettings/**"
+      - ".github/workflows/android-build.yml"
 
 permissions:
   contents: read
