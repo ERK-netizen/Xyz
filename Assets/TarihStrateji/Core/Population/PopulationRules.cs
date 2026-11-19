@@ -32,7 +32,10 @@ namespace TarihStrateji.Core.Population
             ValidationResult check = CheckMobilize(p, count);
             if (check.IsValid)
             {
+                // Askere alınanlar iş gücünden gelir: istihdam aynı anda düşer. Böylece P7'den sonra
+                // (P11 takviyesi) yapılan seferberlik de "istihdam ≤ iş gücü" değişmezini bozmaz.
                 p.Mobilized += count;
+                p.Employed = p.Employed > count ? p.Employed - count : 0L;
             }
 
             return check;

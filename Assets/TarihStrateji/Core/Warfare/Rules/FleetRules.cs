@@ -143,7 +143,8 @@ namespace TarihStrateji.Core.Warfare.Rules
                 }
 
                 ShipTypeDefinition type = ctx.Catalog.ShipTypes[fleet.Type];
-                fleet.MoveBudget = Fixed64.Min(fleet.MoveBudget + type.SpeedPerDay, type.SpeedPerDay * 2);
+                Fixed64 cap = type.SpeedPerDay * 2;
+                fleet.MoveBudget = Fixed64.Min(fleet.MoveBudget + type.SpeedPerDay, cap);
                 while (fleet.PathList.Count > 0)
                 {
                     HexCell from = ctx.World.Cell(fleet.Hex);
@@ -158,7 +159,12 @@ namespace TarihStrateji.Core.Warfare.Rules
 
                     if (cost > fleet.MoveBudget)
                     {
-                        break;
+                        if (fleet.MoveBudget < cap)
+                        {
+                            break;
+                        }
+
+                        cost = fleet.MoveBudget;
                     }
 
                     fleet.MoveBudget -= cost;

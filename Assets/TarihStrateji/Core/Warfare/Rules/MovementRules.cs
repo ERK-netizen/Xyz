@@ -12,7 +12,9 @@ namespace TarihStrateji.Core.Warfare.Rules
 {
     /// <summary>
     /// Hareket (P12). Rota emir anında A* ile hesaplanır. Her gün bütçe = hız × (½ + ½ × ikmal)
-    /// eklenir; sıradaki adımın maliyeti bütçeye sığdıkça ilerlenir. Girilemeyen hücreye (düşman
+    /// eklenir (tavan: 2 × hız); sıradaki adımın maliyeti bütçeye sığdıkça ilerlenir. Maliyeti
+    /// tavanı aşan adım (dağ, bataklık) bütçe tavana dolunca atılır: çok günlük geçiştir, asla
+    /// imkânsız değildir. Girilemeyen hücreye (düşman
     /// birliği, düşman şehri, tarafsız toprak) gelince rota iptal olur; saldırı ayrı emirdir.
     /// </summary>
     public static class MovementRules
@@ -101,7 +103,8 @@ namespace TarihStrateji.Core.Warfare.Rules
 
                 UnitTypeDefinition type = ctx.Catalog.UnitTypes[unit.Type];
                 Fixed64 speed = type.SpeedPerDay * (Fixed64.Half + (Fixed64.Half * unit.Supply));
-                unit.MoveBudget = Fixed64.Min(unit.MoveBudget + speed, type.SpeedPerDay * 2);
+                Fixed64 cap = type.SpeedPerDay * 2;
+                unit.MoveBudget = Fixed64.Min(unit.MoveBudget + speed, cap);
                 while (unit.PathList.Count > 0)
                 {
                     HexCell from = ctx.World.Cell(unit.Hex);
@@ -115,7 +118,13 @@ namespace TarihStrateji.Core.Warfare.Rules
 
                     if (cost > unit.MoveBudget)
                     {
-                        break;
+                        // Tavandan pahalı adım (ör. dağ) çok günlük geçiştir: bütçe tavana dolunca atılır.
+                        if (unit.MoveBudget < cap)
+                        {
+                            break;
+                        }
+
+                        cost = unit.MoveBudget;
                     }
 
                     unit.MoveBudget -= cost;
