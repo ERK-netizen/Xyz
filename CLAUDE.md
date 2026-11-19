@@ -76,7 +76,8 @@ Population, Effects, World ← Economy
 Economy, World ← Logistics
 Logistics, World, Effects ← Warfare
 (Intelligence + tüm alan modülleri) ← AI       // AI yalnız ObservedWorld okur
-Domain, World, Research, Economy, Politics, Characters ← Content   // tanım verisi (DEF)
+Domain, World, Research, Economy, Politics, Characters,
+  Logistics, Warfare, Diplomacy, Intelligence ← Content            // tanım verisi (DEF)
 Tüm modüller + Content ← Simulation            // SimulationKernel tek yazıcı
 Domain, Simulation ← Persistence
 Unity.Presentation → yalnız Domain (sözleşmeler); Unity.Bootstrap → Simulation, Persistence, Content
@@ -212,7 +213,7 @@ Yeni bir Core modülü eklemek anayasa değişikliğidir.
   oran × verim; bakım ölçekle büyür; gıdayı bölgenin fiili kontrolcüsü karşılar, açık ertesi
   gün ölümü artırır. `BudgetLedger.Net` her gün hazine değişimine eşittir (testle doğrulanır).
 - Tanım verisi `Core.Content`'tedir (`BaselineContent`); sayılar kodda değil veride değişir.
-  `StandardRules.Install(setup, StandardContent)` tüm sistem, emir ve değişmezleri kurar.
+  `StandardRules.Install(setup, GameContent)` tüm sistem, emir ve değişmezleri kurar.
 
 **Uygulama kararları (Adım 5, `Core.Research`, `Core.Politics`, `Core.Characters`):**
 - Çağlar sıralıdır; ülke bir sonraki çağa tarih + kapı teknolojileriyle geçer (`EraRules`).
@@ -226,8 +227,9 @@ Yeni bir Core modülü eklemek anayasa değişikliğidir.
 - Karakter ataması: ülkenin karakteri, rol pozisyona uygun, hizmet penceresi içinde, çağ
   yeterli, başka pozisyonda değil. Özellikler atandığı sürece etkidir; pencere bitince P4'te
   otomatik görevden alınır.
-- **Anayasa değişikliği (depo sahibinin onayıyla, Adım 5 sonrası):** Content artık Politics ve
-  Characters'a da başvurur; tüm tanım verisi `GameContent`'te toplanır
+- **Anayasa değişiklikleri (depo sahibinin onayıyla):** Content Politics ve Characters'a
+  (Adım 5 sonrası), ardından Logistics, Warfare, Diplomacy ve Intelligence'a da (Adım 6 öncesi)
+  başvurur; tüm tanım verisi `GameContent`'te toplanır
   (`BaselineContent.Create()`); `StandardRules.Install(setup, GameContent)`.
 
 ---

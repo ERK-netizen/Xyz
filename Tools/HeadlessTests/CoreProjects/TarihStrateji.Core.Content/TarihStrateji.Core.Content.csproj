@@ -17,5 +17,9 @@
     <ProjectReference Include="../TarihStrateji.Core.Economy/TarihStrateji.Core.Economy.csproj" />
     <ProjectReference Include="../TarihStrateji.Core.Politics/TarihStrateji.Core.Politics.csproj" />
     <ProjectReference Include="../TarihStrateji.Core.Characters/TarihStrateji.Core.Characters.csproj" />
+    <ProjectReference Include="../TarihStrateji.Core.Logistics/TarihStrateji.Core.Logistics.csproj" />
+    <ProjectReference Include="../TarihStrateji.Core.Warfare/TarihStrateji.Core.Warfare.csproj" />
+    <ProjectReference Include="../TarihStrateji.Core.Diplomacy/TarihStrateji.Core.Diplomacy.csproj" />
+    <ProjectReference Include="../TarihStrateji.Core.Intelligence/TarihStrateji.Core.Intelligence.csproj" />
   </ItemGroup>
 </Project>

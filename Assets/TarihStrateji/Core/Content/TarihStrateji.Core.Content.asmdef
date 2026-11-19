@@ -9,7 +9,11 @@
         "TarihStrateji.Core.Research",
         "TarihStrateji.Core.Economy",
         "TarihStrateji.Core.Politics",
-        "TarihStrateji.Core.Characters"
+        "TarihStrateji.Core.Characters",
+        "TarihStrateji.Core.Logistics",
+        "TarihStrateji.Core.Warfare",
+        "TarihStrateji.Core.Diplomacy",
+        "TarihStrateji.Core.Intelligence"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],
