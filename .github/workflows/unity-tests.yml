@@ -85,12 +85,14 @@ jobs:
           echo "surum=$surum" >> "$GITHUB_OUTPUT"
           echo "Unity Editor sürümü: $surum" >> "$GITHUB_STEP_SUMMARY"
 
-      # unity-setup, version-file ile revizyonlu satır (m_EditorVersionWithRevision) bekler;
-      # bu satır Unity'nin ilk açılışında yazılır. O zamana kadar sürüm açıkça verilir.
+      # unity-setup, ProjectVersion.txt'de revizyonlu satır (m_EditorVersionWithRevision) arar;
+      # bu satırı Unity ilk açılışta yazar. O zamana kadar dosya araması kapatılır
+      # (version-file: None) ve sürüm aynı dosyanın m_EditorVersion satırından verilir.
       - name: Unity Editor'ü kur
         id: unity
         uses: buildalon/unity-setup@v3
         with:
+          version-file: None
           unity-version: ${{ steps.surum.outputs.surum }}
           modules: None
           cache-installation: true
