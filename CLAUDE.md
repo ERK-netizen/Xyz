@@ -77,7 +77,7 @@ Economy, World ← Logistics
 Logistics, World, Effects ← Warfare
 (Intelligence + tüm alan modülleri) ← AI       // AI yalnız ObservedWorld okur
 Domain, World, Research, Economy, Politics, Characters,
-  Logistics, Warfare, Diplomacy, Intelligence ← Content            // tanım verisi (DEF)
+  Logistics, Warfare, Diplomacy, Intelligence, AI ← Content        // tanım verisi (DEF)
 Tüm modüller + Content ← Simulation            // SimulationKernel tek yazıcı
 Domain, Simulation ← Persistence
 Unity.Presentation → yalnız Domain (sözleşmeler); Unity.Bootstrap → Simulation, Persistence, Content
@@ -230,7 +230,8 @@ Yeni bir Core modülü eklemek anayasa değişikliğidir.
 - **Anayasa değişiklikleri (depo sahibinin onayıyla):** Content Politics ve Characters'a
   (Adım 5 sonrası), ardından Logistics, Warfare, Diplomacy ve Intelligence'a da (Adım 6 öncesi)
   başvurur; tüm tanım verisi `GameContent`'te toplanır
-  (`BaselineContent.Create()`); `StandardRules.Install(setup, GameContent)`.
+  (`BaselineContent.Create()`); `StandardRules.Install(setup, GameContent)`. Adım 9 öncesi
+  Content ayrıca AI'a başvurur (YZ ayarları da tanım verisidir; AI Content'e başvurmaz).
 
 **Uygulama kararları (Adım 6, `Core.Logistics`, `Core.Warfare`):**
 - İkmal kaynağı: merkez sektörü ve hücresi ülkenin kontrolünde olan, kuşatılmamış şehirler
@@ -309,6 +310,30 @@ Yeni bir Core modülü eklemek anayasa değişikliğidir.
   `TreasuryRules.ApplyAdministrativeChange` (gelir `OtherIncome`, gider hazineyle sınırlı).
 - Kayıt şeması 3; `SchemaVersionTests` bayt düzeni değişince sürüm artırılmasını zorlar; daha
   eski şema `hata.kayit.durumSemasiEskiGocYok` ile reddedilir (yayım öncesi, göç yok).
+
+**Uygulama kararları (Adım 9, `Core.AI`, katmanlı YZ ve 365 günlük başsız testler):**
+- YZ saf ve durumsuzdur; emir değil **niyet** (`AiIntent`) üretir, Simulation bunları oyuncunun
+  kullandığı emir türlerine çevirir (`AiIntentMapper`). P15'te `SimulationContext.SubmitAiOrder`
+  ile verilen emirler çekirdekte aynı işleyici doğrulamasından geçip ertesi günün P1 kuyruğuna
+  girer (P1'de yeniden doğrulanır); oyuncu ülkesi adına YZ emri kabul edilmez, Normal modda
+  hile emri yoktur. YZ `StandardRules.InstallArtificialIntelligence` ile ayrıca kurulur.
+- "YZ yalnız `ObservedWorld` okur" yapısal olarak `AiPerceptionBuilder`'da uygulanır: algıya
+  yabancı birlik listesi hiç girmez; yalnız kendi durumu, kamuya açık harita/diplomasi ve kendi
+  temas raporları girer. Görülmeyen orduların karar değiştirmediği testle kilitlidir.
+- Katmanlar: stratejik değerlendirme (kendi gücü; yabancı güç = max(temas tahmini, şehir ×
+  varsayılan garnizon)) → diplomasi (teklif yanıtı, barış/ittifak önerisi, üstünlükte savaş
+  ilanı) ve yönetim (araştırma, odak, olay, seferberlik tavanlı toplama, inşaat, vergi
+  dengeleyicisi) haftalık ve ülkeye göre kaydırılmış; ordu (birleşik saldırı, şehir taarruzu,
+  savunma, ilerleme) her gün. Rastgelelik yoktur; eşitlikler kimlik sırasıyla bozulur.
+- Tüm YZ sayıları `AiParameters`'tadır (`BaselineAiContent`); anayasa değişikliğiyle
+  Content → AI başvurusu (depo sahibinin onayıyla).
+- Uzun koşuların ortaya çıkardığı ve düzeltilen hatalar: (1) bütçe tavanını aşan adım (tepe,
+  bataklık, dağ) asla atılamıyordu → tavana dolunca çok günlük geçiş; (2) P7'den sonra yapılan
+  seferberlik istihdam değişmezini bozuyordu → `Mobilize` istihdamı da düşürür.
+- 365 günlük bantlar (`AiCampaignTests`, 4 tohum, Gözlemci modu, dört ülke): hazine oranı
+  [0,6; 2,5], nüfus değişimi [−%15; +%5], seferber/çalışma çağı ≤ 0,20, en büyük kontrol payı
+  ≤ 0,40; her tohumda ≥ 1 savaş, ≥ 1 barış, > 0 muharebe. Ayrıca aynı tohum → aynı hash ve
+  180. gün kaydet/yükle sürekliliği; ölçüm masaüstünde ≈ 2 s / 365 gün (17 bin hücre).
 
 ---
 

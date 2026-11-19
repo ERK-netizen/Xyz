@@ -13,7 +13,8 @@
         "TarihStrateji.Core.Logistics",
         "TarihStrateji.Core.Warfare",
         "TarihStrateji.Core.Diplomacy",
-        "TarihStrateji.Core.Intelligence"
+        "TarihStrateji.Core.Intelligence",
+        "TarihStrateji.Core.AI"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],

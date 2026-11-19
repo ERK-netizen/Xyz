@@ -39,7 +39,7 @@ namespace TarihStrateji.Core.Tests.Architecture
                 "Intelligence", "World", "Effects", "Population", "Economy", "Research",
                 "Politics", "Characters", "Diplomacy", "Logistics", "Warfare",
             },
-            ["Content"] = new[] { "Domain", "World", "Research", "Economy", "Politics", "Characters", "Logistics", "Warfare", "Diplomacy", "Intelligence" },
+            ["Content"] = new[] { "Domain", "World", "Research", "Economy", "Politics", "Characters", "Logistics", "Warfare", "Diplomacy", "Intelligence", "AI" },
             ["Simulation"] = new[]
             {
                 "Domain", "World", "Effects", "Population", "Economy", "Research", "Politics",

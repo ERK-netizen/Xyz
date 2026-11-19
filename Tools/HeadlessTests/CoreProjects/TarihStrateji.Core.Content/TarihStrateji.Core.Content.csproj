@@ -21,5 +21,6 @@
     <ProjectReference Include="../TarihStrateji.Core.Warfare/TarihStrateji.Core.Warfare.csproj" />
     <ProjectReference Include="../TarihStrateji.Core.Diplomacy/TarihStrateji.Core.Diplomacy.csproj" />
     <ProjectReference Include="../TarihStrateji.Core.Intelligence/TarihStrateji.Core.Intelligence.csproj" />
+    <ProjectReference Include="../TarihStrateji.Core.AI/TarihStrateji.Core.AI.csproj" />
   </ItemGroup>
 </Project>
