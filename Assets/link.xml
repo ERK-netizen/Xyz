@@ -1,0 +1,26 @@
+<!--
+  IL2CPP Managed Stripping (Medium) koruma listesi (CLAUDE.md §4.2).
+  Kural derlemeleri yansıma kullanmaz; yine de kayıt codec'leri, emir işleyicileri ve arayüz
+  üzerinden bulunan oturum (IGameSession) gibi dolaylı erişilen türler budanmasın diye oyun
+  derlemeleri bütünüyle korunur. Unity ve .NET derlemeleri normal budanır.
+-->
+<linker>
+  <assembly fullname="TarihStrateji.Core.Domain" preserve="all" />
+  <assembly fullname="TarihStrateji.Core.World" preserve="all" />
+  <assembly fullname="TarihStrateji.Core.Effects" preserve="all" />
+  <assembly fullname="TarihStrateji.Core.Population" preserve="all" />
+  <assembly fullname="TarihStrateji.Core.Economy" preserve="all" />
+  <assembly fullname="TarihStrateji.Core.Research" preserve="all" />
+  <assembly fullname="TarihStrateji.Core.Politics" preserve="all" />
+  <assembly fullname="TarihStrateji.Core.Characters" preserve="all" />
+  <assembly fullname="TarihStrateji.Core.Diplomacy" preserve="all" />
+  <assembly fullname="TarihStrateji.Core.Intelligence" preserve="all" />
+  <assembly fullname="TarihStrateji.Core.Logistics" preserve="all" />
+  <assembly fullname="TarihStrateji.Core.Warfare" preserve="all" />
+  <assembly fullname="TarihStrateji.Core.AI" preserve="all" />
+  <assembly fullname="TarihStrateji.Core.Content" preserve="all" />
+  <assembly fullname="TarihStrateji.Core.Simulation" preserve="all" />
+  <assembly fullname="TarihStrateji.Core.Persistence" preserve="all" />
+  <assembly fullname="TarihStrateji.Unity.Bootstrap" preserve="all" />
+  <assembly fullname="TarihStrateji.Unity.Presentation" preserve="all" />
+</linker>

@@ -190,6 +190,23 @@ namespace TarihStrateji.Core.Tests.Architecture
         }
 
         [Test]
+        public void EditorAssembly_IsEditorOnly_AndTouchesNoGameRules()
+        {
+            // Derleme betiği (Unity.Editor) oyuna girmez ve kural derlemelerine başvurmaz.
+            JsonElement json = ReadAsmdef(Path.Combine(RepoPaths.UnityDir, "Editor", "TarihStrateji.Unity.Editor.asmdef"));
+            Assert.That(json.GetProperty("includePlatforms").EnumerateArray().Select(e => e.GetString()).ToArray(), Is.EqualTo(new[] { "Editor" }));
+            Assert.That(References(json), Is.Empty);
+        }
+
+        [Test]
+        public void UnityAssemblies_AreExactlyTheKnownSet()
+        {
+            string[] names = Directory.GetFiles(RepoPaths.UnityDir, "*.asmdef", SearchOption.AllDirectories)
+                .Select(Path.GetFileNameWithoutExtension).OrderBy(n => n, StringComparer.Ordinal).ToArray();
+            Assert.That(names, Is.EqualTo(new[] { "TarihStrateji.Unity.Bootstrap", "TarihStrateji.Unity.Editor", "TarihStrateji.Unity.Presentation" }));
+        }
+
+        [Test]
         public void CoreSources_DeclareTheirModuleNamespace()
         {
             var nsRegex = new Regex(@"^\s*namespace\s+([\w.]+)", RegexOptions.Multiline);
