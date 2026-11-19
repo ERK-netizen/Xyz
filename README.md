@@ -36,17 +36,30 @@ dotnet test Tools/HeadlessTests/TarihStrateji.Core.Tests -c Release
 etkinleştirilir. Oyun kurallarının tamamı Unity olmadan derlenir ve test edilir; Unity yalnız
 sunum katmanı (Adım 10) ve APK için gerekir.
 
-`.github/workflows/unity-tests.yml`, Unity 6000.3.28f1'i resmi game-ci imajında
-(`unityci/editor:ubuntu-6000.3.28f1-base-3.2.2`) çalıştırır. Lisans sırları tanımlı değilse
-iş atlanır. Tanımlamak için:
+Unity Personal'ı kullanma koşulu Unity'nin şartlarındadır (bugün: son 12 ayda 200 bin USD'nin
+altında gelir/fon); bu koşulu depo sahibi doğrular.
 
-1. Unity Hub ile kişisel lisansı bir kez etkinleştirin. Oluşan `Unity_lic.ulf` dosyası:
-   Windows `C:\ProgramData\Unity\Unity_lic.ulf`, macOS
-   `/Library/Application Support/Unity/Unity_lic.ulf`, Linux `~/.local/share/unity3d/Unity/Unity_lic.ulf`.
-2. GitHub → depo → Settings → Secrets and variables → Actions altında üç sır ekleyin:
-   `UNITY_LICENSE` (dosyanın tam içeriği), `UNITY_EMAIL`, `UNITY_PASSWORD`.
-3. Actions → "Unity EditMode testleri" → Run workflow.
-4. İş bitince `unity-uretilen-dosyalar` yapıtını indirin. İçindeki `.meta` dosyalarını ve
+`.github/workflows/unity-tests.yml` iki yoldan birini seçer. Sır yoksa iş atlanır.
+
+**Yol A — önerilen, dosyasız (yalnız hesap bilgisi):**
+
+1. https://id.unity.com adresinde ücretsiz bir Unity hesabı açın (varsa onu kullanın). CI için
+   ayrı bir hesap önerilir; hesapta iki adımlı doğrulama açıksa otomatik giriş başarısız olabilir.
+2. GitHub → depo → Settings → Secrets and variables → Actions altında iki sır ekleyin:
+   `UNITY_EMAIL` ve `UNITY_PASSWORD`. **Parolayı sohbete veya dosyaya yazmayın; yalnız sır olarak girin.**
+3. Actions → "Unity EditMode testleri" → Run workflow. İş, 6000.3.28f1 editörünü
+   `buildalon/unity-setup` ile kurar, Personal lisansı `buildalon/activate-unity-license` ile
+   hesabınızla etkinleştirir ve EditMode testlerini çalıştırır (Unity Hub ve `.ulf` gerekmez).
+
+**Yol B — game-ci imajı (`.ulf` dosyasıyla):** Unity Hub ile kişisel lisansı bir kez
+etkinleştirin; oluşan `Unity_lic.ulf` (Windows `C:\ProgramData\Unity\Unity_lic.ulf`, macOS
+`/Library/Application Support/Unity/Unity_lic.ulf`, Linux `~/.local/share/unity3d/Unity/Unity_lic.ulf`)
+içeriğini `UNITY_LICENSE` sırrına, ayrıca `UNITY_EMAIL` ve `UNITY_PASSWORD` sırlarını ekleyin.
+`UNITY_LICENSE` tanımlıysa bu yol çalışır.
+
+Yerelde de ücretsizdir: Unity Hub → Personal lisans → projeyi 6000.3.28f1 ile açın.
+
+**Her iki yolda:** iş bitince `unity-uretilen-dosyalar` yapıtını indirin. İçindeki `.meta` dosyalarını ve
    `Packages/packages-lock.json` dosyasını (varsa Unity'nin düzelttiği `manifest.json` ile)
    aynı yollara kopyalayıp **bir kez** commit edin. Bundan sonra GUID'ler sabittir.
 
