@@ -392,6 +392,37 @@ Yeni bir Core modülü eklemek anayasa değişikliğidir.
 - Hex kodu Adım 12–13'te yerine geçen kurallar testle kabul edilince silinir; `PathNodeHeap`
   yeni A*'da da kullanılır, korunur.
 
+**Uygulama kararları (Adım 12, `*.Geo` isim alanları; altıgen kurallarla yan yana, Adım 13'te tek model):**
+- Hareket maliyeti birimi "yürüyüş dakikası": kenar türü başına km maliyeti `GeoWarfareParameters`
+  (veri); günlük bütçe = tür hızı × `MarchCostPerSpeedUnit`. Birlik/filo düğümde veya kenar
+  ortasındadır (`Node` + `Route` + `RouteProgress`, ara konum kayıtlı).
+- Kara erişimi (`LandAccessCostModel`): kendi kontrolündeki veya savaşta olunan ülkenin bölgesi;
+  tarafsız toprak, deniz düğümü kapalı. Düşman birlikli ya da düşman kontrolündeki şehir düğümüne
+  yürünmez (temasla bir önceki düğümde durur). Deniz erişimi: deniz düğümü + kendi kontrolündeki liman.
+- İkmal (`GeoSupplyRules`): kaynaklar sahip + kontrol + kuşatılmamış şehirler; yalnız kendi
+  kontrolündeki bölgelerin kara düğümlerinden geçer; konvoy (`GeoConvoyRules`) işgal limanına
+  0,7 seviye, düşman filosuz deniz yolu ve boşta nakliye kapasitesi ister.
+- Muharebe (`GeoCombatRules`): hedef birlik veya şehir; hedef düğüm aynı ya da tek kara kenarıyla
+  bitişik olmalı; aynı düğüme saldıranlar tek muharebede, tek `CombatResolver`; arazi = yaklaşma
+  kenarının arazisi; şehir tahkimatı; kırılan savunan grafta güvenli komşuya çekilir, koridor yoksa
+  yok olur; savunansız düşman şehrinde garnizon muharebesi, alınırsa yalnız `Controller` değişir.
+  RNG anahtarı (Combat, gün, hedef düğüm); anında saldırı AP + `ResolutionId`, günlükte atlanır.
+- Kuşatma (`GeoSiegeRules`): kara komşu düğümlerin hepsi düşman bölgesinde/birlikli ve liman ise
+  abluka → `Besieged`; kısmen → `Encircling`; kara komşusuz ada limanı yalnız ablukayla kuşatılır.
+- Bölge kontrolü (`GeoControlRules`): baskın = bölgedeki birliklerden; dost + düşman birlikte ise
+  çekişmeli; kontrolcünün elinde bölgede şehir kaldıkça devir yok; ikmal bölgede veya bitişik
+  düğümde aranır. Sahip yalnız barışla değişir.
+- Deniz (`GeoNavalRules`): filo ana limanda kurulur; düşman filosu düğümüne girince durur; aynı
+  düğümde muharebe, eşik altı batar (yüküyle), teşkilatı çöken en yakın kendi limanına çekilir;
+  abluka = limana deniz yoluyla bitişik düğümde düşman filosu ve savunan filo yok. Binme/çıkarma
+  (`GeoAmphibiousRules`): nakliye kapasitesi > 0, çıkarma hedefi limana bitişik ya da limandaki
+  filodan; düşman limanına çıkarma ×0,5.
+- Hava (`GeoAirRules`): üs kontrol + kuşatılmamış şehir, şehir başına 4; görev menzili üsten büyük
+  çember; ortak destek (`GeoJointSupportRules`) hedef düğümdeki görevli kanatlar × hava payı +
+  deniz yoluyla bitişik filoların kıyı bombardımanı.
+- Ekonomi (`CitySlotRules`): kapasite = gelişim × seviye başına slot; inşaat yalnız sahip = kontrol.
+- Kayıp/terhis çekirdeği (`CasualtyRules`) nüfus durumu üzerinden; iki model aynı kodu kullanır.
+
 ---
 
 ## 3. Depo düzeni

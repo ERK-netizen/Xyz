@@ -1,3 +1,4 @@
+using TarihStrateji.Core.Domain.Geography;
 using TarihStrateji.Core.Domain.Ids;
 using TarihStrateji.Core.Domain.Numerics;
 using TarihStrateji.Core.Warfare.Definitions;
@@ -38,6 +39,9 @@ namespace TarihStrateji.Core.Warfare.State
         public AirMission Mission { get; internal set; }
 
         public HexId MissionTarget { get; internal set; }
+
+        /// <summary>Coğrafi görev hedefi (birlik, şehir, filo veya nokta; ADR-011).</summary>
+        public TargetRef GeoMissionTarget { get; internal set; }
 
         public Fixed64 Strength(AirWingTypeDefinition type)
         {

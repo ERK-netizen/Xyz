@@ -46,6 +46,8 @@ namespace TarihStrateji.Core.Tests.Geography
             {
                 Economy.AddCountry(c, Fixed64.FromInt(50_000), Fixed64.Parse("0.2"));
                 Economy.SeedStock(c, BaselineGoods.InfantryEquipment, Fixed64.FromInt(2_000));
+                Economy.SeedStock(c, BaselineGoods.Ship, Fixed64.FromInt(50));
+                Economy.SeedStock(c, BaselineGoods.Aircraft, Fixed64.FromInt(500));
             }
 
             Hostility.Wars.Add((Red, Blue));
@@ -76,6 +78,16 @@ namespace TarihStrateji.Core.Tests.Geography
             Result<LandUnitId> id = GeoUnitRules.Recruit(Ctx, country, BaselineUnits.InfantryDivision, city);
             Assert.That(id.IsSuccess, Is.True, id.ErrorKey);
             return Warfare.Units[id.Value];
+        }
+
+        /// <summary>Birliği belirtilen düğüme koyar ve tam teşkilat/ikmal verir (yalnız test kurulumu).</summary>
+        public LandUnit Place(CountryId country, CityId recruitAt, TransportNodeId node)
+        {
+            LandUnit unit = Recruit(country, recruitAt);
+            unit.Node = node;
+            unit.Organization = Content.Warfare.UnitTypes[unit.Type].MaxOrganization;
+            unit.Supply = Fixed64.One;
+            return unit;
         }
 
         public void SetController(RegionId region, CountryId controller)

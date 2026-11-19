@@ -21,6 +21,16 @@ namespace TarihStrateji.Core.Warfare.State
             HomeRegion = homeRegion;
         }
 
+        internal Fleet(FleetId id, CountryId owner, UnitTypeId type, TransportNodeId node, RegionId homeRegion)
+        {
+            Id = id;
+            Owner = owner;
+            Type = type;
+            Hex = HexId.None;
+            Node = node;
+            HomeRegion = homeRegion;
+        }
+
         public FleetId Id { get; }
 
         public CountryId Owner { get; }
@@ -43,6 +53,16 @@ namespace TarihStrateji.Core.Warfare.State
         public IReadOnlyList<HexId> Path => PathList;
 
         public Fixed64 MoveBudget { get; internal set; }
+
+        /// <summary>Coğrafi model: bulunduğu deniz/liman düğümü (ADR-011).</summary>
+        public TransportNodeId Node { get; internal set; }
+
+        internal List<TransportEdgeId> RouteList { get; } = new List<TransportEdgeId>();
+
+        /// <summary>Kalan deniz rotası; ilk kenarda <see cref="RouteProgress"/> kadar yol alınmıştır.</summary>
+        public IReadOnlyList<TransportEdgeId> Route => RouteList;
+
+        public long RouteProgress { get; internal set; }
 
         public Fixed64 Strength(ShipTypeDefinition type)
         {

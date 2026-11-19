@@ -10,7 +10,11 @@ namespace TarihStrateji.Core.Warfare.Rules
     public static class CasualtyRules
     {
         /// <summary>Tam güce oranla <paramref name="fraction"/> kadar kayıp; ölen asker sayısını döner.</summary>
-        public static long ApplyStrengthLoss(WarfareContext ctx, LandUnit unit, UnitTypeDefinition type, Fixed64 fraction)
+        public static long ApplyStrengthLoss(WarfareContext ctx, LandUnit unit, UnitTypeDefinition type, Fixed64 fraction) =>
+            ApplyStrengthLoss(ctx.Population, unit, type, fraction);
+
+        /// <summary>Modelden bağımsız çekirdek (altıgen ve coğrafi kurallar ortak kullanır).</summary>
+        public static long ApplyStrengthLoss(PopulationState population, LandUnit unit, UnitTypeDefinition type, Fixed64 fraction)
         {
             if (!fraction.IsPositive)
             {
@@ -25,7 +29,7 @@ namespace TarihStrateji.Core.Warfare.Rules
 
             unit.Manpower -= men;
             unit.Equipment = Fixed64.Max(Fixed64.Zero, unit.Equipment - fraction);
-            RecordDeaths(ctx, unit, men);
+            RecordDeaths(population, unit.HomeRegion, men);
             return men;
         }
 
@@ -36,7 +40,10 @@ namespace TarihStrateji.Core.Warfare.Rules
         }
 
         /// <summary>Filo/kanat için: azami güce göre <paramref name="fraction"/> kadar insan ve teçhizat kaybı.</summary>
-        public static long ApplyLoss(WarfareContext ctx, RegionId home, long fullCrew, ref long manpower, ref Fixed64 equipment, Fixed64 fraction)
+        public static long ApplyLoss(WarfareContext ctx, RegionId home, long fullCrew, ref long manpower, ref Fixed64 equipment, Fixed64 fraction) =>
+            ApplyLoss(ctx.Population, home, fullCrew, ref manpower, ref equipment, fraction);
+
+        public static long ApplyLoss(PopulationState population, RegionId home, long fullCrew, ref long manpower, ref Fixed64 equipment, Fixed64 fraction)
         {
             if (!fraction.IsPositive)
             {
@@ -51,13 +58,15 @@ namespace TarihStrateji.Core.Warfare.Rules
 
             manpower -= men;
             equipment = Fixed64.Max(Fixed64.Zero, equipment - fraction);
-            RecordDeaths(ctx, home, men);
+            RecordDeaths(population, home, men);
             return men;
         }
 
-        public static void RecordDeaths(WarfareContext ctx, RegionId home, long men)
+        public static void RecordDeaths(WarfareContext ctx, RegionId home, long men) => RecordDeaths(ctx.Population, home, men);
+
+        public static void RecordDeaths(PopulationState population, RegionId home, long men)
         {
-            if (men > 0L && ctx.Population.Regions.TryGetValue(home, out RegionPopulation region))
+            if (men > 0L && population.Regions.TryGetValue(home, out RegionPopulation region))
             {
                 long count = men < region.Mobilized ? men : region.Mobilized;
                 if (count > 0L)
@@ -75,9 +84,11 @@ namespace TarihStrateji.Core.Warfare.Rules
         }
 
         /// <summary>Sağ kalan <paramref name="men"/> kişiyi bölgesinde terhis eder.</summary>
-        public static void SendHome(WarfareContext ctx, RegionId home, long men)
+        public static void SendHome(WarfareContext ctx, RegionId home, long men) => SendHome(ctx.Population, home, men);
+
+        public static void SendHome(PopulationState population, RegionId home, long men)
         {
-            if (men > 0L && ctx.Population.Regions.TryGetValue(home, out RegionPopulation region))
+            if (men > 0L && population.Regions.TryGetValue(home, out RegionPopulation region))
             {
                 long count = men < region.Mobilized ? men : region.Mobilized;
                 if (count > 0L)
