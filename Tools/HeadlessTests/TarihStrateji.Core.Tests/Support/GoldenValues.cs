@@ -18,25 +18,25 @@ namespace TarihStrateji.Core.Tests.Support
         // "savaş yorgunluğu" olayı duruma girer; kara harbi sonuçları ölçümle birebir aynıdır.
         // Kurallar değişmedi: 120. gün hazine/nüfus/stok değerleri eski ve yeni kodda birebir aynı ölçüldü.
         /// <summary>"şemaSürümü:parmakİzi" (bkz. SchemaVersionTests). Değişirse şema sürümü de artar.</summary>
-        public const string SchemaFingerprint = "3:ac8856e12445b63b354c95a5c2c6bbc26dbf6388f6442d8a2cb037a3e98d14e1";
+        public const string SchemaFingerprint = "4:0bf36d17293802857976681f7c58933a1433409a284a320f805766e833bd346e";
 
-        public const string KernelDay60 = "597a14fff0a7f9ea41419e2ce59ce8e54043742fb4fc5e44279fd5d4a1088eeb"; // PRNG ve SHA-256 ayrıca kâhinlerle doğrulanır
+        public const string KernelDay60 = "e4e5d3789ca7726aaaaa1827419e213f34126e1c77c2793571d5398c5fc5493e"; // PRNG ve SHA-256 ayrıca kâhinlerle doğrulanır
 
-        public const string EconomyDay120 = "5e7d5d33e5d6badc661d451a0f520e211cc97740435b510e449f9360a5c78a1f"; // defter/korunum aynı testlerde doğrulanır
+        public const string EconomyDay120 = "42ad3a37144b64f0226743422019ac7d0431aa8dd2d64e6e40010ba9777d4e55"; // defter/korunum aynı testlerde doğrulanır
 
-        public const string StatecraftDay200 = "6266810906780a5203ea5bda2f7567e430dad245d47b91ce4d8f389b29f1d014"; // defter, araştırma günü ve kaydet/yükle aynı dosyada doğrulanır
+        public const string StatecraftDay200 = "28093e452e6994546f9dd7d00fa796651ced0689cf5c6913cd1c7ed19f5eeb46"; // defter, araştırma günü ve kaydet/yükle aynı dosyada doğrulanır
 
         /// <summary>Kara harbi kampanyası (toplama, hareket, muharebe, işgal) 60. gün durum hash'i.</summary>
         /// <remarks>Adım 7'de kara kuralları değişmedi: kampanyanın birlik durumları ve 100 tohumluk 2:1 muharebe sonuçları birebir aynı ölçüldü.</remarks>
-        public const string WarDay60 = "65505628a35101774ee67fe6537080778697e4d3137be37adf0d5513c8151d2e"; // aynı tohum ve kaydet/yükle aynı dosyada doğrulanır
+        public const string WarDay60 = "f3df3ca1f531011dfef18d2cb236c6804d2bd1602063b3fcba10ca6e93bbcca1"; // aynı tohum ve kaydet/yükle aynı dosyada doğrulanır
 
         /// <summary>Diplomasi + odak + olay senaryosu (teklif düşmesi, iki taraflı barış, geri çekilme) 60. gün durum hash'i.</summary>
-        public const string DiplomacyDay60 = "9a7b7e92988853ec755daaa4d53699d4164b4a52b5f2299968768272c78283ad"; // aynı tohum ve kaydet/yükle aynı dosyada doğrulanır
+        public const string DiplomacyDay60 = "e09db353e6653a2db71066ba329be712eda252085cdc641142544dc1a89be8ab"; // aynı tohum ve kaydet/yükle aynı dosyada doğrulanır
 
         /// <summary>365 günlük dört ülkeli YZ kampanyası (Gözlemci modu, tohum 7) son gün durum hash'i.</summary>
-        public const string CampaignDay365 = "75e7c55a2230f92ef714ede1689034f4a87662e446f0bad0315c1c004079e2bc"; // aynı kampanya ve 180. gün kaydet/yükle aynı testte doğrulanır
+        public const string CampaignDay365 = "5ea35fa3cd951ad86818c7740ba43bd39c9936e81a9e2bc98010b8768f59d2bc"; // aynı kampanya ve 180. gün kaydet/yükle aynı testte doğrulanır
 
         /// <summary>Ortak harekât (filo, gemiye binme, çıkarma, hava ve kıyı desteği, liman fethi, konvoy) 40. gün durum hash'i.</summary>
-        public const string JointOperationDay40 = "f085fd622ca9a60877c49dbd6e64593957319878fa3fe40928e7649ffcfc90a8"; // aynı tohum ve kaydet/yükle aynı dosyada doğrulanır
+        public const string JointOperationDay40 = "e29400aebf79ac65e440ae0dc30fff4a3435712bc364a0eeabb6173d6a272149"; // aynı tohum ve kaydet/yükle aynı dosyada doğrulanır
     }
 }

@@ -14,6 +14,7 @@ using TarihStrateji.Core.Population;
 using TarihStrateji.Core.Research.State;
 using TarihStrateji.Core.Warfare.State;
 using TarihStrateji.Core.World;
+using TarihStrateji.Core.World.Geography;
 
 namespace TarihStrateji.Core.Simulation.State
 {
@@ -40,13 +41,20 @@ namespace TarihStrateji.Core.Simulation.State
             IntelligenceState intelligence,
             NarrativeState narrative,
             StableIdAllocator commandIds,
-            StableIdAllocator resolutionIds)
+            StableIdAllocator resolutionIds,
+            GeoWorld geo = null)
         {
             WorldSeed = worldSeed;
             Mode = mode;
             Today = today;
             PlayerCountry = playerCountry;
-            World = world ?? throw new ArgumentNullException(nameof(world));
+            if (world == null && geo == null)
+            {
+                throw new ArgumentNullException(nameof(world));
+            }
+
+            World = world;
+            Geo = geo;
             Effects = effects ?? throw new ArgumentNullException(nameof(effects));
             Population = population ?? throw new ArgumentNullException(nameof(population));
             Economy = economy ?? throw new ArgumentNullException(nameof(economy));
@@ -72,7 +80,13 @@ namespace TarihStrateji.Core.Simulation.State
 
         public CountryId PlayerCountry { get; }
 
+        /// <summary>Altıgen dünya (emekli model; yalnız eski senaryolarda). Coğrafi senaryoda null.</summary>
         public WorldMap World { get; }
+
+        /// <summary>Coğrafi dünya (ADR-011): ülke/bölge çokgenleri, şehirler, ulaşım grafı. Altıgen senaryoda null.</summary>
+        public GeoWorld Geo { get; }
+
+        public bool IsGeographic => Geo != null;
 
         public EffectEngine Effects { get; }
 
@@ -123,6 +137,23 @@ namespace TarihStrateji.Core.Simulation.State
 
             return new GameState(worldSeed, mode, startDate, playerCountry, world, new EffectEngine(), new PopulationState(), new EconomyState(), new ResearchState(), new PoliticsState(), new CharacterState(), new WarfareState(),
                 new DiplomacyState(), new IntelligenceState(), new NarrativeState(), new StableIdAllocator(), new StableIdAllocator());
+        }
+
+        /// <summary>Coğrafi (altıgensiz) yeni oyun durumu.</summary>
+        public static GameState CreateNewGeo(ulong worldSeed, GameMode mode, GameDate startDate, CountryId playerCountry, GeoWorld geo)
+        {
+            if (geo == null)
+            {
+                throw new ArgumentNullException(nameof(geo));
+            }
+
+            if (mode == GameMode.Observer ? playerCountry.IsValid : !playerCountry.IsValid)
+            {
+                throw new ArgumentException("Oyuncu ülkesi moda uygun değil.", nameof(playerCountry));
+            }
+
+            return new GameState(worldSeed, mode, startDate, playerCountry, null, new EffectEngine(), new PopulationState(), new EconomyState(), new ResearchState(), new PoliticsState(), new CharacterState(), new WarfareState(),
+                new DiplomacyState(), new IntelligenceState(), new NarrativeState(), new StableIdAllocator(), new StableIdAllocator(), geo);
         }
 
         /// <summary>Bugünün anahtarıyla PRNG akışı.</summary>

@@ -108,7 +108,8 @@ Her adım headless testleriyle gelir; altıgen kodu yalnız yerine geçen sistem
 | Adım | Durum |
 |---|---|
 | 11 coğrafi çekirdek | TESTED (headless) + Unity EditMode geçti |
-| 12 coğrafi kurallar (ikmal, hareket, muharebe, kuşatma, bölge kontrolü, deniz, hava, konvoy, slot) | CODED + TESTED (headless 389/389) |
+| 12 coğrafi kurallar (ikmal, hareket, muharebe, kuşatma, bölge kontrolü, deniz, hava, konvoy, slot) | TESTED (headless) + Unity EditMode geçti |
+| 13/1 coğrafi oyun durumu, günlük sistemler, emirler, kayıt şeması 4 | CODED + TESTED (headless 392/392) |
 
 Not: Altıgen kural dosyaları Adım 12'de değil 13'te silinir; çünkü Simulation onlara bağlıdır ve her
 commit derlenebilir kalmalıdır (§4 "sıfır eksik kod"). Adım 12 yeni kuralları `*.Geo` isim alanlarında

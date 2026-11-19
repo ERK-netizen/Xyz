@@ -25,6 +25,7 @@ using TarihStrateji.Core.Warfare.State;
 using TarihStrateji.Core.Warfare;
 using TarihStrateji.Core.World.Persistence;
 using TarihStrateji.Core.World;
+using TarihStrateji.Core.World.Geography;
 
 namespace TarihStrateji.Core.Simulation.Persistence
 {
@@ -45,15 +46,17 @@ namespace TarihStrateji.Core.Simulation.Persistence
         /// <item>1: Adım 3 (dünya, etkiler, emir günlüğü)</item>
         /// <item>2: Adım 4–7 (nüfus, ekonomi, araştırma/siyaset/karakter, kara/deniz/hava harbi, savaş kaydı)</item>
         /// <item>3: Adım 8 (diplomasi: savaş/antlaşma/teklif/sürgün; istihbarat temasları; olay/odak; bütçe defterinde idari gelir)</item>
+        /// <item>4: Adım 13 (ADR-011: dünya modeli bayrağı; coğrafi dünya parmak izi + değişken katmanı; birlik/filo
+        /// düğüm-rota-ilerleme, coğrafi saldırı ve hava görevi hedefleri)</item>
         /// </list>
         /// </summary>
-        public const int SchemaVersion = 3;
+        public const int SchemaVersion = 4;
 
         /// <summary>
         /// Yüklenebilen en eski şema. Bunun altındaki şemalar yayım öncesi geliştirme kayıtlarıdır ve
         /// göçleri yoktur: "bozuk" yerine <see cref="SimulationErrorKeys.DurumSemasiEski"/> ile reddedilir.
         /// </summary>
-        public const int MinimumSupportedSchemaVersion = 3;
+        public const int MinimumSupportedSchemaVersion = 4;
 
         public static byte[] Encode(GameState state, CommandRegistry registry, bool includeVolatile)
         {
@@ -83,7 +86,16 @@ namespace TarihStrateji.Core.Simulation.Persistence
 
             w.WriteUInt64(state.CommandIds.NextValue);
             w.WriteUInt64(state.ResolutionIds.NextValue);
-            WorldSnapshotCodec.Write(state.World, w);
+            w.WriteBool(state.IsGeographic);
+            if (state.IsGeographic)
+            {
+                GeoWorldSnapshotCodec.Write(state.Geo, w);
+            }
+            else
+            {
+                WorldSnapshotCodec.Write(state.World, w);
+            }
+
             EffectSnapshotCodec.Write(state.Effects, w);
             PopulationSnapshotCodec.Write(state.Population, w);
             EconomySnapshotCodec.Write(state.Economy, w);
@@ -123,7 +135,8 @@ namespace TarihStrateji.Core.Simulation.Persistence
             }
         }
 
-        public static Result<GameState> Decode(byte[] data, CommandRegistry registry)
+        /// <param name="geoTemplate">Coğrafi kayıtlar için aynı içerikten kurulmuş taze dünya üreticisi (değişmez geometri kayıtta yoktur).</param>
+        public static Result<GameState> Decode(byte[] data, CommandRegistry registry, Func<GeoWorld> geoTemplate = null)
         {
             if (data == null || registry == null)
             {
@@ -133,7 +146,7 @@ namespace TarihStrateji.Core.Simulation.Persistence
             try
             {
                 var reader = new CanonicalReader(data);
-                Result<GameState> result = Read(reader, registry);
+                Result<GameState> result = Read(reader, registry, geoTemplate);
                 if (result.IsSuccess)
                 {
                     reader.ExpectEnd();
@@ -155,7 +168,7 @@ namespace TarihStrateji.Core.Simulation.Persistence
             }
         }
 
-        private static Result<GameState> Read(CanonicalReader r, CommandRegistry registry)
+        private static Result<GameState> Read(CanonicalReader r, CommandRegistry registry, Func<GeoWorld> geoTemplate)
         {
             r.ExpectTag(Tag);
             int schema = r.ReadInt32();
@@ -188,10 +201,27 @@ namespace TarihStrateji.Core.Simulation.Persistence
             var commandIds = new StableIdAllocator(r.ReadUInt64());
             var resolutionIds = new StableIdAllocator(r.ReadUInt64());
 
-            Result<WorldMap> world = WorldSnapshotCodec.Read(r);
-            if (!world.IsSuccess)
+            WorldMap hexWorld = null;
+            GeoWorld geoWorld = null;
+            if (r.ReadBool())
             {
-                return Result<GameState>.Failure(world.ErrorKey);
+                Result<GeoWorld> geo = GeoWorldSnapshotCodec.Read(r, geoTemplate?.Invoke());
+                if (!geo.IsSuccess)
+                {
+                    return Result<GameState>.Failure(geo.ErrorKey);
+                }
+
+                geoWorld = geo.Value;
+            }
+            else
+            {
+                Result<WorldMap> world = WorldSnapshotCodec.Read(r);
+                if (!world.IsSuccess)
+                {
+                    return Result<GameState>.Failure(world.ErrorKey);
+                }
+
+                hexWorld = world.Value;
             }
 
             Result<EffectEngine> effects = EffectSnapshotCodec.Read(r);
@@ -254,9 +284,9 @@ namespace TarihStrateji.Core.Simulation.Persistence
                 return Result<GameState>.Failure(narrative.ErrorKey);
             }
 
-            var state = new GameState(seed, mode, today, player, world.Value, effects.Value, population.Value, economy.Value,
+            var state = new GameState(seed, mode, today, player, hexWorld, effects.Value, population.Value, economy.Value,
                 research.Value, politics.Value, characters.Value, warfare.Value, diplomacy.Value, intelligence.Value, narrative.Value,
-                commandIds, resolutionIds)
+                commandIds, resolutionIds, geoWorld)
             {
                 StateVersion = stateVersion,
             };

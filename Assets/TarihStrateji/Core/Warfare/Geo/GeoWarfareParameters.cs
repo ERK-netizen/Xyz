@@ -12,7 +12,7 @@ namespace TarihStrateji.Core.Warfare.Geo
     public sealed class GeoWarfareParameters
     {
         public GeoWarfareParameters(long[] landCostPerKm, long[] seaCostPerKm, Fixed64 marchCostPerSpeedUnit,
-            RegionControlParameters regionControl, int buildingSlotsPerDevelopment)
+            RegionControlParameters regionControl, int buildingSlotsPerDevelopment, Fixed64 supplyRange)
         {
             LandCostPerKm = landCostPerKm ?? throw new ArgumentNullException(nameof(landCostPerKm));
             SeaCostPerKm = seaCostPerKm ?? throw new ArgumentNullException(nameof(seaCostPerKm));
@@ -24,7 +24,16 @@ namespace TarihStrateji.Core.Warfare.Geo
             MarchCostPerSpeedUnit = marchCostPerSpeedUnit;
             RegionControl = regionControl ?? throw new ArgumentNullException(nameof(regionControl));
             BuildingSlotsPerDevelopment = buildingSlotsPerDevelopment;
+            if (!supplyRange.IsPositive)
+            {
+                throw new ArgumentOutOfRangeException(nameof(supplyRange));
+            }
+
+            SupplyRange = supplyRange;
         }
+
+        /// <summary>İkmal menzili (hareket maliyeti birimi; ör. patikada km × patika maliyeti).</summary>
+        public Fixed64 SupplyRange { get; }
 
         /// <summary>İndeks = <see cref="TransportEdgeKind"/>; 0 = kara kuvveti kullanamaz.</summary>
         public long[] LandCostPerKm { get; }

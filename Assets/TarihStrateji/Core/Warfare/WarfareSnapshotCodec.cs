@@ -1,6 +1,8 @@
 using System;
+using System.Collections.Generic;
 using TarihStrateji.Core.Domain;
 using TarihStrateji.Core.Domain.Collections;
+using TarihStrateji.Core.Domain.Geography;
 using TarihStrateji.Core.Domain.Ids;
 using TarihStrateji.Core.Domain.Serialization;
 using TarihStrateji.Core.Warfare.State;
@@ -39,6 +41,9 @@ namespace TarihStrateji.Core.Warfare
                 {
                     w.WriteId(u.Path[p]);
                 }
+
+                WriteGeoRoute(w, u.Node, u.Route, u.RouteProgress);
+                TargetRefCodec.Write(w, u.GeoAttackTarget);
             }
 
             w.WriteInt32(state.Besieged.Count);
@@ -66,6 +71,8 @@ namespace TarihStrateji.Core.Warfare
                 {
                     w.WriteId(f.Path[p]);
                 }
+
+                WriteGeoRoute(w, f.Node, f.Route, f.RouteProgress);
             }
 
             w.WriteUInt64(state.AirWingIds.NextValue);
@@ -83,6 +90,7 @@ namespace TarihStrateji.Core.Warfare
                 w.WriteFixed64(a.Organization);
                 w.WriteInt32((int)a.Mission);
                 w.WriteId(a.MissionTarget);
+                TargetRefCodec.Write(w, a.GeoMissionTarget);
             }
 
             w.WriteInt32(state.Blockaded.Count);
@@ -119,6 +127,10 @@ namespace TarihStrateji.Core.Warfare
                         u.PathList.Add(new HexId(r.ReadUInt64()));
                     }
 
+                    u.Node = ReadGeoRoute(r, u.RouteList, out long unitProgress);
+                    u.RouteProgress = unitProgress;
+                    u.GeoAttackTarget = TargetRefCodec.Read(r);
+
                     if (!u.Id.IsValid || u.Id.Value >= state.UnitIds.NextValue)
                     {
                         return Result<WarfareState>.Failure(DomainErrorKeys.KayitBozuk);
@@ -150,6 +162,9 @@ namespace TarihStrateji.Core.Warfare
                         f.PathList.Add(new HexId(r.ReadUInt64()));
                     }
 
+                    f.Node = ReadGeoRoute(r, f.RouteList, out long fleetProgress);
+                    f.RouteProgress = fleetProgress;
+
                     if (!f.Id.IsValid || f.Id.Value >= state.FleetIds.NextValue)
                     {
                         return Result<WarfareState>.Failure(DomainErrorKeys.KayitBozuk);
@@ -176,6 +191,7 @@ namespace TarihStrateji.Core.Warfare
 
                     a.Mission = (AirMission)mission;
                     a.MissionTarget = new HexId(r.ReadUInt64());
+                    a.GeoMissionTarget = TargetRefCodec.Read(r);
                     state.AirWings.Add(a.Id, a);
                 }
 
@@ -191,6 +207,36 @@ namespace TarihStrateji.Core.Warfare
             {
                 return Result<WarfareState>.Failure(DomainErrorKeys.KayitBozuk);
             }
+        }
+
+        /// <summary>Coğrafi konum (ADR-011): düğüm, kalan rota kenarları, ilk kenardaki ilerleme.</summary>
+        private static void WriteGeoRoute(CanonicalWriter w, TransportNodeId node, IReadOnlyList<TransportEdgeId> route, long progress)
+        {
+            w.WriteId(node);
+            w.WriteInt64(progress);
+            w.WriteInt32(route.Count);
+            for (int i = 0; i < route.Count; i++)
+            {
+                w.WriteId(route[i]);
+            }
+        }
+
+        private static TransportNodeId ReadGeoRoute(CanonicalReader r, List<TransportEdgeId> route, out long progress)
+        {
+            var node = new TransportNodeId(r.ReadUInt64());
+            progress = r.ReadInt64();
+            if (progress < 0L)
+            {
+                throw new ArgumentException(DomainErrorKeys.KayitBozuk);
+            }
+
+            int count = r.ReadCount(r.Remaining);
+            for (int i = 0; i < count; i++)
+            {
+                route.Add(new TransportEdgeId(r.ReadUInt64()));
+            }
+
+            return node;
         }
     }
 }

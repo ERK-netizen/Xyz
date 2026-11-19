@@ -6,6 +6,10 @@ using TarihStrateji.Core.Logistics;
 using TarihStrateji.Core.Warfare.Definitions;
 using TarihStrateji.Core.World.Map;
 
+using TarihStrateji.Core.Warfare.Geo;
+
+using TarihStrateji.Core.World.Geography;
+
 namespace TarihStrateji.Core.Content
 {
     /// <summary>
@@ -100,6 +104,20 @@ namespace TarihStrateji.Core.Content
 
         /// <summary>İkmal menzili: ovada yolsuz ≈ 400 km; demiryolu boyunca 1600 km'ye kadar.</summary>
         public static LogisticsParameters CreateLogistics() => new LogisticsParameters(F("400"));
+
+        /// <summary>
+        /// Coğrafi savaş (ADR-011). Maliyet birimi yürüyüş dakikası/km; günlük bütçe = hız × 20. Piyade (30)
+        /// yolda 30 km, patikada 20 km, demiryolunda 300 km/gün; boğaz geçişi 10 km/gün; muhrip (700) denizde
+        /// 700 km/gün. Bölge işgali 3 gün ikmalli tutma, güvenli hâle gelme 7 gün; şehir gelişim seviyesi
+        /// başına 4 yapı slotu; ikmal menzili patikada ≈ 400 km.
+        /// </summary>
+        public static GeoWarfareParameters CreateGeoWarfare() => new GeoWarfareParameters(
+            new long[] { 0L, 30L, 20L, 2L, 0L, 60L },
+            new long[] { 0L, 0L, 0L, 0L, 20L, 0L },
+            F("20"),
+            new RegionControlParameters(3, 7),
+            4,
+            F("12000"));
 
         private static Fixed64 F(string text) => Fixed64.Parse(text);
     }

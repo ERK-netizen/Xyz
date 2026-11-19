@@ -12,6 +12,8 @@ using TarihStrateji.Core.Research.Definitions;
 using TarihStrateji.Core.Warfare.Definitions;
 using TarihStrateji.Core.World.Pathfinding;
 
+using TarihStrateji.Core.Warfare.Geo;
+
 namespace TarihStrateji.Core.Content
 {
     /// <summary>
@@ -32,7 +34,8 @@ namespace TarihStrateji.Core.Content
             DiplomacyParameters diplomacy,
             IntelligenceParameters intelligence,
             NarrativeCatalog narrative,
-            AiParameters ai)
+            AiParameters ai,
+            GeoWarfareParameters geoWarfare = null)
         {
             Economy = economy ?? throw new ArgumentNullException(nameof(economy));
             Demography = demography ?? throw new ArgumentNullException(nameof(demography));
@@ -46,7 +49,11 @@ namespace TarihStrateji.Core.Content
             Intelligence = intelligence ?? throw new ArgumentNullException(nameof(intelligence));
             Narrative = narrative ?? throw new ArgumentNullException(nameof(narrative));
             Ai = ai ?? throw new ArgumentNullException(nameof(ai));
+            GeoWarfare = geoWarfare ?? BaselineMilitaryContent.CreateGeoWarfare();
         }
+
+        /// <summary>Coğrafi (altıgensiz) savaş parametreleri (ADR-011).</summary>
+        public GeoWarfareParameters GeoWarfare { get; }
 
         public EconomyCatalog Economy { get; }
 

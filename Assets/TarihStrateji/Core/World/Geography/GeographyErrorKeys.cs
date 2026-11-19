@@ -27,6 +27,8 @@ namespace TarihStrateji.Core.World.Geography
         public const string SehirGelisimGecersiz = "hata.sehir.gelisimSeviyesiGecersiz";
         public const string SehirBolgeDisinda = "hata.sehir.konumBolgeDisinda";
         public const string SehirDugumUyumsuz = "hata.sehir.ulasimDugumuUyumsuz";
+        public const string CografyaSablonuYok = "hata.kayit.cografyaSablonuYok";
+        public const string CografyaUyumsuz = "hata.kayit.cografyaIcerikUyumsuz";
         public const string LimanDenizBaglantisiYok = "hata.sehir.limanDenizBaglantisiYok";
     }
 }

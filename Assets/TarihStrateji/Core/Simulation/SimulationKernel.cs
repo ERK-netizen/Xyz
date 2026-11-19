@@ -143,7 +143,7 @@ namespace TarihStrateji.Core.Simulation
                 return Result<SimulationKernel>.Failure(SimulationErrorKeys.KurulumEksik);
             }
 
-            Result<GameState> state = GameStateCodec.Decode(snapshot, setup.Commands);
+            Result<GameState> state = GameStateCodec.Decode(snapshot, setup.Commands, setup.GeoWorldTemplate);
             return state.IsSuccess ? Create(setup, state.Value) : Result<SimulationKernel>.Failure(state.ErrorKey);
         }
 

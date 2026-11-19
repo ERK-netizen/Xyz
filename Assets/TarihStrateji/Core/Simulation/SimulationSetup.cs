@@ -38,6 +38,12 @@ namespace TarihStrateji.Core.Simulation
         /// <summary>Kurulu tanım verisi (<see cref="StandardRules.Install"/> atar); okuma modeli birlik güçleri için kullanır.</summary>
         public Content.GameContent Content { get; set; }
 
+        /// <summary>
+        /// Coğrafi kayıt yüklerken değişmez dünyayı (çokgenler, şehirler, ulaşım grafı) aynı içerikten kuran
+        /// üretici (ADR-011, §16.4). Altıgen senaryolarda gerekmez.
+        /// </summary>
+        public System.Func<World.Geography.GeoWorld> GeoWorldTemplate { get; set; }
+
         public SimulationSetup AddSystem(ISimulationSystem system)
         {
             if (system == null)

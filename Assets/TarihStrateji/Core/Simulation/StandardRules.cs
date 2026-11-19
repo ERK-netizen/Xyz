@@ -2,9 +2,11 @@ using System;
 using TarihStrateji.Core.Content;
 using TarihStrateji.Core.Simulation.Commands.Diplomacy;
 using TarihStrateji.Core.Simulation.Commands.Economy;
+using TarihStrateji.Core.Simulation.Commands.Geo;
 using TarihStrateji.Core.Simulation.Commands.Military;
 using TarihStrateji.Core.Simulation.Commands.Statecraft;
 using TarihStrateji.Core.Simulation.Systems;
+using TarihStrateji.Core.Simulation.Systems.Geo;
 
 namespace TarihStrateji.Core.Simulation
 {
@@ -79,6 +81,53 @@ namespace TarihStrateji.Core.Simulation
             setup.Commands.Register(new RespondProposalHandler(content));
             setup.Commands.Register(new ChooseEventOptionHandler(content));
             setup.Commands.Register(new SelectFocusHandler(content));
+            return setup;
+        }
+
+        /// <summary>
+        /// Coğrafi (altıgensiz, ADR-011) senaryo kuralları: dünyaya bağlı olmayan sistemler (gün açılışı,
+        /// karakter, siyaset, araştırma) + coğrafi askerî sistemler (P0 AP, P11 ikmal, P12 hareket, P13 muharebe,
+        /// P14 kontrol) ve coğrafi emirler. Ekonomi üretimi, nüfus, diplomasi, istihbarat ve YZ Adım 13'ün
+        /// sonraki parçalarında coğrafi modele geçer; altıgen senaryolar <see cref="Install"/> kullanır.
+        /// </summary>
+        public static SimulationSetup InstallGeographic(SimulationSetup setup, GameContent content)
+        {
+            if (setup == null || content == null)
+            {
+                throw new ArgumentNullException(setup == null ? nameof(setup) : nameof(content));
+            }
+
+            setup.Content = content;
+            var supply = new GeoSupplyCache();
+            setup.AddSystem(new EconomyDayOpenSystem());
+            setup.AddSystem(new GeoActionPointSystem(content, supply));
+            setup.AddSystem(new CharacterServiceSystem(content.Characters));
+            setup.AddSystem(new PoliticsSystem(content.Politics));
+            setup.AddSystem(new ResearchSystem(content.Technology));
+            setup.AddSystem(new GeoSupplySystem(content, supply));
+            setup.AddSystem(new GeoMovementSystem(content, supply));
+            setup.AddSystem(new GeoCombatSystem(content, supply));
+            setup.AddSystem(new GeoControlSystem(content, supply));
+
+            setup.AddInvariant(new PopulationInvariantCheck(content.Demography));
+            setup.AddInvariant(new StatecraftInvariantCheck(content));
+
+            setup.Commands.Register(new SetTaxRateHandler(content.Economy));
+            setup.Commands.Register(new SetResearchHandler(content.Technology));
+            setup.Commands.Register(new EnqueueResearchHandler(content.Technology));
+            setup.Commands.Register(new AppointCharacterHandler(content.Characters));
+            setup.Commands.Register(new DismissCharacterHandler());
+            setup.Commands.Register(new InvestInInstitutionHandler(content.Politics));
+            setup.Commands.Register(new GeoRecruitUnitHandler(content));
+            setup.Commands.Register(new GeoMoveUnitHandler(content));
+            setup.Commands.Register(new GeoOrderAttackHandler(content));
+            setup.Commands.Register(new GeoImmediateAttackHandler(content));
+            setup.Commands.Register(new GeoBuildFleetHandler(content));
+            setup.Commands.Register(new GeoMoveFleetHandler(content));
+            setup.Commands.Register(new GeoEmbarkHandler(content));
+            setup.Commands.Register(new GeoLandingHandler(content));
+            setup.Commands.Register(new GeoRecruitAirWingHandler(content));
+            setup.Commands.Register(new GeoAirMissionHandler(content));
             return setup;
         }
 

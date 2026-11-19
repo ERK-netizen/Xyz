@@ -71,6 +71,9 @@ namespace TarihStrateji.Core.World.Geography
 
         public bool TryGetControl(RegionId region, out RegionControl control) => _control.TryGetValue(region, out control);
 
+        /// <summary>Bölgelerin denetim durumu (atlas sırasıyla bölge kimliği).</summary>
+        public IReadOnlyList<RegionId> Regions => Atlas.Regions;
+
         public bool IsPort(City city) => Transport.TryGetNode(city.Node, out TransportNode node) && node.Kind == TransportNodeKind.Port;
 
         /// <summary>Kurulum sonrası bütünlük: liman şehrinin deniz yolu bağlantısı olmalı.</summary>
