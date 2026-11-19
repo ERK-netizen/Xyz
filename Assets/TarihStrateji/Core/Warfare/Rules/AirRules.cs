@@ -116,12 +116,10 @@ namespace TarihStrateji.Core.Warfare.Rules
             }
 
             ValidationResult baseCheck = CheckBaseAt(ctx, country, at, out City city);
-            if (!baseCheck.IsValid && !(city != null && city.Id == wing.Base && baseCheck.ErrorKey == WarfareErrorKeys.UsDolu))
-            {
-                return baseCheck;
-            }
 
-            return ValidationResult.Ok;
+            // Kanadın zaten bulunduğu üs kendi yuvasını sayar: dolu olması geçişi engellemez.
+            bool sameBase = city != null && city.Id == wing.Base;
+            return baseCheck.IsValid || (sameBase && baseCheck.ErrorKey == WarfareErrorKeys.UsDolu) ? ValidationResult.Ok : baseCheck;
         }
 
         public static void Rebase(AirWing wing, CityId city)

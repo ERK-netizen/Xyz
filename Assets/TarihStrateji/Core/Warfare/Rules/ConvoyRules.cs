@@ -100,6 +100,18 @@ namespace TarihStrateji.Core.Warfare.Rules
             WorldMap map = ctx.World;
             var reached = new bool[map.CellCount];
             var queue = new Queue<int>();
+
+            // Düşman filolu hücreler bir kez işaretlenir (hücre başına filo taraması yerine O(filo)).
+            var blocked = new bool[map.CellCount];
+            for (int i = 0; i < ctx.Warfare.Fleets.Count; i++)
+            {
+                Fleet f = ctx.Warfare.Fleets.ValueAt(i);
+                if (UnitQueries.IsHostile(ctx, f.Owner, country))
+                {
+                    blocked[map.Grid.IndexOf(map.Grid.FromId(f.Hex))] = true;
+                }
+            }
+
             for (int c = 0; c < map.Cities.Count; c++)
             {
                 City city = map.Cities.ValueAt(c);
@@ -113,7 +125,7 @@ namespace TarihStrateji.Core.Warfare.Rules
                 {
                     if (map.TryGetNeighborCell(cell, (HexDirection)d, out HexCell n))
                     {
-                        Visit(ctx, country, n, reached, queue);
+                        Visit(ctx, n, blocked, reached, queue);
                     }
                 }
             }
@@ -125,7 +137,7 @@ namespace TarihStrateji.Core.Warfare.Rules
                 {
                     if (map.TryGetNeighborCell(cell, (HexDirection)d, out HexCell n))
                     {
-                        Visit(ctx, country, n, reached, queue);
+                        Visit(ctx, n, blocked, reached, queue);
                     }
                 }
             }
@@ -133,10 +145,10 @@ namespace TarihStrateji.Core.Warfare.Rules
             return reached;
         }
 
-        private static void Visit(WarfareContext ctx, CountryId country, HexCell cell, bool[] reached, Queue<int> queue)
+        private static void Visit(WarfareContext ctx, HexCell cell, bool[] blocked, bool[] reached, Queue<int> queue)
         {
             int index = ctx.World.Grid.IndexOf(cell.Coord);
-            if (reached[index] || !cell.IsWater || NavalQueries.HasHostileFleets(ctx, cell.Id, country))
+            if (reached[index] || !cell.IsWater || blocked[index])
             {
                 return;
             }

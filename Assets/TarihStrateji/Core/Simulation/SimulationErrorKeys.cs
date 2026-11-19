@@ -12,5 +12,6 @@ namespace TarihStrateji.Core.Simulation
         public const string UygulamadaReddedildi = "hata.emir.uygulamadaReddedildi";
         public const string KurulumEksik = "hata.simulasyon.kurulumEksik";
         public const string DurumSemasiYeni = "hata.kayit.durumSemasiDahaYeni";
+        public const string DurumSemasiEski = "hata.kayit.durumSemasiEskiGocYok";
     }
 }

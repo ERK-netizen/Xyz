@@ -33,8 +33,21 @@ namespace TarihStrateji.Core.Simulation.Persistence
         public const uint Tag = 0x454D4147; // "GAME"
         private const uint JournalTag = 0x4C4E524A; // "JRNL"
 
-        /// <summary>Durum şemasının sürümü. Değiştiğinde Persistence'a göç eklenir.</summary>
-        public const int SchemaVersion = 1;
+        /// <summary>
+        /// Durum şemasının sürümü. Bayt düzeni her değiştiğinde artırılır (şema parmak izi testi
+        /// bunu zorlar); yayımlanmış bir sürümden sonrası için Persistence'a göç eklenir.
+        /// <list type="bullet">
+        /// <item>1: Adım 3 (dünya, etkiler, emir günlüğü)</item>
+        /// <item>2: Adım 4–7 (nüfus, ekonomi, araştırma/siyaset/karakter, kara/deniz/hava harbi, savaş kaydı)</item>
+        /// </list>
+        /// </summary>
+        public const int SchemaVersion = 2;
+
+        /// <summary>
+        /// Yüklenebilen en eski şema. Bunun altındaki şemalar yayım öncesi geliştirme kayıtlarıdır ve
+        /// göçleri yoktur: "bozuk" yerine <see cref="SimulationErrorKeys.DurumSemasiEski"/> ile reddedilir.
+        /// </summary>
+        public const int MinimumSupportedSchemaVersion = 2;
 
         public static byte[] Encode(GameState state, CommandRegistry registry, bool includeVolatile)
         {
@@ -141,6 +154,11 @@ namespace TarihStrateji.Core.Simulation.Persistence
             if (schema > SchemaVersion)
             {
                 return Result<GameState>.Failure(SimulationErrorKeys.DurumSemasiYeni);
+            }
+
+            if (schema < MinimumSupportedSchemaVersion && schema >= 1)
+            {
+                return Result<GameState>.Failure(SimulationErrorKeys.DurumSemasiEski);
             }
 
             if (schema != SchemaVersion)
