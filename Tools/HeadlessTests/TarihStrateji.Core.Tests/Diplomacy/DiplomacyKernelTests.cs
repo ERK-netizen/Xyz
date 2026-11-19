@@ -112,7 +112,7 @@ namespace TarihStrateji.Core.Tests.Diplomacy
                     new EventOption("secenek.borc", null, 0, Fixed64.FromInt(3000)),
                 });
             var content = new GameContent(c.Economy, c.Demography, c.Movement, c.Technology, c.Politics, c.Characters, c.Warfare, c.Logistics,
-                c.Diplomacy, c.Intelligence, NarrativeCatalog.Create(new[] { levy }, new FocusDefinition[0]).Value);
+                c.Diplomacy, c.Intelligence, NarrativeCatalog.Create(new[] { levy }, new FocusDefinition[0]).Value, c.Ai);
             var s = new FrontScenario();
             SimulationKernel k = TestSimulation.Kernel(StandardRules.Install(new SimulationSetup(), content), s.State);
             TestSimulation.AdvanceOk(k, 1);

@@ -33,6 +33,9 @@ namespace TarihStrateji.Core.Tests.Support
         /// <summary>Diplomasi + odak + olay senaryosu (teklif düşmesi, iki taraflı barış, geri çekilme) 60. gün durum hash'i.</summary>
         public const string DiplomacyDay60 = "9a7b7e92988853ec755daaa4d53699d4164b4a52b5f2299968768272c78283ad"; // aynı tohum ve kaydet/yükle aynı dosyada doğrulanır
 
+        /// <summary>365 günlük dört ülkeli YZ kampanyası (Gözlemci modu, tohum 7) son gün durum hash'i.</summary>
+        public const string CampaignDay365 = "75e7c55a2230f92ef714ede1689034f4a87662e446f0bad0315c1c004079e2bc"; // aynı kampanya ve 180. gün kaydet/yükle aynı testte doğrulanır
+
         /// <summary>Ortak harekât (filo, gemiye binme, çıkarma, hava ve kıyı desteği, liman fethi, konvoy) 40. gün durum hash'i.</summary>
         public const string JointOperationDay40 = "f085fd622ca9a60877c49dbd6e64593957319878fa3fe40928e7649ffcfc90a8"; // aynı tohum ve kaydet/yükle aynı dosyada doğrulanır
     }

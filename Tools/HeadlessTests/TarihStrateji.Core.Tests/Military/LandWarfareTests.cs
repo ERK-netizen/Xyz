@@ -85,6 +85,30 @@ namespace TarihStrateji.Core.Tests.Military
         }
 
         [Test]
+        public void ExpensiveTerrain_IsSlow_ButNeverImpassable()
+        {
+            // Regresyon: 2 × hız tavanını aşan adım (tepe ≈ 75 km, dağ ≈ 129 km; piyade tavanı 60 km)
+            // eskiden sonsuza dek atılamıyordu.
+            var s = new FrontScenario();
+            s.Cell(104, 4).Terrain = TerrainType.Hills;
+            s.Cell(105, 4).Terrain = TerrainType.Mountains;
+            LandUnit unit = s.Place(TestWorlds.CountryA, BaselineUnits.InfantryDivision, 103, 4);
+            var path = new List<HexId>();
+            Assert.That(MovementRules.CheckMove(s.War, new HexPathfinder(s.State.World, Land), TestWorlds.CountryA, unit.Id, new HexCoord(105, 4), path).IsValid, Is.True);
+            MovementRules.SetPath(unit, path);
+            int days = 0;
+            while (unit.Hex != s.State.World.Grid.ToId(new HexCoord(105, 4)) && days < 20)
+            {
+                MovementRules.AdvanceDay(s.War, Land, new List<string>());
+                days++;
+            }
+
+            Assert.That(unit.Hex, Is.EqualTo(s.State.World.Grid.ToId(new HexCoord(105, 4))), "dağa girilir");
+            Assert.That(days, Is.InRange(4, 6), "tepe 2, dağ 2–3 gün: pahalı arazi yavaşlatır");
+            Assert.That(unit.MoveBudget, Is.EqualTo(Fixed64.Zero));
+        }
+
+        [Test]
         public void LostBattle_DefenderRetreats_AttackerAdvances_AndOccupies()
         {
             var s = new FrontScenario();
