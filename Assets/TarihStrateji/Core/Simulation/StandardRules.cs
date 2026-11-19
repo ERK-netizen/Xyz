@@ -21,6 +21,7 @@ namespace TarihStrateji.Core.Simulation
                 throw new ArgumentNullException(setup == null ? nameof(setup) : nameof(content));
             }
 
+            setup.Content = content;
             setup.AddSystem(new EconomyDayOpenSystem());
             setup.AddSystem(new ActionPointSystem(content));
             setup.AddSystem(new NarrativeSystem(content));

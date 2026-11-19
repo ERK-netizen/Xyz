@@ -7,10 +7,12 @@ using TarihStrateji.Core.Domain.Ids;
 using TarihStrateji.Core.Domain.Randomness;
 using TarihStrateji.Core.Domain.Serialization;
 using TarihStrateji.Core.Domain.Time;
+using TarihStrateji.Core.Domain.Views;
 using TarihStrateji.Core.Effects;
 using TarihStrateji.Core.Simulation.Commands;
 using TarihStrateji.Core.Simulation.Persistence;
 using TarihStrateji.Core.Simulation.Phases;
+using TarihStrateji.Core.Simulation.ReadModel;
 using TarihStrateji.Core.Simulation.State;
 
 namespace TarihStrateji.Core.Simulation
@@ -39,6 +41,7 @@ namespace TarihStrateji.Core.Simulation
         private readonly List<string> _haltReasons = new List<string>();
         private readonly CanonicalWriter _hashWriter = new CanonicalWriter(64 * 1024);
         private byte[] _lastStateHash;
+        private readonly Content.GameContent _content;
 
         private SimulationKernel(SimulationSetup setup, GameState state)
         {
@@ -47,6 +50,7 @@ namespace TarihStrateji.Core.Simulation
             _autosave = setup.AutosaveSink;
             _autosaveIntervalDays = setup.AutosaveIntervalDays;
             _hashIntervalDays = setup.HashIntervalDays;
+            _content = setup.Content;
             _phases = new List<ISimulationSystem>[SimulationPhases.Count];
             for (int p = 0; p < _phases.Length; p++)
             {
@@ -76,6 +80,38 @@ namespace TarihStrateji.Core.Simulation
         public CountryId PlayerCountry => _state.PlayerCountry;
 
         public long StateVersion => _state.StateVersion;
+
+        public int MapWidth => _state.World.Grid.Width;
+
+        public int MapHeight => _state.World.Grid.Height;
+
+        public CellView GetCell(int cellIndex) => ReadModelProjection.Cell(_state, cellIndex);
+
+        public bool IsCellVisible(int cellIndex) => ReadModelProjection.IsVisible(_state, cellIndex);
+
+        public void GetCities(List<CityView> into) => ReadModelProjection.Cities(_state, into);
+
+        public bool TryGetCountry(CountryId country, out CountryView view) => ReadModelProjection.TryCountry(_state, country, out view);
+
+        public void GetCountries(List<CountryId> into)
+        {
+            for (int i = 0; i < _state.Economy.Countries.Count; i++)
+            {
+                into.Add(_state.Economy.Countries.KeyAt(i));
+            }
+        }
+
+        public void GetVisibleUnits(List<UnitView> into)
+        {
+            if (_content == null)
+            {
+                throw new InvalidOperationException(SimulationErrorKeys.KurulumEksik);
+            }
+
+            ReadModelProjection.Units(_state, _content, into);
+        }
+
+        public bool IsAtWarWith(CountryId other) => _state.Diplomacy.AtWar(_state.PlayerCountry, other);
 
         public bool IsHalted => _haltReasons.Count > 0;
 

@@ -35,6 +35,9 @@ namespace TarihStrateji.Core.Simulation
         /// <summary>Kaç günde bir durum hash'i hesaplanır; 0 = kapalı. Varsayılan her gün.</summary>
         public int HashIntervalDays { get; set; } = 1;
 
+        /// <summary>Kurulu tanım verisi (<see cref="StandardRules.Install"/> atar); okuma modeli birlik güçleri için kullanır.</summary>
+        public Content.GameContent Content { get; set; }
+
         public SimulationSetup AddSystem(ISimulationSystem system)
         {
             if (system == null)
