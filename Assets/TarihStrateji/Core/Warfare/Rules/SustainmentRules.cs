@@ -26,6 +26,12 @@ namespace TarihStrateji.Core.Warfare.Rules
             for (int i = 0; i < ctx.Warfare.Units.Count; i++)
             {
                 LandUnit unit = ctx.Warfare.Units.ValueAt(i);
+                if (unit.IsEmbarked)
+                {
+                    // Gemideki birlik gemi erzakıyla yaşar: ne yıpranır ne toparlanır.
+                    continue;
+                }
+
                 UnitTypeDefinition type = ctx.Catalog.UnitTypes[unit.Type];
                 int cellIndex = ctx.World.Grid.IndexOf(ctx.World.Grid.FromId(unit.Hex));
                 unit.Supply = grids.TryGetValue(unit.Owner, out SupplyGrid grid) ? grid.Level(cellIndex) : Fixed64.Zero;

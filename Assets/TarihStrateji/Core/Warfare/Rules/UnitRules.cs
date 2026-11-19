@@ -91,6 +91,11 @@ namespace TarihStrateji.Core.Warfare.Rules
                 return owned;
             }
 
+            if (unit.IsEmbarked)
+            {
+                return ValidationResult.Fail(WarfareErrorKeys.BirlikGemide);
+            }
+
             return ctx.World.Cell(unit.Hex).Controller == country ? ValidationResult.Ok : ValidationResult.Fail(WarfareErrorKeys.TerhisYeriGecersiz);
         }
 

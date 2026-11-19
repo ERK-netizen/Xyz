@@ -56,6 +56,11 @@ namespace TarihStrateji.Core.Warfare.State
         /// <summary>Son anında çözümün kimliği; defterdeyse P13 bu birliği atlar.</summary>
         public ResolutionId LastResolution { get; internal set; }
 
+        /// <summary>Gemideyse taşıyan filo; değilse <see cref="FleetId.None"/>. Gemideki birliğin hücresi filonun hücresidir.</summary>
+        public FleetId Carrier { get; internal set; }
+
+        public bool IsEmbarked => Carrier.IsValid;
+
         public Fixed64 Strength(UnitTypeDefinition type)
         {
             return Fixed64.Min(Fixed64.FromRatio(Manpower, type.Manpower), Equipment);

@@ -1,3 +1,4 @@
+using TarihStrateji.Core.Domain.Ids;
 using TarihStrateji.Core.Domain.Numerics;
 using TarihStrateji.Core.Population;
 using TarihStrateji.Core.Warfare.Definitions;
@@ -31,7 +32,32 @@ namespace TarihStrateji.Core.Warfare.Rules
         /// <summary>Ölen askerleri bölge nüfusundan düşer (seferberlik sınırıyla).</summary>
         public static void RecordDeaths(WarfareContext ctx, LandUnit unit, long men)
         {
-            if (men > 0L && ctx.Population.Regions.TryGetValue(unit.HomeRegion, out RegionPopulation region))
+            RecordDeaths(ctx, unit.HomeRegion, men);
+        }
+
+        /// <summary>Filo/kanat için: azami güce göre <paramref name="fraction"/> kadar insan ve teçhizat kaybı.</summary>
+        public static long ApplyLoss(WarfareContext ctx, RegionId home, long fullCrew, ref long manpower, ref Fixed64 equipment, Fixed64 fraction)
+        {
+            if (!fraction.IsPositive)
+            {
+                return 0L;
+            }
+
+            long men = (Fixed64.FromInt(fullCrew) * fraction).RoundToLong();
+            if (men > manpower)
+            {
+                men = manpower;
+            }
+
+            manpower -= men;
+            equipment = Fixed64.Max(Fixed64.Zero, equipment - fraction);
+            RecordDeaths(ctx, home, men);
+            return men;
+        }
+
+        public static void RecordDeaths(WarfareContext ctx, RegionId home, long men)
+        {
+            if (men > 0L && ctx.Population.Regions.TryGetValue(home, out RegionPopulation region))
             {
                 long count = men < region.Mobilized ? men : region.Mobilized;
                 if (count > 0L)
@@ -44,16 +70,21 @@ namespace TarihStrateji.Core.Warfare.Rules
         /// <summary>Kalan askerleri terhis eder (sağ kalanlar eve döner).</summary>
         public static void SendHome(WarfareContext ctx, LandUnit unit)
         {
-            if (unit.Manpower > 0L && ctx.Population.Regions.TryGetValue(unit.HomeRegion, out RegionPopulation region))
+            SendHome(ctx, unit.HomeRegion, unit.Manpower);
+            unit.Manpower = 0L;
+        }
+
+        /// <summary>Sağ kalan <paramref name="men"/> kişiyi bölgesinde terhis eder.</summary>
+        public static void SendHome(WarfareContext ctx, RegionId home, long men)
+        {
+            if (men > 0L && ctx.Population.Regions.TryGetValue(home, out RegionPopulation region))
             {
-                long count = unit.Manpower < region.Mobilized ? unit.Manpower : region.Mobilized;
+                long count = men < region.Mobilized ? men : region.Mobilized;
                 if (count > 0L)
                 {
                     PopulationRules.Demobilize(region, count);
                 }
             }
-
-            unit.Manpower = 0L;
         }
     }
 }

@@ -35,6 +35,11 @@ namespace TarihStrateji.Core.Warfare.Rules
                 return owned;
             }
 
+            if (unit.IsEmbarked)
+            {
+                return ValidationResult.Fail(WarfareErrorKeys.BirlikGemide);
+            }
+
             if (!ctx.World.Grid.Contains(target) || !IsAdjacent(ctx, unit.Hex, ctx.World.Grid.ToId(target), out _))
             {
                 return ValidationResult.Fail(WarfareErrorKeys.HedefKomsuDegil);
@@ -97,13 +102,27 @@ namespace TarihStrateji.Core.Warfare.Rules
         /// </summary>
         public static void Resolve(WarfareContext ctx, List<LandUnit> attackers, HexCoord target, ref RngStream rng, List<string> notes)
         {
+            Resolve(ctx, attackers, target, Fixed64.One, ref rng, notes);
+        }
+
+        /// <summary>
+        /// Gemiden çıkarma: saldırganlar gemidedir, güçleri <see cref="JointWarfareParameters.AmphibiousAttackFactor"/>
+        /// ile çarpılır. Kazanırlarsa karaya çıkarlar; kaybederlerse gemide kalırlar.
+        /// </summary>
+        public static void ResolveLanding(WarfareContext ctx, List<LandUnit> attackers, HexCoord target, ref RngStream rng, List<string> notes)
+        {
+            Resolve(ctx, attackers, target, ctx.Catalog.Joint.AmphibiousAttackFactor, ref rng, notes);
+        }
+
+        private static void Resolve(WarfareContext ctx, List<LandUnit> attackers, HexCoord target, Fixed64 attackFactor, ref RngStream rng, List<string> notes)
+        {
             LandUnit attacker = attackers[0];
             HexCell cell = ctx.World.Cell(target);
             var defenders = new List<LandUnit>();
             for (int i = 0; i < ctx.Warfare.Units.Count; i++)
             {
                 LandUnit u = ctx.Warfare.Units.ValueAt(i);
-                if (u.Hex == cell.Id && UnitQueries.IsHostile(ctx, attacker.Owner, u.Owner))
+                if (u.Hex == cell.Id && !u.IsEmbarked && UnitQueries.IsHostile(ctx, attacker.Owner, u.Owner))
                 {
                     defenders.Add(u);
                 }
@@ -111,22 +130,22 @@ namespace TarihStrateji.Core.Warfare.Rules
 
             if (defenders.Count > 0)
             {
-                Battle(ctx, attackers, cell, defenders, ref rng, notes);
+                Battle(ctx, attackers, cell, defenders, attackFactor, ref rng, notes);
             }
             else if (cell.City.IsValid)
             {
-                AssaultCity(ctx, attackers, cell, ref rng, notes);
+                AssaultCity(ctx, attackers, cell, attackFactor, ref rng, notes);
             }
         }
 
-        private static void Battle(WarfareContext ctx, List<LandUnit> attackers, HexCell cell, List<LandUnit> defenders, ref RngStream rng, List<string> notes)
+        private static void Battle(WarfareContext ctx, List<LandUnit> attackers, HexCell cell, List<LandUnit> defenders, Fixed64 attackFactor, ref RngStream rng, List<string> notes)
         {
             WarfareParameters prm = ctx.Catalog.Parameters;
             LandUnit attacker = attackers[0];
             CountryId defenderCountry = defenders[0].Owner;
-            Fixed64 attack = CombatResolver.SidePower(ctx.Catalog, attackers, true) * CountryModifier(ctx, attacker.Owner, WarfareStatKeys.LandAttack);
-            Fixed64 defense = CombatResolver.SidePower(ctx.Catalog, defenders, false) * CountryModifier(ctx, defenderCountry, WarfareStatKeys.LandDefense)
-                * prm.TerrainDefense(cell.Terrain) * FortressFactor(ctx, cell, defenderCountry);
+            Fixed64 attack = AttackPower(ctx, attackers, cell, attackFactor);
+            Fixed64 defense = (CombatResolver.SidePower(ctx.Catalog, defenders, false) * CountryModifier(ctx, defenderCountry, WarfareStatKeys.LandDefense)
+                * prm.TerrainDefense(cell.Terrain) * FortressFactor(ctx, cell, defenderCountry)) + JointSupportRules.Support(ctx, cell, defenderCountry);
             CombatOutcome outcome = CombatResolver.Resolve(attack, defense, prm, ref rng);
 
             for (int i = 0; i < attackers.Count; i++)
@@ -157,22 +176,19 @@ namespace TarihStrateji.Core.Warfare.Rules
 
             if (!cell.City.IsValid && UnitQueries.CanEnter(ctx, attacker.Owner, cell))
             {
-                for (int i = 0; i < attackers.Count; i++)
-                {
-                    MovementRules.ClearOrders(attackers[i]);
-                    attackers[i].Hex = cell.Id;
-                }
+                Advance(attackers, cell.Id);
             }
         }
 
-        private static void AssaultCity(WarfareContext ctx, List<LandUnit> attackers, HexCell cell, ref RngStream rng, List<string> notes)
+        private static void AssaultCity(WarfareContext ctx, List<LandUnit> attackers, HexCell cell, Fixed64 attackFactor, ref RngStream rng, List<string> notes)
         {
             WarfareParameters prm = ctx.Catalog.Parameters;
             LandUnit attacker = attackers[0];
             City city = ctx.World.Cities[cell.City];
             CountryId holder = cell.Controller;
-            Fixed64 attack = CombatResolver.SidePower(ctx.Catalog, attackers, true) * CountryModifier(ctx, attacker.Owner, WarfareStatKeys.LandAttack);
-            Fixed64 garrison = prm.GarrisonDefense * FortressFactor(ctx, cell, holder) * (ctx.Warfare.IsBesieged(city.Id) ? prm.BesiegedGarrisonFactor : Fixed64.One);
+            Fixed64 attack = AttackPower(ctx, attackers, cell, attackFactor);
+            Fixed64 garrison = (prm.GarrisonDefense * FortressFactor(ctx, cell, holder) * (ctx.Warfare.IsBesieged(city.Id) ? prm.BesiegedGarrisonFactor : Fixed64.One))
+                + JointSupportRules.Support(ctx, cell, holder);
             CombatOutcome outcome = CombatResolver.Resolve(attack, garrison, prm, ref rng);
             for (int i = 0; i < attackers.Count; i++)
             {
@@ -210,13 +226,34 @@ namespace TarihStrateji.Core.Warfare.Rules
 
             if (ctx.World.Cell(city.Hex).Controller == attacker.Owner)
             {
-                for (int i = 0; i < attackers.Count; i++)
-                {
-                    MovementRules.ClearOrders(attackers[i]);
-                    attackers[i].Hex = cell.Id;
-                }
-
+                Advance(attackers, cell.Id);
+                FleetRules.EvictFromPort(ctx, city, attacker.Owner, notes);
                 notes.Add(CityCapturedNote + " @ " + city.Id.Value.ToString(CultureInfo.InvariantCulture));
+            }
+        }
+
+        /// <summary>
+        /// Saldırı gücü = Σ birlik saldırısı × ülke etkisi (× çıkarma çarpanı) + ortak destek. Destek
+        /// ve çarpan yokken değer Adım 6 formülüyle birebir aynıdır.
+        /// </summary>
+        private static Fixed64 AttackPower(WarfareContext ctx, List<LandUnit> attackers, HexCell cell, Fixed64 attackFactor)
+        {
+            CountryId side = attackers[0].Owner;
+            Fixed64 attack = CombatResolver.SidePower(ctx.Catalog, attackers, true) * CountryModifier(ctx, side, WarfareStatKeys.LandAttack);
+            if (attackFactor != Fixed64.One)
+            {
+                attack *= attackFactor;
+            }
+
+            return attack + JointSupportRules.Support(ctx, cell, side);
+        }
+
+        /// <summary>Kazanan saldırganlar hücreye girer (gemidekiler karaya çıkar).</summary>
+        private static void Advance(List<LandUnit> attackers, HexId hex)
+        {
+            for (int i = 0; i < attackers.Count; i++)
+            {
+                AmphibiousRules.Disembark(attackers[i], hex);
             }
         }
 

@@ -19,5 +19,7 @@ namespace TarihStrateji.Core.Domain.Randomness
         Intelligence = 11,
         AI = 12,
         Tactical = 13,
+        NavalCombat = 14,
+        AirCombat = 15,
     }
 }

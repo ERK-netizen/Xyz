@@ -19,7 +19,7 @@ namespace TarihStrateji.Core.Warfare.Rules
             for (int i = 0; i < ctx.Warfare.Units.Count; i++)
             {
                 LandUnit u = ctx.Warfare.Units.ValueAt(i);
-                if (u.Hex == hex)
+                if (u.Hex == hex && !u.IsEmbarked)
                 {
                     into.Add(u);
                 }
@@ -32,7 +32,7 @@ namespace TarihStrateji.Core.Warfare.Rules
             for (int i = 0; i < ctx.Warfare.Units.Count; i++)
             {
                 LandUnit u = ctx.Warfare.Units.ValueAt(i);
-                if (u.Hex == hex && IsHostile(ctx, u.Owner, country))
+                if (u.Hex == hex && !u.IsEmbarked && IsHostile(ctx, u.Owner, country))
                 {
                     return true;
                 }

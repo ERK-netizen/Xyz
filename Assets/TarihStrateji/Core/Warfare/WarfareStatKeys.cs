@@ -5,5 +5,7 @@ namespace TarihStrateji.Core.Warfare
     {
         public const string LandAttack = "kara.saldiri";
         public const string LandDefense = "kara.savunma";
+        public const string NavalAttack = "deniz.saldiri";
+        public const string AirAttack = "hava.saldiri";
     }
 }

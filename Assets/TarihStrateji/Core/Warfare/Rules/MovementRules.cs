@@ -27,6 +27,11 @@ namespace TarihStrateji.Core.Warfare.Rules
                 return owned;
             }
 
+            if (unit.IsEmbarked)
+            {
+                return ValidationResult.Fail(WarfareErrorKeys.BirlikGemide);
+            }
+
             if (!ctx.World.Grid.Contains(target))
             {
                 return ValidationResult.Fail(WarfareErrorKeys.HedefGecersiz);
@@ -78,7 +83,7 @@ namespace TarihStrateji.Core.Warfare.Rules
             for (int i = 0; i < ctx.Warfare.Units.Count; i++)
             {
                 LandUnit unit = ctx.Warfare.Units.ValueAt(i);
-                if (unit.PathList.Count == 0)
+                if (unit.PathList.Count == 0 || unit.IsEmbarked)
                 {
                     unit.MoveBudget = Fixed64.Zero;
                     continue;

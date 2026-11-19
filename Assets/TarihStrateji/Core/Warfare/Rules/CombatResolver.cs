@@ -7,7 +7,8 @@ using TarihStrateji.Core.Warfare.State;
 namespace TarihStrateji.Core.Warfare.Rules
 {
     /// <summary>
-    /// Tek muharebe çözücüsü (CLAUDE.md §2.6; deniz ve hava Adım 7'de aynı çözücüyü kullanır).
+    /// Tek muharebe çözücüsü (CLAUDE.md §2.6): kara, deniz ve hava muharebeleri aynı
+    /// <see cref="Power"/> ve <see cref="Resolve"/> ile çözülür.
     /// Birlik gücü = taban × güç × (½ + ½ × teşkilat oranı) × (½ + ½ × ikmal). Saldırı gücü ülke
     /// saldırı etkileriyle, savunma gücü ülke savunma etkileri × arazi × kale ile çarpılır.
     /// Muharebe şansı güce uygulanır: A' = A × zarA, D' = D × zarD, zar ∈ [1 − s, 1 + s]
@@ -16,12 +17,29 @@ namespace TarihStrateji.Core.Warfare.Rules
     /// </summary>
     public static class CombatResolver
     {
+        /// <summary>Ortak güç formülü: taban × güç × (½ + ½ × teşkilat oranı) × (½ + ½ × ikmal).</summary>
+        public static Fixed64 Power(Fixed64 basePower, Fixed64 strength, Fixed64 organization, Fixed64 maxOrganization, Fixed64 supply)
+        {
+            Fixed64 orgRatio = Fixed64.MulDiv(organization, Fixed64.One, maxOrganization);
+            Fixed64 org = Fixed64.Half + (Fixed64.Half * orgRatio);
+            Fixed64 sup = Fixed64.Half + (Fixed64.Half * supply);
+            return basePower * strength * org * sup;
+        }
+
         public static Fixed64 UnitPower(LandUnit unit, UnitTypeDefinition type, Fixed64 basePower)
         {
-            Fixed64 orgRatio = Fixed64.MulDiv(unit.Organization, Fixed64.One, type.MaxOrganization);
-            Fixed64 org = Fixed64.Half + (Fixed64.Half * orgRatio);
-            Fixed64 supply = Fixed64.Half + (Fixed64.Half * unit.Supply);
-            return basePower * unit.Strength(type) * org * supply;
+            return Power(basePower, unit.Strength(type), unit.Organization, type.MaxOrganization, unit.Supply);
+        }
+
+        /// <summary>Filo gücü (denizde ikmal tam sayılır; limandan kopukluk teşkilata yansır).</summary>
+        public static Fixed64 FleetPower(Fleet fleet, ShipTypeDefinition type, Fixed64 basePower)
+        {
+            return Power(basePower, fleet.Strength(type), fleet.Organization, type.MaxOrganization, Fixed64.One);
+        }
+
+        public static Fixed64 AirWingPower(AirWing wing, AirWingTypeDefinition type, Fixed64 basePower)
+        {
+            return Power(basePower, wing.Strength(type), wing.Organization, type.MaxOrganization, Fixed64.One);
         }
 
         public static CombatOutcome Resolve(

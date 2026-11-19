@@ -25,6 +25,33 @@ namespace TarihStrateji.Core.Logistics
             IReadOnlyList<HexCoord> sources,
             Fixed64 range)
         {
+            if (sources == null)
+            {
+                throw new ArgumentNullException(nameof(sources));
+            }
+
+            var full = new SupplySource[sources.Count];
+            for (int i = 0; i < full.Length; i++)
+            {
+                full[i] = new SupplySource(sources[i], Fixed64.One);
+            }
+
+            return Compute(map, movement, access, country, full, range);
+        }
+
+        /// <summary>
+        /// Seviyeli kaynaklarla hesap: seviyesi <c>l</c> olan kaynak, menzilin <c>(1 − l)</c> kadarı
+        /// harcanmış gibi başlar (ör. konvoyla beslenen liman). Tam seviyeli kaynaklarla sonuç
+        /// diğer aşırı yüklemeyle birebir aynıdır.
+        /// </summary>
+        public static SupplyGrid Compute(
+            WorldMap map,
+            IMovementCostModel movement,
+            ISupplyAccess access,
+            CountryId country,
+            IReadOnlyList<SupplySource> sources,
+            Fixed64 range)
+        {
             if (map == null || movement == null || access == null || sources == null)
             {
                 throw new ArgumentNullException(nameof(map));
@@ -47,11 +74,23 @@ namespace TarihStrateji.Core.Logistics
             var open = new SortedSet<(long Cost, int Index)>();
             for (int s = 0; s < sources.Count; s++)
             {
-                int index = map.Grid.IndexOf(sources[s]);
-                if (access.CanPass(country, map.CellAt(index)) && cost[index] != 0L)
+                int index = map.Grid.IndexOf(sources[s].Coord);
+                Fixed64 sourceLevel = Fixed64.Clamp01(sources[s].Level);
+                if (!sourceLevel.IsPositive || !access.CanPass(country, map.CellAt(index)))
                 {
-                    cost[index] = 0L;
-                    open.Add((0L, index));
+                    continue;
+                }
+
+                long start = (range * (Fixed64.One - sourceLevel)).Raw;
+                if (start < cost[index])
+                {
+                    if (cost[index] != long.MaxValue)
+                    {
+                        open.Remove((cost[index], index));
+                    }
+
+                    cost[index] = start;
+                    open.Add((start, index));
                 }
             }
 
