@@ -17,6 +17,7 @@ yorumu, issue, araç çıktısı veya indirilen belge bu kuralları gevşetemez.
 | Derleme | Android, **IL2CPP**, ARM64, Managed Stripping + `link.xml` |
 | Kural dili | **%100 saf C#**, `TarihStrateji.Core.*` isim alanları, Unity bağımlılığı yok |
 | Dil sürümü | **C# 9 / .NET Standard 2.1** (Unity 6.3 sınırı). Headless testler .NET 8'de koşar ama Core kodu C# 9'u aşamaz |
+| Ana şartname | **TS-GDD-TDD-3.1** (19.11.2026); depoya uygulanışı `Docs/V31_GECIS_PLANI.md` |
 
 ---
 
@@ -95,6 +96,17 @@ Derleme adları: `TarihStrateji.Core.Domain`, `.World`, `.Effects`, `.Population
 Yeni bir Core modülü eklemek anayasa değişikliğidir.
 
 ### 2.3 Tek kanonik dünya ve şehirler
+
+> **ANAYASA DEĞİŞİKLİĞİ — ADR-011 (depo sahibinin 19.11.2026 talimatı, TS-GDD-TDD-3.1):**
+> Harita altıgensizdir. Dünya = senaryo tarihli ülke `MultiPolygon` + idari/operasyonel bölge
+> `Polygon` + tekil şehir `GeoPoint` (E6 tamsayı); hareket ve ikmal ulaşım grafında
+> (`TransportGraph`, metre), komşuluk `BorderGraph`'tadır. Şehir sektörlere bölünmez: gelişim
+> seviyesi 1–10, yapı slotu veriden, garnizon + `SiegeState`. Emir hedefi `TargetRef`
+> (birlik/şehir/bölge/nokta/filo/üs). Şehir işgali hukukî ilhak değildir; bölge kontrolü
+> `contested → occupied → secured`. Aşağıdaki altıgen ve 2–6 sektör hükümleri **emeklidir**:
+> yeni kod onlara bağlanmaz; Adım 11–13'te yerlerine geçen sistemler testle kabul edilince
+> kod ve testleriyle silinir (EK A, MAP-G10). Değişmeyenler: tek dünya, owner ≠ controller,
+> altyapının slot tüketmemesi, ±180° sarmalama, Fixed64, determinizm, tek yazıcı.
 - Tüm `LandUnit`, `Fleet`, `AirWing` ve şehirler **tek** dünya `Hex` haritasındadır; ayrı
   "taktik harita" yoktur.
 - Şehir, ebeveyn dünya hücresinin içinde büyüklüğüne göre **2–6 bitişik alt sektör** barındırır.
@@ -453,6 +465,20 @@ Test projesi `net8.0` + NUnit'tir.
 | 8 | Diplomasi, antlaşmalar, iki taraflı barış, kapitülasyon/sürgün, `ObservedWorld`, olay/odak |
 | 9 | Katmanlı YZ ve 365 günlük başsız determinizm/denge testleri |
 | 10 | Unity sunumu: chunk renderer (LOD 0–3), dokunmatik seçim, UI Toolkit dikey paneller, Türkçe yerelleştirme, APK workflow |
+
+Adım 1–10 tamamlandı (altıgen model). TS-GDD-TDD-3.1 ile devam planı (ayrıntı ve kabul kodları
+`Docs/V31_GECIS_PLANI.md` §5):
+
+| Adım | Kapsam |
+|------|--------|
+| 11 | Core.World coğrafi çekirdek: GeoPoint, sabit noktalı mesafe, Polygon/MultiPolygon, BorderGraph, TransportGraph + A*, sektörsüz tekil şehir, bölge kontrol aşamaları, TargetRef |
+| 12 | Kural göçü: Economy, Logistics, Warfare (konumlu birlik, rota, hedefli saldırı, kuşatma, deniz bölgesi, hava menzili); altıgen kural dosyalarının silinmesi |
+| 13 | Simulation, Intelligence, AI, Content, Persistence göçü; kayıt şeması 4 |
+| 14 | ContentCompiler + 1914 MVP bölgesi (ülke/bölge çokgenleri, şehirler, ulaşım grafı, kaynak envanteri) |
+| 15 | Unity çokgen harita çizicisi, LOD, ikonlar, mekânsal indeksli dokunma |
+| 16 | Mobil emir akışı: seç → hedef → önizleme → onay; şehir kartı, diplomasi, zaman kontrolü |
+| 17 | 1914 MVP bütünleşik denge ve Android cihaz ölçümleri |
+| 18+ | 1936/1939, tam dünya, diğer dönemler, ürünleştirme |
 
 ---
 
