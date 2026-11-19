@@ -32,6 +32,9 @@ namespace TarihStrateji.Core.Simulation
             setup.AddSystem(new TradeAndBudgetSystem(content));
             setup.AddSystem(new SupplySystem(content));
             setup.AddSystem(new LandMovementSystem(content));
+            setup.AddSystem(new NavalMovementSystem(content));
+            setup.AddSystem(new AirCombatSystem(content));
+            setup.AddSystem(new NavalCombatSystem(content));
             setup.AddSystem(new LandCombatSystem(content));
             setup.AddSystem(new LandControlSystem(content));
 
@@ -56,6 +59,15 @@ namespace TarihStrateji.Core.Simulation
             setup.Commands.Register(new OrderAttackHandler(content));
             setup.Commands.Register(new ImmediateAttackHandler(content));
             setup.Commands.Register(new HoldPositionHandler(content));
+            setup.Commands.Register(new BuildFleetHandler(content));
+            setup.Commands.Register(new MoveFleetHandler(content));
+            setup.Commands.Register(new DisbandFleetHandler(content));
+            setup.Commands.Register(new EmbarkUnitHandler(content));
+            setup.Commands.Register(new NavalLandingHandler(content));
+            setup.Commands.Register(new RecruitAirWingHandler(content));
+            setup.Commands.Register(new RebaseAirWingHandler(content));
+            setup.Commands.Register(new AssignAirMissionHandler(content));
+            setup.Commands.Register(new DisbandAirWingHandler(content));
             return setup;
         }
     }

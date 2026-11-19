@@ -1,6 +1,5 @@
 using TarihStrateji.Core.Domain.Commands;
 using TarihStrateji.Core.Domain.Ids;
-using TarihStrateji.Core.World.Grid;
 
 namespace TarihStrateji.Core.Simulation.Commands.Military
 {

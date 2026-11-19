@@ -15,6 +15,8 @@ namespace TarihStrateji.Core.Content
     /// %30'un altına düşen savunan geri çekilir. Arazi: tepe ×2, dağ ×2,5, orman ×1,5.
     /// Denge bandı (game-balance, testle kilitli): eşit piyade ovada %10–30, 2:1 ovada %60–90,
     /// 3:1 tepede %55–80, 3:1 dağda %35–65 saldırgan başarısı ("3:1 kuralı").
+    /// Deniz ve hava (Adım 7): çıkarma saldırısı ×0,5; konvoy limanı ikmal seviyesi 0,7; bir
+    /// bombardıman kanadı yakın destekte tam güçte bir tümen saldırısının yaklaşık %40'ını ekler.
     /// </summary>
     public static class BaselineMilitaryContent
     {
@@ -60,7 +62,34 @@ namespace TarihStrateji.Core.Content
                 destroyedBelowStrength: F("0.1"),
                 initialOrganization: F("0.5"),
                 randomSpread: F("0.75"));
-            Result<WarfareCatalog> catalog = WarfareCatalog.Create(types, parameters, economy);
+            // Filolar: gemi malından çekilir; hız km/gün. Nakliye filosu iki tümen taşır, savaşmaz.
+            var ships = new[]
+            {
+                new ShipTypeDefinition(BaselineUnits.DestroyerFlotilla, "filo.muhripFilotillasi", 1_500,
+                    new[] { new GoodAmount(BaselineGoods.Ship, F("3")) }, F("6"), F("50"), F("700"), 0, F("1")),
+                new ShipTypeDefinition(BaselineUnits.BattleshipSquadron, "filo.zirhliFilosu", 3_000,
+                    new[] { new GoodAmount(BaselineGoods.Ship, F("4")) }, F("20"), F("60"), F("450"), 0, F("6")),
+                new ShipTypeDefinition(BaselineUnits.TransportFlotilla, "filo.nakliyeFilosu", 1_000,
+                    new[] { new GoodAmount(BaselineGoods.Ship, F("2")) }, Fixed64.Zero, F("30"), F("400"), 2, Fixed64.Zero),
+            };
+
+            // Hava kanatları: avcı hava üstünlüğü, bombardıman yakın destek; menzil üssten km.
+            var air = new[]
+            {
+                new AirWingTypeDefinition(BaselineUnits.FighterWing, "kanat.avci", 150,
+                    new[] { new GoodAmount(BaselineGoods.Aircraft, F("50")) }, F("12"), F("1"), F("40"), F("350")),
+                new AirWingTypeDefinition(BaselineUnits.BomberWing, "kanat.bombardiman", 300,
+                    new[] { new GoodAmount(BaselineGoods.Aircraft, F("40")) }, F("3"), F("4"), F("40"), F("700")),
+            };
+
+            var joint = new JointWarfareParameters(
+                amphibiousAttackFactor: F("0.5"),
+                convoySupplyLevel: F("0.7"),
+                portRecovery: F("0.1"),
+                airMissionOrganizationCost: F("0.05"),
+                airRecovery: F("0.1"),
+                airWingsPerCity: 4);
+            Result<WarfareCatalog> catalog = WarfareCatalog.Create(types, ships, air, parameters, joint, economy);
             if (!catalog.IsSuccess)
             {
                 throw new InvalidOperationException("Temel harp içeriği geçersiz: " + catalog.ErrorKey);

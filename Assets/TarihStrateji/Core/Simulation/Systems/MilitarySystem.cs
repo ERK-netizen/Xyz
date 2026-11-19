@@ -1,23 +1,15 @@
 using System;
 using System.Collections.Generic;
 using TarihStrateji.Core.Content;
-using TarihStrateji.Core.Domain.Collections;
-using TarihStrateji.Core.Domain.Ids;
-using TarihStrateji.Core.Domain.Numerics;
-using TarihStrateji.Core.Domain.Randomness;
-using TarihStrateji.Core.Effects;
-using TarihStrateji.Core.Logistics;
 using TarihStrateji.Core.Simulation.Phases;
 using TarihStrateji.Core.Warfare.Rules;
-using TarihStrateji.Core.Warfare.State;
-using TarihStrateji.Core.World;
-using TarihStrateji.Core.World.Cities;
-using TarihStrateji.Core.World.Grid;
-using TarihStrateji.Core.World.Pathfinding;
 
 namespace TarihStrateji.Core.Simulation.Systems
 {
-    /// <summary>Kara harbinin günlük sistemleri (P0, P11, P12, P13, P14) için ortak taban.</summary>
+    /// <summary>
+    /// Askerî sistemlerin ortak tabanı: her çalıştırmada savaş bağlamını kurar ve sistemin
+    /// notlarını gün raporuna aktarır. Kural mantığı Warfare modülündedir.
+    /// </summary>
     public abstract class MilitarySystem : ISimulationSystem
     {
         protected MilitarySystem(GameContent content)

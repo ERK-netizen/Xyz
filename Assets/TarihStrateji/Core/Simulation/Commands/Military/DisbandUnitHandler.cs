@@ -5,7 +5,6 @@ using TarihStrateji.Core.Domain.Serialization;
 using TarihStrateji.Core.Simulation.State;
 using TarihStrateji.Core.Warfare.Rules;
 using TarihStrateji.Core.Warfare.State;
-using TarihStrateji.Core.World.Grid;
 
 namespace TarihStrateji.Core.Simulation.Commands.Military
 {

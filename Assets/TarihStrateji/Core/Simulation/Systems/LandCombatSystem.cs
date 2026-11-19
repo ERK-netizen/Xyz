@@ -1,26 +1,19 @@
-using System;
 using System.Collections.Generic;
 using TarihStrateji.Core.Content;
-using TarihStrateji.Core.Domain.Collections;
 using TarihStrateji.Core.Domain.Ids;
-using TarihStrateji.Core.Domain.Numerics;
 using TarihStrateji.Core.Domain.Randomness;
-using TarihStrateji.Core.Effects;
-using TarihStrateji.Core.Logistics;
 using TarihStrateji.Core.Simulation.Phases;
 using TarihStrateji.Core.Warfare.Rules;
 using TarihStrateji.Core.Warfare.State;
-using TarihStrateji.Core.World;
-using TarihStrateji.Core.World.Cities;
 using TarihStrateji.Core.World.Grid;
-using TarihStrateji.Core.World.Pathfinding;
 
 namespace TarihStrateji.Core.Simulation.Systems
 {
     /// <summary>
-    /// P13: günlük saldırı emirleri hedef hücre başına tek birleşik muharebede çözülür (hedefler
-    /// ilk saldırganın kimlik sırasıyla). Bugün anında çözülmüş (çözüm defterinde) birlik atlanır;
-    /// artık geçersiz emir silinir.
+    /// P13 (son): kara muharebeleri ve çıkarmalar. Hedef hücre başına (ilk saldırganın kimlik
+    /// sırasıyla) önce karadan saldıranlar tek birleşik muharebede, sonra gemiden çıkarma yapanlar
+    /// ayrı bir muharebede çözülür. O gün anında çözülmüş (<c>ResolutionId</c> defterde) birlikler
+    /// atlanır; geçersizleşen emirler temizlenir. Boş ve girilebilir hedefe çıkarma muharebesizdir.
     /// </summary>
     public sealed class LandCombatSystem : MilitarySystem
     {
@@ -32,7 +25,6 @@ namespace TarihStrateji.Core.Simulation.Systems
 
         protected override void Run(SimulationContext context, WarfareContext war)
         {
-            // Hedef hücre başına (ilk saldırganın kimlik sırasıyla) tek birleşik muharebe.
             var targets = new List<HexId>();
             for (int i = 0; i < war.Warfare.Units.Count; i++)
             {
@@ -47,36 +39,63 @@ namespace TarihStrateji.Core.Simulation.Systems
             for (int t = 0; t < targets.Count; t++)
             {
                 HexCoord target = context.World.Grid.FromId(targets[t]);
-                attackers.Clear();
-                CountryId side = CountryId.None;
-                for (int i = 0; i < war.Warfare.Units.Count; i++)
-                {
-                    LandUnit unit = war.Warfare.Units.ValueAt(i);
-                    if (unit.AttackTarget != targets[t] || (side.IsValid && unit.Owner != side))
-                    {
-                        continue;
-                    }
-
-                    if (unit.LastResolution.IsValid && context.Ledger.Contains(unit.LastResolution))
-                    {
-                        continue;
-                    }
-
-                    if (!CombatRules.CheckAttack(war, unit.Owner, unit.Id, target).IsValid)
-                    {
-                        MovementRules.ClearOrders(unit);
-                        continue;
-                    }
-
-                    side = unit.Owner;
-                    attackers.Add(unit);
-                }
-
+                CollectAttackers(context, war, targets[t], target, false, attackers);
                 if (attackers.Count > 0)
                 {
                     RngStream rng = context.Rng(RngSubsystem.Combat, attackers[0].Id.Value, targets[t].Value);
                     CombatRules.Resolve(war, attackers, target, ref rng, Notes);
                 }
+
+                CollectAttackers(context, war, targets[t], target, true, attackers);
+                if (attackers.Count == 0)
+                {
+                    continue;
+                }
+
+                if (AmphibiousRules.IsAssault(war, attackers[0].Owner, context.World.Cell(target)))
+                {
+                    RngStream rng = context.Rng(RngSubsystem.Combat, attackers[0].Id.Value, targets[t].Value);
+                    CombatRules.ResolveLanding(war, attackers, target, ref rng, Notes);
+                }
+                else
+                {
+                    for (int i = 0; i < attackers.Count; i++)
+                    {
+                        AmphibiousRules.Disembark(attackers[i], targets[t]);
+                        Notes.Add(AmphibiousRules.LandedNote + " @ " + attackers[i].Id.Value.ToString(System.Globalization.CultureInfo.InvariantCulture));
+                    }
+                }
+            }
+        }
+
+        private static void CollectAttackers(SimulationContext context, WarfareContext war, HexId targetId, HexCoord target, bool embarked, List<LandUnit> into)
+        {
+            into.Clear();
+            CountryId side = CountryId.None;
+            for (int i = 0; i < war.Warfare.Units.Count; i++)
+            {
+                LandUnit unit = war.Warfare.Units.ValueAt(i);
+                if (unit.AttackTarget != targetId || unit.IsEmbarked != embarked || (side.IsValid && unit.Owner != side))
+                {
+                    continue;
+                }
+
+                if (unit.LastResolution.IsValid && context.Ledger.Contains(unit.LastResolution))
+                {
+                    continue;
+                }
+
+                bool valid = embarked
+                    ? AmphibiousRules.CheckLanding(war, unit.Owner, unit.Id, target).IsValid
+                    : CombatRules.CheckAttack(war, unit.Owner, unit.Id, target).IsValid;
+                if (!valid)
+                {
+                    MovementRules.ClearOrders(unit);
+                    continue;
+                }
+
+                side = unit.Owner;
+                into.Add(unit);
             }
         }
     }
