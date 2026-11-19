@@ -38,6 +38,7 @@ namespace TarihStrateji.Core.Economy
                 w.WriteFixed64(l.FacilityUpkeep);
                 w.WriteFixed64(l.ConstructionSpending);
                 w.WriteFixed64(l.OtherSpending);
+                w.WriteFixed64(l.OtherIncome);
                 w.WriteInt32(c.Inventory.Count);
                 for (int g = 0; g < c.Inventory.Count; g++)
                 {
@@ -131,6 +132,7 @@ namespace TarihStrateji.Core.Economy
                 c.Ledger.FacilityUpkeep = r.ReadFixed64();
                 c.Ledger.ConstructionSpending = r.ReadFixed64();
                 c.Ledger.OtherSpending = r.ReadFixed64();
+                c.Ledger.OtherIncome = r.ReadFixed64();
                 int goods = r.ReadCount(r.Remaining);
                 for (int g = 0; g < goods; g++)
                 {

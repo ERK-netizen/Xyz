@@ -26,6 +26,30 @@ namespace TarihStrateji.Core.Economy.Rules
             return ce.Treasury < amount ? ValidationResult.Fail(EconomyErrorKeys.HazineYetersiz) : ValidationResult.Ok;
         }
 
+        /// <summary>
+        /// Olay/odak hazine değişimi: artı tutar gelir yazılır; eksi tutar hazinede ne varsa o kadar
+        /// harcanır (hazine eksiye düşmez). Uygulanan net değişimi döndürür; ülke ekonomisi yoksa 0.
+        /// </summary>
+        public static Fixed64 ApplyAdministrativeChange(EconomyState economy, CountryId country, Fixed64 amount)
+        {
+            if (!economy.Countries.TryGetValue(country, out CountryEconomy ce) || amount.IsZero)
+            {
+                return Fixed64.Zero;
+            }
+
+            if (amount.IsPositive)
+            {
+                ce.Treasury += amount;
+                ce.Ledger.OtherIncome += amount;
+                return amount;
+            }
+
+            Fixed64 spent = Fixed64.Min(-amount, Fixed64.Max(Fixed64.Zero, ce.Treasury));
+            ce.Treasury -= spent;
+            ce.Ledger.OtherSpending += spent;
+            return -spent;
+        }
+
         public static ValidationResult Spend(EconomyState economy, CountryId country, Fixed64 amount)
         {
             ValidationResult check = CheckSpend(economy, country, amount);

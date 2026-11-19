@@ -71,6 +71,16 @@ namespace TarihStrateji.Core.Warfare.Rules
             unit.AttackTarget = target;
         }
 
+        /// <summary>
+        /// Birliği yürüyüşsüz yeni hücreye yerleştirir (barış sonrası geri çekilme). Çağıran hedefin
+        /// birliğin kendi kontrolündeki kara olduğunu sağlar.
+        /// </summary>
+        public static void Redeploy(LandUnit unit, HexId hex)
+        {
+            ClearOrders(unit);
+            unit.Hex = hex;
+        }
+
         public static void ClearOrders(LandUnit unit)
         {
             unit.PathList.Clear();

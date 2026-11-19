@@ -23,7 +23,10 @@ namespace TarihStrateji.Core.Economy.State
         /// <summary>Kurum yatırımı vb. siyasi/idari harcamalar.</summary>
         public Fixed64 OtherSpending { get; internal set; }
 
-        public Fixed64 Income => TaxIncome + TradeIncome + ConstructionRefunds;
+        /// <summary>Olay ve odak gibi idari gelirler.</summary>
+        public Fixed64 OtherIncome { get; internal set; }
+
+        public Fixed64 Income => TaxIncome + TradeIncome + ConstructionRefunds + OtherIncome;
 
         public Fixed64 Expense => TradeExpense + FacilityUpkeep + ConstructionSpending + OtherSpending;
 
@@ -38,6 +41,7 @@ namespace TarihStrateji.Core.Economy.State
             FacilityUpkeep = Fixed64.Zero;
             ConstructionSpending = Fixed64.Zero;
             OtherSpending = Fixed64.Zero;
+            OtherIncome = Fixed64.Zero;
         }
     }
 }
