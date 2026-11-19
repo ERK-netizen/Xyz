@@ -93,9 +93,18 @@ Her adım headless testleriyle gelir; altıgen kodu yalnız yerine geçen sistem
 | 17 | 1914 MVP bütünleşik denge: üretim → ikmal → taarruz → barış; Android cihaz ölçümleri | §24.1 MVP, REG-020 |
 | 18+ | 1936/1939, tam dünya, diğer dönemler (F4), ürünleştirme (F5) | §24 F4/F5 |
 
-## 6. Açık kararlar (depo sahibi)
+## 6. Kararlar (depo sahibi, 19.11.2026)
 
-1. Tarihsel sınır kaynağı ve lisans (ticari yayın düşünülüyor mu?).
-2. v2.2 paketi (katalog ve şehir verisi) depoya eklenecek mi?
-3. MVP bölgesi: önerilen 1914 Balkanlar–Anadolu–Doğu Akdeniz (Osmanlı, Yunanistan, Bulgaristan,
-   Sırbistan, Karadağ, Romanya; komşular sınırda).
+1. **Kullanım kişisel, ticari amaç yok.** Bu yüzden tarihsel sınırlar için birincil kaynak
+   **CShapes 2.0** (CC BY-NC-SA 4.0: atıf zorunlu, ticari kullanım yok, türetilmiş veri aynı
+   lisansla); eksik kalan dönemler için historical-basemaps (GPL-3.0); fizikî coğrafya (kıyı,
+   nehir, göl) için Natural Earth (kamu malı). Atıf ve lisans envanteri `Docs/` altında tutulur;
+   oyun ticari yayına çıkacaksa kaynaklar yeniden seçilmelidir.
+2. v2.2 paketi depoya eklenmedi; içerik bu depodaki kataloglar ve §22 hattıyla üretilir.
+3. MVP bölgesi önerildiği gibi: 1914 Balkanlar–Anadolu–Doğu Akdeniz.
+
+## 7. İlerleme
+
+| Adım | Durum |
+|---|---|
+| 11 coğrafi çekirdek | CODED + TESTED (headless 365/365); Unity derlemesi CI'da |

@@ -371,6 +371,27 @@ Yeni bir Core modülü eklemek anayasa değişikliğidir.
   `.github/workflows/android-build.yml` APK'yı (isteğe bağlı AAB) `tarih-strateji-android`
   yapıtı olarak verir. APK hata ayıklama anahtarıyla imzalıdır; Play için yayın anahtarı ayrıdır.
 
+**Uygulama kararları (Adım 11, `Core.World.Geography`, `Domain.Geography`; ADR-011):**
+- `GeoPoint` E6 tamsayı (enlem [−90, 90], boylam (−180, 180]); E6 = `Fixed64` derece ham değeri.
+  Mesafe `GeoMath.DistanceMeters`: büyük çember, `FixedTrig` kiriş yöntemi, R = 6 371 009 m.
+- Çokgenler `GeoRing` → `GeoPolygon` (delikli) → `GeoMultiPolygon` (adalı). Halka ±180°'yi geçmez
+  (derleyici keser); nokta konumu tam tamsayı çapraz çarpımla, sınır içeride sayılır.
+  `GeometryValidator` (kapalılık, tekrar, dikiş, sıfır alan, kendini kesme, delik içeride) içerik
+  yüklenirken çalışır, günlük fazda değil.
+- `RegionAtlas`: 1°×1° kovalı mekânsal indeks; nokta → içeren en küçük `RegionId` (yoksa None).
+- `BorderGraph`: yalnız açık tanımlı ortak sınır komşuluktur (uzunluk + kara geçişine açık mı).
+- `TransportGraph`: kenar büyük çemberden kısa olamaz; kara kenarı yalnız aynı/kara-komşu
+  bölgeler; boğaz geçişi kara düğümleri arası ≤ 30 km; deniz yolu yalnız liman/deniz düğümü.
+  `TransportPathfinder` A* (sezgisel = km × asgari km maliyeti), kenar kimliği sırası, genişletme
+  sınırı. `EdgeKindCostModel`: kenar türü başına km maliyeti (veri), kara/deniz ayrımı, açılış tarihi.
+- `City` sektörsüz: konum, bölge, ulaşım düğümü (şehir/liman), gelişim 1–10, slot = seviye ×
+  seviye başına slot, `Owner` ≠ `Controller`, `SiegeState`, tahkimat. Liman deniz yolu ister.
+- `RegionControlRules`: baskın yoksa çekişmeli; yabancı baskın ikmalli `DaysToOccupy` gün tutarsa
+  kontrolcü olur (`Occupied`, sahip değişmez); kontrolcü `DaysToSecure` gün tutarsa `Secured`.
+- `TargetRef`: birlik/şehir/bölge/filo/üs kimliği veya nokta; hücre/sektör taşımaz.
+- Hex kodu Adım 12–13'te yerine geçen kurallar testle kabul edilince silinir; `PathNodeHeap`
+  yeni A*'da da kullanılır, korunur.
+
 ---
 
 ## 3. Depo düzeni
