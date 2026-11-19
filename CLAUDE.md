@@ -233,7 +233,8 @@ Yeni bir Core modülü eklemek anayasa değişikliğidir.
   (`BaselineContent.Create()`); `StandardRules.Install(setup, GameContent)`.
 
 **Uygulama kararları (Adım 6, `Core.Logistics`, `Core.Warfare`):**
-- İkmal kaynağı: merkez sektörü ve hücresi ülkenin kontrolünde olan, kuşatılmamış şehirler.
+- İkmal kaynağı: merkez sektörü ve hücresi ülkenin kontrolünde olan, kuşatılmamış şehirler
+  (Adım 7'de daraltıldı: yalnız sahip + kontrol; işgal limanı konvoyla kaynak olur).
   İkmal ızgarası çok kaynaklı Dijkstra'dır (kara hareket maliyeti, yalnız kendi kontrolündeki
   kara); seviye `1 − maliyet/menzil` (taban menzil 400 km, `lojistik.ikmalMenzili` etkisi).
 - `LandUnit` gücü = min(asker/tam asker, ekipman oranı). Toplama yalnız kendi sahip+kontrol
@@ -252,6 +253,32 @@ Yeni bir Core modülü eklemek anayasa değişikliğidir.
   ikmal ≥ ½ ise nüfus + envanterden takviye alır.
 - Denge bantları (`CombatBalanceTests`, 200 tohum): eşit piyade ovada %10–30, 2:1 ovada
   %60–90, 3:1 tepede %55–80, 3:1 dağda %35–65 saldırgan başarısı.
+
+**Uygulama kararları (Adım 7, `Core.Warfare` deniz/hava, `Core.Logistics` konvoy):**
+- `Fleet` tek türden gemi grubudur; hücresi deniz veya kullanılabilir kendi limanıdır (şehir +
+  merkez + `Port` sektörü kontrolde). Yalnız ana limanda (sahip + kontrol) kurulur; gemiler
+  envanterden, mürettebat nüfustan gelir. Deniz rotası A* (`NavalMovementCostModel`, km);
+  düşman filosunun hücresine giren filo durur (temas). Harita sarmalandığı için deniz yolları
+  dünyayı dolaşabilir.
+- Tek `CombatResolver`: ortak `Power(taban, güç, teşkilat, azami, ikmal)`; kara aritmetiği
+  birebir korunur. P13 sırası: hava üstünlüğü → deniz → kara/çıkarma. RNG alt sistemleri
+  `NavalCombat` (14), `AirCombat` (15); anahtar hücre kimliğidir.
+- Gemiye binme ve çıkarma `transportCapacity > 0` ister (aksi doğrulamada reddedilir).
+  Gemideki birlik filoyla taşınır, kara hareketi/saldırısı yapamaz, yıpranmaz. Çıkarma P13'te:
+  boş girilebilir hedefe doğrudan, düşmanlı hedefe `AmphibiousAttackFactor` (0,5) ile.
+  Batan filo taşıdığı birlikleri de kaybeder.
+- Abluka: liman komşusu denizde düşman filosu varken kontrolcünün komşu denizde veya limanda
+  filosu yoksa. Kuşatma = kara kapalı + deniz yolu kapalı; kara komşusu olmayan ada yalnız
+  ablukayla kuşatılır. Şehir düşünce limandaki yabancı filolar denize itilir (yer yoksa batar).
+- İkmal kaynakları: ana şehirler seviye 1; işgal edilmiş, ablukasız liman, ana limandan düşman
+  filosuz deniz yoluyla ulaşılır ve boşta nakliye kapasitesi varsa `ConvoySupplyLevel` (0,7).
+  Konvoy kapasitesi = ana limanda demirli, yüksüz nakliye kapasitesi; liman başına 1 birim.
+- `AirWing` bir şehirde üslenir (kontrol + merkez, kuşatılmamış; şehir başına 4). Görev hedefi
+  üssten büyük çember km'si ile menzil içinde olmalı (aksi `hata.hava.menzilDisi`). Görev
+  günlük teşkilat harcar; üste bekleyen toparlanır ve takviye alır. Üs düşerse en yakın boş üsse
+  geçer, yoksa kaybedilir.
+- Ortak destek (güç olarak eklenir): yakın hava desteği/deniz taarruzu × hava üstünlüğü payı
+  (taraf / (taraf + düşman) hava gücü) ve komşu denizdeki filoların kıyı bombardımanı.
 
 ---
 
