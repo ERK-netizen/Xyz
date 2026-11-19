@@ -71,7 +71,7 @@ namespace TarihStrateji.Core.Tests.Military
                 State.Economy.SeedStock(c, BaselineGoods.Food, Fixed64.FromInt(10_000));
             }
 
-            State.Wars.SetAtWar(TestWorlds.CountryA, TestWorlds.CountryB, true);
+            Core.Diplomacy.DiplomacyRules.StartWar(State.Diplomacy, TestWorlds.CountryA, TestWorlds.CountryB, State.Today);
             CityA = State.World.Cities.ValueAt(0);
             CityB = State.World.Cities.ValueAt(2);
         }

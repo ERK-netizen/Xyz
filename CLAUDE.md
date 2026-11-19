@@ -280,6 +280,36 @@ Yeni bir Core modülü eklemek anayasa değişikliğidir.
 - Ortak destek (güç olarak eklenir): yakın hava desteği/deniz taarruzu × hava üstünlüğü payı
   (taraf / (taraf + düşman) hava gücü) ve komşu denizdeki filoların kıyı bombardımanı.
 
+**Uygulama kararları (Adım 8, `Core.Diplomacy`, `Core.Intelligence`, olay/odak `Core.Effects.Events`):**
+- Savaş durumu `DiplomacyState`'tedir; savaşlar **çiftler** halinde tutulur (ittifakla katılan
+  her ülke saldırganla ayrı çift, ayrı barış). Warfare'in `IHostility`'si Simulation'daki
+  `DiplomaticHostility` görünümüdür (ayrı kayıt yok). Savaş ilanında savunanın etkin
+  müttefikleri otomatik katılır; saldırmazlık, ittifak ve barış sonrası ateşkes (365 gün) ilanı
+  engeller.
+- Teklifler (barış/saldırmazlık/ittifak) `Pending` başlar, yalnız muhatap kabul/ret eder, 30
+  günde düşer; kabulde koşullar yeniden denetlenir. **Tek taraflı barış yoktur.** Barışta bölge
+  talebi için o bölge hücrelerinin yarısından fazlası talep edende olmalıdır; kendi bölgesini
+  vermek serbesttir. Barış: çift savaşı biter, devirler `TransferRegionOwnership` ile, karşılıklı
+  işgal (hücre + sektör) sahibine döner, ateşkes imzalanır; birlikler `PeaceSettlement` ile kendi
+  en yakın şehrine çekilir (şehri yoksa terhis), yabancı limandaki filolar denize çıkar.
+- Kapitülasyon (P3): savaştaki ülkenin sahip olduğu şehirlerden kontrolündekilerin oranı
+  < 0,25 ise; düşmanlarından biriyle savaşan müttefiki varsa hükümet ona **sürgüne** gider (savaş
+  sürer; oran dönünce biter; ev sahibi uygunluğunu yitirirse teslim), yoksa teslim olur: her
+  düşmanla barış, düşmanın çoğunluğunu işgal ettiği bölgeler ona geçer.
+- `ObservedWorld` (P14, kontrol güncellemesinden sonra): sensörler birlik/filo/kontrol edilen
+  şehir (2 hücre) ve görevdeki kanadın hedefi (1 hücre); görünür hücreler her gün yeniden
+  hesaplanır (kayda yazılmaz), temas raporları kalıcıdır: 1 hücre içinde güç kesin, ötesi 0,25
+  adımla tahmin; son konumu görünüp orada olmayan temas silinir, 30 günde unutulur. Gemideki
+  birlik görünmez (filo görünür); kanat üssünde görülür.
+- Olay/odak tanımları ve durumu `Core.Effects.Events`'te saf veridir; koşullar
+  `ICountryConditions` ile Simulation'da (`CountryConditions`) değerlendirilir. P2 sırası: süresi
+  dolan olaylarda ilk seçenek → yeni tetiklemeler (`1/MeanDays`, `RngSubsystem.Events`, `eventId`
+  = olay, `entityId` = ülke) → odak ilerlemesi. Odak ağacı Kahn ile döngüsüz, dışlama simetrik;
+  odak değiştirmek ilerlemeyi sıfırlar; tamamlanan odağın etkileri kalıcıdır. Hazine değişimi
+  `TreasuryRules.ApplyAdministrativeChange` (gelir `OtherIncome`, gider hazineyle sınırlı).
+- Kayıt şeması 3; `SchemaVersionTests` bayt düzeni değişince sürüm artırılmasını zorlar; daha
+  eski şema `hata.kayit.durumSemasiEskiGocYok` ile reddedilir (yayım öncesi, göç yok).
+
 ---
 
 ## 3. Depo düzeni

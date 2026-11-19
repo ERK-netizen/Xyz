@@ -76,7 +76,7 @@ namespace TarihStrateji.Core.Tests.Naval
                 State.Economy.SeedStock(c, BaselineGoods.Food, Fixed64.FromInt(10_000));
             }
 
-            State.Wars.SetAtWar(TestWorlds.CountryA, TestWorlds.CountryB, true);
+            Core.Diplomacy.DiplomacyRules.StartWar(State.Diplomacy, TestWorlds.CountryA, TestWorlds.CountryB, State.Today);
             InlandA = State.World.Cities.ValueAt(0);
             PortA = State.World.Cities.ValueAt(1);
             PortB = State.World.Cities.ValueAt(2);
