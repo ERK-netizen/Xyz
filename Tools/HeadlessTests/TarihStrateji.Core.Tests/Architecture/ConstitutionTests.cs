@@ -172,6 +172,24 @@ namespace TarihStrateji.Core.Tests.Architecture
         }
 
         [Test]
+        public void BootstrapAssembly_ReferencesOnlyItsAllowedClosure()
+        {
+            // §2.2: Unity.Bootstrap → Simulation, Persistence, Content (ve onların geçişli kapanışı).
+            string path = Path.Combine(RepoPaths.UnityDir, "Bootstrap", "TarihStrateji.Unity.Bootstrap.asmdef");
+            var allowed = new HashSet<string>(StringComparer.Ordinal) { "Simulation", "Persistence", "Content" };
+            foreach (string root in new[] { "Simulation", "Persistence", "Content" })
+            {
+                allowed.UnionWith(Closure(root));
+            }
+
+            foreach (string reference in References(ReadAsmdef(path)))
+            {
+                Assert.That(reference.StartsWith(Prefix, StringComparison.Ordinal) && allowed.Contains(reference.Substring(Prefix.Length)), Is.True,
+                    "Bootstrap izinsiz derlemeye başvuruyor: " + reference);
+            }
+        }
+
+        [Test]
         public void CoreSources_DeclareTheirModuleNamespace()
         {
             var nsRegex = new Regex(@"^\s*namespace\s+([\w.]+)", RegexOptions.Multiline);

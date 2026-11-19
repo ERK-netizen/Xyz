@@ -16,7 +16,7 @@ namespace TarihStrateji.Core.Warfare
         public const string MoralYetersiz = "hata.savas.teskilatYetersiz";
         public const string ApYetersiz = "hata.savas.aksiyonPuaniYetersiz";
         public const string RotaYok = "hata.savas.rotaYok";
-        public const string TerhisYeriGecersiz = "hata.savas.terhisIcinKendiToprağimizdaOlmali";
+        public const string TerhisYeriGecersiz = "hata.savas.terhisIcinKendiTopragimizdaOlmali";
         public const string DurumTutarsiz = "hata.savas.durumTutarsiz";
         public const string BirlikGemide = "hata.savas.birlikGemideCikarmaEmriVerin";
         public const string BirlikGemideDegil = "hata.savas.birlikGemideDegil";
