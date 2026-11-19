@@ -80,5 +80,20 @@ namespace TarihStrateji.Core.Simulation
             setup.Commands.Register(new SelectFocusHandler(content));
             return setup;
         }
+
+        /// <summary>
+        /// Katmanlı YZ'yi (P15) kurar: oyuncu dışındaki ülkeler karar verir. Oyun ve uzun başsız
+        /// testler için <see cref="Install"/>'dan sonra çağrılır; mekanik testleri YZ'siz kalabilir.
+        /// </summary>
+        public static SimulationSetup InstallArtificialIntelligence(SimulationSetup setup, GameContent content)
+        {
+            if (setup == null || content == null)
+            {
+                throw new ArgumentNullException(setup == null ? nameof(setup) : nameof(content));
+            }
+
+            setup.AddSystem(new AiSystem(content));
+            return setup;
+        }
     }
 }

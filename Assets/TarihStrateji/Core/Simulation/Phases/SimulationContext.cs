@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using TarihStrateji.Core.Domain.Commands;
 using TarihStrateji.Core.Domain.Randomness;
 using TarihStrateji.Core.Domain.Time;
 using TarihStrateji.Core.Effects;
@@ -42,6 +43,23 @@ namespace TarihStrateji.Core.Simulation.Phases
         public void Note(string note)
         {
             _notes.Add(note);
+        }
+
+        internal List<GameCommand> AiOrderList { get; } = new List<GameCommand>();
+
+        /// <summary>
+        /// P15 YZ sistemi için: emir, gün sonunda çekirdekçe oyuncu emirleriyle aynı işleyici
+        /// doğrulamasından geçirilip ertesi günün P1 kuyruğuna alınır (P1'de yeniden doğrulanır).
+        /// Oyuncu ülkesi adına emir kabul edilmez.
+        /// </summary>
+        public void SubmitAiOrder(GameCommand command)
+        {
+            if (CurrentPhase != SimulationPhase.P15AiInvariantsAndSave)
+            {
+                throw new System.InvalidOperationException("YZ emirleri yalnız P15'te verilir.");
+            }
+
+            AiOrderList.Add(command);
         }
     }
 }

@@ -1,4 +1,5 @@
 using System;
+using TarihStrateji.Core.AI.Definitions;
 using TarihStrateji.Core.Characters.Definitions;
 using TarihStrateji.Core.Diplomacy.Definitions;
 using TarihStrateji.Core.Economy.Definitions;
@@ -30,7 +31,8 @@ namespace TarihStrateji.Core.Content
             LogisticsParameters logistics,
             DiplomacyParameters diplomacy,
             IntelligenceParameters intelligence,
-            NarrativeCatalog narrative)
+            NarrativeCatalog narrative,
+            AiParameters ai)
         {
             Economy = economy ?? throw new ArgumentNullException(nameof(economy));
             Demography = demography ?? throw new ArgumentNullException(nameof(demography));
@@ -43,6 +45,7 @@ namespace TarihStrateji.Core.Content
             Diplomacy = diplomacy ?? throw new ArgumentNullException(nameof(diplomacy));
             Intelligence = intelligence ?? throw new ArgumentNullException(nameof(intelligence));
             Narrative = narrative ?? throw new ArgumentNullException(nameof(narrative));
+            Ai = ai ?? throw new ArgumentNullException(nameof(ai));
         }
 
         public EconomyCatalog Economy { get; }
@@ -66,5 +69,7 @@ namespace TarihStrateji.Core.Content
         public IntelligenceParameters Intelligence { get; }
 
         public NarrativeCatalog Narrative { get; }
+
+        public AiParameters Ai { get; }
     }
 }

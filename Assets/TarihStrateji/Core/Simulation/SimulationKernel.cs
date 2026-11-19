@@ -222,6 +222,11 @@ namespace TarihStrateji.Core.Simulation
                     {
                         systems[s].Execute(context);
                     }
+
+                    if (phase == SimulationPhase.P15AiInvariantsAndSave)
+                    {
+                        EnqueueAiOrders(context, rejected);
+                    }
                 }
                 catch (Exception e)
                 {
@@ -264,6 +269,48 @@ namespace TarihStrateji.Core.Simulation
 
             RaiseStateChanged();
             return Result<DayReport>.Success(new DayReport(_state.Today, applied, rejected, expired, notes, violations, hash, autosaved));
+        }
+
+        /// <summary>
+        /// YZ emirleri: oyuncu ülkesi adına olamaz; mod kuralı (Normal'de hile yok) ve işleyici
+        /// doğrulaması geçerse yeni <see cref="CommandId"/> ile günlüğe girer; reddedilenler
+        /// rapora yazılır.
+        /// </summary>
+        private void EnqueueAiOrders(SimulationContext context, List<string> rejected)
+        {
+            List<GameCommand> orders = context.AiOrderList;
+            for (int i = 0; i < orders.Count; i++)
+            {
+                GameCommand command = orders[i];
+                ValidationResult result;
+                if (command == null || !command.Issuer.IsValid || command.Issuer == _state.PlayerCountry)
+                {
+                    result = ValidationResult.Fail(SimulationErrorKeys.YabanciUlkeEmri);
+                }
+                else if (_state.Mode == GameMode.Normal && command.Authority != CommandAuthority.Player)
+                {
+                    result = ValidationResult.Fail(DomainErrorKeys.HileNormalModda);
+                }
+                else if (!_commands.TryGet(command.Kind, out ICommandHandler handler))
+                {
+                    result = ValidationResult.Fail(SimulationErrorKeys.BilinmeyenEmirTuru);
+                }
+                else
+                {
+                    result = handler.Validate(_state, command);
+                }
+
+                if (!result.IsValid)
+                {
+                    rejected.Add("yz:" + (command == null ? "?" : command.Kind) + ": " + result.ErrorKey);
+                    continue;
+                }
+
+                var id = new CommandId(_state.CommandIds.Allocate());
+                _state.Journal.AddPending(new JournalEntry(id, _state.Today, command, ResolutionId.None));
+            }
+
+            orders.Clear();
         }
 
         private int ApplyPendingCommands(List<string> rejected)

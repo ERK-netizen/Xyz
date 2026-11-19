@@ -34,7 +34,7 @@ namespace TarihStrateji.Core.Content
             return new GameContent(economy, CreateDemography(), TerrainMovementTable.CreateBaseline(), technology,
                 BaselineStatecraftContent.CreatePolitics(), BaselineStatecraftContent.CreateCharacters(technology.Eras.Count),
                 BaselineMilitaryContent.CreateWarfare(economy), BaselineMilitaryContent.CreateLogistics(),
-                BaselineDiplomacyContent.CreateDiplomacy(), BaselineDiplomacyContent.CreateIntelligence(), BaselineDiplomacyContent.CreateNarrative());
+                BaselineDiplomacyContent.CreateDiplomacy(), BaselineDiplomacyContent.CreateIntelligence(), BaselineDiplomacyContent.CreateNarrative(), BaselineAiContent.Create());
         }
 
         public static DemographyParameters CreateDemography()
