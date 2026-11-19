@@ -232,6 +232,27 @@ Yeni bir Core modülü eklemek anayasa değişikliğidir.
   başvurur; tüm tanım verisi `GameContent`'te toplanır
   (`BaselineContent.Create()`); `StandardRules.Install(setup, GameContent)`.
 
+**Uygulama kararları (Adım 6, `Core.Logistics`, `Core.Warfare`):**
+- İkmal kaynağı: merkez sektörü ve hücresi ülkenin kontrolünde olan, kuşatılmamış şehirler.
+  İkmal ızgarası çok kaynaklı Dijkstra'dır (kara hareket maliyeti, yalnız kendi kontrolündeki
+  kara); seviye `1 − maliyet/menzil` (taban menzil 400 km, `lojistik.ikmalMenzili` etkisi).
+- `LandUnit` gücü = min(asker/tam asker, ekipman oranı). Toplama yalnız kendi sahip+kontrol
+  şehrinde; asker bölge nüfusundan seferber edilir, ekipman ortak envanterden çekilir; dağıtma
+  ikisini iade eder. Kayıplar seferberden düşülür ve ölüm olarak kaydedilir.
+- AP P0'da yenilenir; anında saldırı AP harcar, `ResolutionId` alır, P13'te o gün atlanır.
+  P13'te aynı hedefe saldıran tüm birlikler **tek muharebede** birleşir.
+- `CombatResolver`: güç = taban × güç oranı × (½+½ teşkilat) × (½+½ ikmal) × arazi/kale/etki;
+  şans güce uygulanır (±%75); r = A'/(A'+D'); teşkilat kaybı 2·taban·r / 2·taban·(1−r).
+  Kırılan savunan yön sırasıyla ilk güvenli komşuya çekilir, yoksa yok olur; saldırgan şehir
+  olmayan hücreye ilerler. Şehir sektör sektör alınır: saldırı yönündeki giriş yuvası önce,
+  merkez (`Administrative`) en son; garnizon × kale çarpanı × kuşatma çarpanı.
+- İşgal (P14) yalnız `controller`'ı değiştirir. Şehir, tüm kara komşuları düşman kontrolünde
+  veya düşman birlikli ise kuşatılmıştır ve ikmal kaynağı olmaz.
+- İkmalsiz birlik günde teşkilat ve güç kaybeder; ikmalli birlik toparlanır, kendi toprağında
+  ikmal ≥ ½ ise nüfus + envanterden takviye alır.
+- Denge bantları (`CombatBalanceTests`, 200 tohum): eşit piyade ovada %10–30, 2:1 ovada
+  %60–90, 3:1 tepede %55–80, 3:1 dağda %35–65 saldırgan başarısı.
+
 ---
 
 ## 3. Depo düzeni

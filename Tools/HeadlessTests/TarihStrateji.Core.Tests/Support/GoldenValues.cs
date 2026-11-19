@@ -11,12 +11,16 @@ namespace TarihStrateji.Core.Tests.Support
 
         public const ulong WorldMapAndPaths = 0xF55FC836AFFB48B1UL; // maliyetler testte Dijkstra kâhiniyle doğrulanır
 
-        // Adım 4–5: durum şemasına nüfus/ekonomi, sonra araştırma/siyaset/karakter bölümleri eklendi.
+        // Adım 4–6: durum şemasına nüfus/ekonomi, araştırma/siyaset/karakter, sonra kara harbi ve savaş
+        // kaydı bölümleri eklendi.
         // Kurallar değişmedi: 120. gün hazine/nüfus/stok değerleri eski ve yeni kodda birebir aynı ölçüldü.
-        public const string KernelDay60 = "ecad9f1df53196e7c9a4e4a9db4af314aa45abdd56b99dcff96625fc348ac62b"; // PRNG ve SHA-256 ayrıca kâhinlerle doğrulanır
+        public const string KernelDay60 = "63d3af6c4cf64e3b3ac34cc7120757b4694c6b53c9536144559bdc740f28b214"; // PRNG ve SHA-256 ayrıca kâhinlerle doğrulanır
 
-        public const string EconomyDay120 = "0690b7930918b963c930b178d9f18ce77366b10291307f6cfe515624affe7eb6"; // defter/korunum aynı testlerde doğrulanır
+        public const string EconomyDay120 = "f9edf08c70282be8cd920460b2865b4e23778229d13cd09613a0d5c6b2b8b3f2"; // defter/korunum aynı testlerde doğrulanır
 
-        public const string StatecraftDay200 = "3216d3639b67129e8368e5d9df8eaa8db608d365ccfed500cffcd0f591eeeb9a"; // defter, araştırma günü ve kaydet/yükle aynı dosyada doğrulanır
+        public const string StatecraftDay200 = "f1475b2a25c17379f8126f636b78df4b908d31df8abf55cdc4e69d0870d2e6ac"; // defter, araştırma günü ve kaydet/yükle aynı dosyada doğrulanır
+
+        /// <summary>Kara harbi kampanyası (toplama, hareket, muharebe, işgal) 60. gün durum hash'i.</summary>
+        public const string WarDay60 = "0b988e178104810eedb6a803b7a323144b54e15298d6020f565fc0b6b66b2204"; // aynı tohum ve kaydet/yükle aynı dosyada doğrulanır
     }
 }
