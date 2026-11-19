@@ -1,5 +1,6 @@
 using System;
 using TarihStrateji.Core.Content;
+using TarihStrateji.Core.Simulation.Commands.Diplomacy;
 using TarihStrateji.Core.Simulation.Commands.Economy;
 using TarihStrateji.Core.Simulation.Commands.Military;
 using TarihStrateji.Core.Simulation.Commands.Statecraft;
@@ -22,6 +23,8 @@ namespace TarihStrateji.Core.Simulation
 
             setup.AddSystem(new EconomyDayOpenSystem());
             setup.AddSystem(new ActionPointSystem(content));
+            setup.AddSystem(new NarrativeSystem(content));
+            setup.AddSystem(new DiplomacySystem(content));
             setup.AddSystem(new CharacterServiceSystem(content.Characters));
             setup.AddSystem(new PoliticsSystem(content.Politics));
             setup.AddSystem(new ResearchSystem(content.Technology));
@@ -37,11 +40,13 @@ namespace TarihStrateji.Core.Simulation
             setup.AddSystem(new NavalCombatSystem(content));
             setup.AddSystem(new LandCombatSystem(content));
             setup.AddSystem(new LandControlSystem(content));
+            setup.AddSystem(new IntelligenceSystem(content));
 
             setup.AddInvariant(new PopulationInvariantCheck(content.Demography));
             setup.AddInvariant(new EconomyInvariantCheck(content.Economy));
             setup.AddInvariant(new StatecraftInvariantCheck(content));
             setup.AddInvariant(new WarfareInvariantCheck(content));
+            setup.AddInvariant(new DiplomacyInvariantCheck(content));
 
             setup.Commands.Register(new BuildFacilityHandler(content.Economy));
             setup.Commands.Register(new CancelConstructionHandler(content.Economy));
@@ -68,6 +73,11 @@ namespace TarihStrateji.Core.Simulation
             setup.Commands.Register(new RebaseAirWingHandler(content));
             setup.Commands.Register(new AssignAirMissionHandler(content));
             setup.Commands.Register(new DisbandAirWingHandler(content));
+            setup.Commands.Register(new DeclareWarHandler(content));
+            setup.Commands.Register(new ProposeTreatyHandler(content));
+            setup.Commands.Register(new RespondProposalHandler(content));
+            setup.Commands.Register(new ChooseEventOptionHandler(content));
+            setup.Commands.Register(new SelectFocusHandler(content));
             return setup;
         }
     }

@@ -1,11 +1,14 @@
 using System;
 using TarihStrateji.Core.Characters.State;
+using TarihStrateji.Core.Diplomacy.State;
 using TarihStrateji.Core.Domain.Commands;
 using TarihStrateji.Core.Domain.Ids;
 using TarihStrateji.Core.Domain.Randomness;
 using TarihStrateji.Core.Domain.Time;
 using TarihStrateji.Core.Economy.State;
 using TarihStrateji.Core.Effects;
+using TarihStrateji.Core.Effects.Events;
+using TarihStrateji.Core.Intelligence.State;
 using TarihStrateji.Core.Politics.State;
 using TarihStrateji.Core.Population;
 using TarihStrateji.Core.Research.State;
@@ -33,6 +36,9 @@ namespace TarihStrateji.Core.Simulation.State
             PoliticsState politics,
             CharacterState characters,
             WarfareState warfare,
+            DiplomacyState diplomacy,
+            IntelligenceState intelligence,
+            NarrativeState narrative,
             StableIdAllocator commandIds,
             StableIdAllocator resolutionIds)
         {
@@ -48,7 +54,10 @@ namespace TarihStrateji.Core.Simulation.State
             Politics = politics ?? throw new ArgumentNullException(nameof(politics));
             Characters = characters ?? throw new ArgumentNullException(nameof(characters));
             Warfare = warfare ?? throw new ArgumentNullException(nameof(warfare));
-            Wars = new WarRegistry();
+            Diplomacy = diplomacy ?? throw new ArgumentNullException(nameof(diplomacy));
+            Intelligence = intelligence ?? throw new ArgumentNullException(nameof(intelligence));
+            Narrative = narrative ?? throw new ArgumentNullException(nameof(narrative));
+            Hostility = new DiplomaticHostility(diplomacy);
             CommandIds = commandIds;
             ResolutionIds = resolutionIds;
             Journal = new CommandJournal();
@@ -79,7 +88,14 @@ namespace TarihStrateji.Core.Simulation.State
 
         public WarfareState Warfare { get; }
 
-        public WarRegistry Wars { get; }
+        public DiplomacyState Diplomacy { get; }
+
+        /// <summary>Savaş hâli görünümü (Warfare'in <c>IHostility</c>'si); kaynak <see cref="Diplomacy"/>.</summary>
+        public DiplomaticHostility Hostility { get; }
+
+        public IntelligenceState Intelligence { get; }
+
+        public NarrativeState Narrative { get; }
 
         public CommandJournal Journal { get; }
 
@@ -105,7 +121,8 @@ namespace TarihStrateji.Core.Simulation.State
                 throw new ArgumentException("Oyuncu ülkesi gerekli.", nameof(playerCountry));
             }
 
-            return new GameState(worldSeed, mode, startDate, playerCountry, world, new EffectEngine(), new PopulationState(), new EconomyState(), new ResearchState(), new PoliticsState(), new CharacterState(), new WarfareState(), new StableIdAllocator(), new StableIdAllocator());
+            return new GameState(worldSeed, mode, startDate, playerCountry, world, new EffectEngine(), new PopulationState(), new EconomyState(), new ResearchState(), new PoliticsState(), new CharacterState(), new WarfareState(),
+                new DiplomacyState(), new IntelligenceState(), new NarrativeState(), new StableIdAllocator(), new StableIdAllocator());
         }
 
         /// <summary>Bugünün anahtarıyla PRNG akışı.</summary>

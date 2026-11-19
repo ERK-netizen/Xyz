@@ -1,6 +1,9 @@
 using System;
 using TarihStrateji.Core.Characters.Definitions;
+using TarihStrateji.Core.Diplomacy.Definitions;
 using TarihStrateji.Core.Economy.Definitions;
+using TarihStrateji.Core.Effects.Events;
+using TarihStrateji.Core.Intelligence.Definitions;
 using TarihStrateji.Core.Logistics;
 using TarihStrateji.Core.Politics.Definitions;
 using TarihStrateji.Core.Population;
@@ -24,7 +27,10 @@ namespace TarihStrateji.Core.Content
             PoliticsCatalog politics,
             CharacterCatalog characters,
             WarfareCatalog warfare,
-            LogisticsParameters logistics)
+            LogisticsParameters logistics,
+            DiplomacyParameters diplomacy,
+            IntelligenceParameters intelligence,
+            NarrativeCatalog narrative)
         {
             Economy = economy ?? throw new ArgumentNullException(nameof(economy));
             Demography = demography ?? throw new ArgumentNullException(nameof(demography));
@@ -34,6 +40,9 @@ namespace TarihStrateji.Core.Content
             Characters = characters ?? throw new ArgumentNullException(nameof(characters));
             Warfare = warfare ?? throw new ArgumentNullException(nameof(warfare));
             Logistics = logistics ?? throw new ArgumentNullException(nameof(logistics));
+            Diplomacy = diplomacy ?? throw new ArgumentNullException(nameof(diplomacy));
+            Intelligence = intelligence ?? throw new ArgumentNullException(nameof(intelligence));
+            Narrative = narrative ?? throw new ArgumentNullException(nameof(narrative));
         }
 
         public EconomyCatalog Economy { get; }
@@ -51,5 +60,11 @@ namespace TarihStrateji.Core.Content
         public WarfareCatalog Warfare { get; }
 
         public LogisticsParameters Logistics { get; }
+
+        public DiplomacyParameters Diplomacy { get; }
+
+        public IntelligenceParameters Intelligence { get; }
+
+        public NarrativeCatalog Narrative { get; }
     }
 }

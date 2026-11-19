@@ -9,7 +9,7 @@ namespace TarihStrateji.Core.Simulation.Systems
     {
         public static WarfareContext From(GameState state, GameContent content)
         {
-            return new WarfareContext(state.World, state.Warfare, content.Warfare, state.Population, state.Economy, state.Effects, state.Wars, state.Today);
+            return new WarfareContext(state.World, state.Warfare, content.Warfare, state.Population, state.Economy, state.Effects, state.Hostility, state.Today);
         }
     }
 }

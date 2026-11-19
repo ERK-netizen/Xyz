@@ -1,25 +1,30 @@
-using System;
 using System.Collections.Generic;
-using TarihStrateji.Core.Characters;
+using System;
 using TarihStrateji.Core.Characters.State;
-using TarihStrateji.Core.Domain;
+using TarihStrateji.Core.Characters;
+using TarihStrateji.Core.Diplomacy.State;
+using TarihStrateji.Core.Diplomacy;
 using TarihStrateji.Core.Domain.Commands;
 using TarihStrateji.Core.Domain.Ids;
 using TarihStrateji.Core.Domain.Serialization;
-using TarihStrateji.Core.Economy;
+using TarihStrateji.Core.Domain;
 using TarihStrateji.Core.Economy.State;
+using TarihStrateji.Core.Economy;
+using TarihStrateji.Core.Effects.Events;
 using TarihStrateji.Core.Effects;
-using TarihStrateji.Core.Politics;
+using TarihStrateji.Core.Intelligence.State;
+using TarihStrateji.Core.Intelligence;
 using TarihStrateji.Core.Politics.State;
+using TarihStrateji.Core.Politics;
 using TarihStrateji.Core.Population;
-using TarihStrateji.Core.Research;
 using TarihStrateji.Core.Research.State;
+using TarihStrateji.Core.Research;
 using TarihStrateji.Core.Simulation.Commands;
 using TarihStrateji.Core.Simulation.State;
-using TarihStrateji.Core.Warfare;
 using TarihStrateji.Core.Warfare.State;
-using TarihStrateji.Core.World;
+using TarihStrateji.Core.Warfare;
 using TarihStrateji.Core.World.Persistence;
+using TarihStrateji.Core.World;
 
 namespace TarihStrateji.Core.Simulation.Persistence
 {
@@ -39,15 +44,16 @@ namespace TarihStrateji.Core.Simulation.Persistence
         /// <list type="bullet">
         /// <item>1: Adım 3 (dünya, etkiler, emir günlüğü)</item>
         /// <item>2: Adım 4–7 (nüfus, ekonomi, araştırma/siyaset/karakter, kara/deniz/hava harbi, savaş kaydı)</item>
+        /// <item>3: Adım 8 (diplomasi: savaş/antlaşma/teklif/sürgün; istihbarat temasları; olay/odak; bütçe defterinde idari gelir)</item>
         /// </list>
         /// </summary>
-        public const int SchemaVersion = 2;
+        public const int SchemaVersion = 3;
 
         /// <summary>
         /// Yüklenebilen en eski şema. Bunun altındaki şemalar yayım öncesi geliştirme kayıtlarıdır ve
         /// göçleri yoktur: "bozuk" yerine <see cref="SimulationErrorKeys.DurumSemasiEski"/> ile reddedilir.
         /// </summary>
-        public const int MinimumSupportedSchemaVersion = 2;
+        public const int MinimumSupportedSchemaVersion = 3;
 
         public static byte[] Encode(GameState state, CommandRegistry registry, bool includeVolatile)
         {
@@ -85,7 +91,9 @@ namespace TarihStrateji.Core.Simulation.Persistence
             PoliticsSnapshotCodec.Write(state.Politics, w);
             CharacterSnapshotCodec.Write(state.Characters, w);
             WarfareSnapshotCodec.Write(state.Warfare, w);
-            state.Wars.Write(w);
+            DiplomacySnapshotCodec.Write(state.Diplomacy, w);
+            IntelligenceSnapshotCodec.Write(state.Intelligence, w);
+            NarrativeSnapshotCodec.Write(state.Narrative, w);
 
             w.WriteTag(JournalTag);
             IReadOnlyList<JournalEntry> pending = state.Journal.Pending;
@@ -228,13 +236,31 @@ namespace TarihStrateji.Core.Simulation.Persistence
                 return Result<GameState>.Failure(warfare.ErrorKey);
             }
 
+            Result<DiplomacyState> diplomacy = DiplomacySnapshotCodec.Read(r);
+            if (!diplomacy.IsSuccess)
+            {
+                return Result<GameState>.Failure(diplomacy.ErrorKey);
+            }
+
+            Result<IntelligenceState> intelligence = IntelligenceSnapshotCodec.Read(r);
+            if (!intelligence.IsSuccess)
+            {
+                return Result<GameState>.Failure(intelligence.ErrorKey);
+            }
+
+            Result<NarrativeState> narrative = NarrativeSnapshotCodec.Read(r);
+            if (!narrative.IsSuccess)
+            {
+                return Result<GameState>.Failure(narrative.ErrorKey);
+            }
+
             var state = new GameState(seed, mode, today, player, world.Value, effects.Value, population.Value, economy.Value,
-                research.Value, politics.Value, characters.Value, warfare.Value, commandIds, resolutionIds)
+                research.Value, politics.Value, characters.Value, warfare.Value, diplomacy.Value, intelligence.Value, narrative.Value,
+                commandIds, resolutionIds)
             {
                 StateVersion = stateVersion,
             };
 
-            state.Wars.Read(r);
             r.ExpectTag(JournalTag);
             int pendingCount = r.ReadCount(r.Remaining);
             for (int i = 0; i < pendingCount; i++)
