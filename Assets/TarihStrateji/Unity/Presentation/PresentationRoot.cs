@@ -94,12 +94,12 @@ namespace TarihStrateji.Unity.Presentation
             {
                 if (cities[i].Owner == model.PlayerCountry)
                 {
-                    return HexLayout.CellCenter(cities[i].CellIndex, model.MapWidth);
+                    return HexLayout.CellCenterOfIndex(cities[i].CellIndex, model.MapWidth);
                 }
             }
 
             return cities.Count > 0
-                ? HexLayout.CellCenter(cities[0].CellIndex, model.MapWidth)
+                ? HexLayout.CellCenterOfIndex(cities[0].CellIndex, model.MapWidth)
                 : HexLayout.CellCenter(model.MapWidth / 2, model.MapHeight / 2);
         }
 

@@ -142,7 +142,7 @@ namespace TarihStrateji.Unity.Presentation.Map
 
         private static Vector2 Place(int cellIndex, int width, float cameraX, float worldWidth)
         {
-            Vector2 at = HexLayout.CellCenter(cellIndex, width);
+            Vector2 at = HexLayout.CellCenterOfIndex(cellIndex, width);
             at.x += HexLayout.WrapShift(at.x, cameraX, worldWidth);
             return at;
         }

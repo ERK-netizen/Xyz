@@ -25,6 +25,7 @@ namespace TarihStrateji.Tests.EditMode
                 {
                     int index = (row * Width) + column;
                     Vector2 center = HexLayout.CellCenter(column, row);
+                    Assert.That(HexLayout.CellCenterOfIndex(index, Width), Is.EqualTo(center));
                     foreach (Vector2 offset in Offsets)
                     {
                         if ((row == 0 && offset.y > 0.5f) || (row == Height - 1 && offset.y < -0.5f))

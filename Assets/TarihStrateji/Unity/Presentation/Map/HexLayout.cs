@@ -28,7 +28,8 @@ namespace TarihStrateji.Unity.Presentation.Map
 
         public static Vector2 CellCenter(int column, int row) => new Vector2(ColumnWidth * (column + (0.5f * (row & 1))), -RowHeight * row);
 
-        public static Vector2 CellCenter(int cellIndex, int mapWidth) => CellCenter(cellIndex % mapWidth, cellIndex / mapWidth);
+        /// <summary>Hücre dizininden (satır × genişlik + sütun) merkez.</summary>
+        public static Vector2 CellCenterOfIndex(int cellIndex, int mapWidth) => CellCenter(cellIndex % mapWidth, cellIndex / mapWidth);
 
         /// <summary>Merkeze göre köşe (0 = doğu-kuzeydoğu, saat yönünün tersine).</summary>
         public static Vector2 Corner(int index) => CornerOffsets[index];
