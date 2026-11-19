@@ -9,6 +9,7 @@ using TarihStrateji.Core.Effects;
 using TarihStrateji.Core.Politics.State;
 using TarihStrateji.Core.Population;
 using TarihStrateji.Core.Research.State;
+using TarihStrateji.Core.Warfare.State;
 using TarihStrateji.Core.World;
 
 namespace TarihStrateji.Core.Simulation.State
@@ -31,6 +32,7 @@ namespace TarihStrateji.Core.Simulation.State
             ResearchState research,
             PoliticsState politics,
             CharacterState characters,
+            WarfareState warfare,
             StableIdAllocator commandIds,
             StableIdAllocator resolutionIds)
         {
@@ -45,6 +47,8 @@ namespace TarihStrateji.Core.Simulation.State
             Research = research ?? throw new ArgumentNullException(nameof(research));
             Politics = politics ?? throw new ArgumentNullException(nameof(politics));
             Characters = characters ?? throw new ArgumentNullException(nameof(characters));
+            Warfare = warfare ?? throw new ArgumentNullException(nameof(warfare));
+            Wars = new WarRegistry();
             CommandIds = commandIds;
             ResolutionIds = resolutionIds;
             Journal = new CommandJournal();
@@ -73,6 +77,10 @@ namespace TarihStrateji.Core.Simulation.State
 
         public CharacterState Characters { get; }
 
+        public WarfareState Warfare { get; }
+
+        public WarRegistry Wars { get; }
+
         public CommandJournal Journal { get; }
 
         public ResolutionLedger Ledger { get; }
@@ -97,7 +105,7 @@ namespace TarihStrateji.Core.Simulation.State
                 throw new ArgumentException("Oyuncu ülkesi gerekli.", nameof(playerCountry));
             }
 
-            return new GameState(worldSeed, mode, startDate, playerCountry, world, new EffectEngine(), new PopulationState(), new EconomyState(), new ResearchState(), new PoliticsState(), new CharacterState(), new StableIdAllocator(), new StableIdAllocator());
+            return new GameState(worldSeed, mode, startDate, playerCountry, world, new EffectEngine(), new PopulationState(), new EconomyState(), new ResearchState(), new PoliticsState(), new CharacterState(), new WarfareState(), new StableIdAllocator(), new StableIdAllocator());
         }
 
         /// <summary>Bugünün anahtarıyla PRNG akışı.</summary>

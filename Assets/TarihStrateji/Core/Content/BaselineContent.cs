@@ -30,8 +30,10 @@ namespace TarihStrateji.Core.Content
         public static GameContent Create()
         {
             TechCatalog technology = CreateTechnology();
-            return new GameContent(CreateEconomy(), CreateDemography(), TerrainMovementTable.CreateBaseline(), technology,
-                BaselineStatecraftContent.CreatePolitics(), BaselineStatecraftContent.CreateCharacters(technology.Eras.Count));
+            EconomyCatalog economy = CreateEconomy();
+            return new GameContent(economy, CreateDemography(), TerrainMovementTable.CreateBaseline(), technology,
+                BaselineStatecraftContent.CreatePolitics(), BaselineStatecraftContent.CreateCharacters(technology.Eras.Count),
+                BaselineMilitaryContent.CreateWarfare(economy), BaselineMilitaryContent.CreateLogistics());
         }
 
         public static DemographyParameters CreateDemography()

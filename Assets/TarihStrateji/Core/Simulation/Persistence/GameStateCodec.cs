@@ -16,6 +16,8 @@ using TarihStrateji.Core.Research;
 using TarihStrateji.Core.Research.State;
 using TarihStrateji.Core.Simulation.Commands;
 using TarihStrateji.Core.Simulation.State;
+using TarihStrateji.Core.Warfare;
+using TarihStrateji.Core.Warfare.State;
 using TarihStrateji.Core.World;
 using TarihStrateji.Core.World.Persistence;
 
@@ -69,6 +71,8 @@ namespace TarihStrateji.Core.Simulation.Persistence
             ResearchSnapshotCodec.Write(state.Research, w);
             PoliticsSnapshotCodec.Write(state.Politics, w);
             CharacterSnapshotCodec.Write(state.Characters, w);
+            WarfareSnapshotCodec.Write(state.Warfare, w);
+            state.Wars.Write(w);
 
             w.WriteTag(JournalTag);
             IReadOnlyList<JournalEntry> pending = state.Journal.Pending;
@@ -200,12 +204,19 @@ namespace TarihStrateji.Core.Simulation.Persistence
                 return Result<GameState>.Failure(characters.ErrorKey);
             }
 
+            Result<WarfareState> warfare = WarfareSnapshotCodec.Read(r);
+            if (!warfare.IsSuccess)
+            {
+                return Result<GameState>.Failure(warfare.ErrorKey);
+            }
+
             var state = new GameState(seed, mode, today, player, world.Value, effects.Value, population.Value, economy.Value,
-                research.Value, politics.Value, characters.Value, commandIds, resolutionIds)
+                research.Value, politics.Value, characters.Value, warfare.Value, commandIds, resolutionIds)
             {
                 StateVersion = stateVersion,
             };
 
+            state.Wars.Read(r);
             r.ExpectTag(JournalTag);
             int pendingCount = r.ReadCount(r.Remaining);
             for (int i = 0; i < pendingCount; i++)
