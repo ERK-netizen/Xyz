@@ -74,11 +74,24 @@ jobs:
       - name: Depoyu al
         uses: actions/checkout@v4
 
-      - name: Unity Editor'ü kur (ProjectVersion.txt sürümü)
+      - name: Editör sürümünü ProjectVersion.txt'den oku
+        id: surum
+        run: |
+          surum="$(sed -n 's/^m_EditorVersion: *//p' ProjectSettings/ProjectVersion.txt | tr -d '[:space:]')"
+          if [ -z "$surum" ]; then
+            echo "::error::ProjectSettings/ProjectVersion.txt içinde m_EditorVersion bulunamadı."
+            exit 1
+          fi
+          echo "surum=$surum" >> "$GITHUB_OUTPUT"
+          echo "Unity Editor sürümü: $surum" >> "$GITHUB_STEP_SUMMARY"
+
+      # unity-setup, version-file ile revizyonlu satır (m_EditorVersionWithRevision) bekler;
+      # bu satır Unity'nin ilk açılışında yazılır. O zamana kadar sürüm açıkça verilir.
+      - name: Unity Editor'ü kur
         id: unity
         uses: buildalon/unity-setup@v3
         with:
-          version-file: ProjectSettings/ProjectVersion.txt
+          unity-version: ${{ steps.surum.outputs.surum }}
           modules: None
           cache-installation: true
 
