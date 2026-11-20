@@ -147,6 +147,17 @@ namespace TarihStrateji.Core.Tests.Campaign
                 Add(metrics, "A07 biten savaşın süresi (gün)", durations[i]);
             }
 
+            // Sansürlü veri: yalnız bitenlerin süresine bakmak hayatta kalma yanlılığı verir (eşik yükselince uzun
+            // savaşlar bitmez, ortancaya yalnız kısa olanlar girer). Başlayan savaşlara oranlanmış paylar asıl ölçüdür.
+            int shortWars = 0;
+            for (int i = 0; i < durations.Count; i++)
+            {
+                shortWars += durations[i] < 120 ? 1 : 0;
+            }
+
+            Add(metrics, "A10 120 günden kısa biten savaş ‰ (başlayanlara)", declared == 0 ? 0 : shortWars * 1000L / declared);
+            Add(metrics, "A11 yıl sonunda süren savaş ‰ (başlayanlara)", declared == 0 ? 0 : (declared - durations.Count) * 1000L / declared);
+
             int regions = k.State.World.Regions.Count;
             int largest = 0;
             for (int i = 0; i < countries.Count; i++)
