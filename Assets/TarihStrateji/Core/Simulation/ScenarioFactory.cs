@@ -42,20 +42,32 @@ namespace TarihStrateji.Core.Simulation
         /// (büyükten küçüğe şehirlerine sırayla dağıtılır, toplanabilen şehirlerde) ve ana liman sahibi
         /// büyük güçlere birer muhrip filotillası.
         /// </summary>
-        public static GameState Create1914(GameContent content, GeoPackage package, ulong seed, GameMode mode, CountryId player)
+        public static GameState Create1914(GameContent content, GeoPackage package, ulong seed, GameMode mode, CountryId player) =>
+            CreateFromPackage(content, package, seed, mode, player, Scenario1914.Populate);
+
+        /// <summary>"1939" (1 Eylül 1939): 1914 ile aynı ordu/filo kuralıyla, <see cref="Scenario1939"/> kurulumu.</summary>
+        public static GameState Create1939(GameContent content, GeoPackage package, ulong seed, GameMode mode, CountryId player) =>
+            CreateFromPackage(content, package, seed, mode, player, Scenario1939.Populate);
+
+        /// <summary>Paket senaryosu kurucusu (<see cref="Scenario1914.Populate"/> imzasındaki doldurucu).</summary>
+        public delegate void PackagePopulator(GeoPackage package, GeoWorld world, Population.PopulationState population, Economy.State.EconomyState economy,
+            Research.State.ResearchState research, Politics.State.PoliticsState politics, Characters.State.CharacterState characters,
+            Effects.EffectEngine effects, GameContent content, Domain.Time.GameDate today);
+
+        public static GameState CreateFromPackage(GameContent content, GeoPackage package, ulong seed, GameMode mode, CountryId player, PackagePopulator populate)
         {
-            if (content == null || package == null)
+            if (content == null || package == null || populate == null)
             {
-                throw new ArgumentNullException(content == null ? nameof(content) : nameof(package));
+                throw new ArgumentNullException(content == null ? nameof(content) : package == null ? nameof(package) : nameof(populate));
             }
 
             GameState state = GameState.CreateNew(seed, mode, package.Date, mode == GameMode.Observer ? CountryId.None : player, package.BuildWorld());
-            Scenario1914.Populate(package, state.World, state.Population, state.Economy, state.Research, state.Politics, state.Characters, state.Effects, content, state.Today);
+            populate(package, state.World, state.Population, state.Economy, state.Research, state.Politics, state.Characters, state.Effects, content, state.Today);
             GeoWarfareContext war = GeoWarfareContexts.From(state, content);
             for (int i = 0; i < package.Countries.Count; i++)
             {
                 CountryId country = package.Countries[i];
-                int divisions = Scenario1914.Divisions(Scenario1914.CountryPopulation(package, country));
+                int divisions = PackageScenario.Divisions(PackageScenario.CountryPopulation(package, country));
                 var sites = new List<PackageCity>();
                 for (int c = 0; c < package.Cities.Count; c++)
                 {

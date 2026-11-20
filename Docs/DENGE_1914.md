@@ -130,3 +130,15 @@ Osmanlı yine yılın çoğunu savaşta geçiriyor (C03 ≈ 330 gün) ama hazine
 - Tümensiz küçük devletler birkaç günde teslim oluyor (A07 P50 11 gün). Tarihte Sırbistan ve Karadağ 1915–16'ya
   dek dayandı; küçük devlet garnizonları/milisleri ayrı bir içerik kararıdır.
 - Cihazda performans ölçümü: Adım 17 (3/3).
+
+## 1939 barış ekonomisi (Adım 18 bulgusu, açık)
+
+`Scenario1939Tests` (tohum 41, 365 gün, YZ'li Gözlemci): bölge 10.06.1940'a kadar barışta. Bir yıl sonunda hazine
+oranları (14 ülke, sıralı): 0,65 · 0,71 · 0,82 · 0,92 · 0,98 · 1,28 · 1,45 · 1,71 · 1,90 · 2,90 · 2,98 · 3,03 · 3,03 · 3,08.
+P90 = 3,03 > 1914 bandı 3,0. Neden: barışta vergi geliri bakım ve inşaat giderini belirgin aşıyor; YZ vergiyi yalnız
+mutlak eşikte (hazine > 80 bin) düşürüyor ve küçük ülkeler bu eşiğe hiç ulaşmıyor (Graz'daki Alman parçası gibi).
+1914'te ülkelerin çoğu savaşta olduğundan bu fazla görünmüyordu.
+
+Düzeltme ayrı bir denge geçişidir (game-balance, kalıp 3: gelir/gider defteri): ülke büyüklüğüyle ölçeklenen bir
+gider ya da büyüklüğe göreli vergi eşiği, 1914/Ege/1939 taramalarıyla birlikte. O zamana kadar 1939 kapısı P10 ≥ 0,25,
+P50 ≤ 3,0 ve en çok ≤ 4 (kaçak büyüme yok) sınar.

@@ -31,19 +31,19 @@ namespace TarihStrateji.Core.Content
         public static readonly CountryId Ottoman = BaselineStatecraft.Turkey;
 
         /// <summary>Ölçekli nüfusun bu kadar kişisine bir tümen düşer (başlangıç ordusu).</summary>
-        public const long PeoplePerDivision = 400_000;
+        public const long PeoplePerDivision = PackageScenario.PeoplePerDivision;
 
-        /// <summary>
-        /// 28 Haziran 1914 başkentleri (kapsam içindekiler): İstanbul, Atina, Sofya, Belgrad, Çetine, Dıraç
-        /// (Prens Wied'in merkezi), Bükreş, Roma. Viyana, Petersburg, Londra ve Tahran kapsam dışındadır; bu
-        /// ülkelerin haritada başkenti yoktur.
-        /// </summary>
         /// <summary>
         /// YZ'nin ilk savaş ilanı için en erken tarih: Temmuz Krizi (Saraybosna 28.06 → Avusturya-Macaristan'ın
         /// Sırbistan'a savaş ilanı 28.07.1914). Adım 17 denge taramasında YZ her tohumda 6. gün savaş ilan ediyordu.
         /// </summary>
         public static readonly GameDate AiEarliestWar = GameDate.FromYmd(1914, 7, 28);
 
+        /// <summary>
+        /// 28 Haziran 1914 başkentleri (kapsam içindekiler): İstanbul, Atina, Sofya, Belgrad, Çetine, Dıraç
+        /// (Prens Wied'in merkezi), Bükreş, Roma. Viyana, Petersburg, Londra ve Tahran kapsam dışındadır; bu
+        /// ülkelerin haritada başkenti yoktur.
+        /// </summary>
         public static readonly string[] CapitalCityKeys =
         {
             "sehir.1914.istanbul", "sehir.1914.atina", "sehir.1914.sofya", "sehir.1914.belgrad",
@@ -51,120 +51,21 @@ namespace TarihStrateji.Core.Content
         };
 
         public static void Populate(GeoPackage package, GeoWorld world, PopulationState population, EconomyState economy, ResearchState research,
-            PoliticsState politics, CharacterState characters, EffectEngine effects, GameContent content, GameDate today)
+            PoliticsState politics, CharacterState characters, EffectEngine effects, GameContent content, GameDate today) =>
+            PackageScenario.Populate(package, world, population, economy, research, politics, characters, effects, content, today, SetupPolitics);
+
+        /// <summary>Osmanlı (İttihat ve Terakki iktidar, Hürriyet ve İtilaf muhalefet) ve Yunanistan (Liberal) meşruti monarşi.</summary>
+        private static void SetupPolitics(PoliticsState politics, GameContent content, GameDate today)
         {
-            if (package == null || world == null)
-            {
-                throw new ArgumentNullException(package == null ? nameof(package) : nameof(world));
-            }
-
-            for (int i = 0; i < package.Regions.Count; i++)
-            {
-                population.AddRegion(package.Regions[i].Id, BaselineContent.AgePyramid(package.Regions[i].Population));
-            }
-
-            for (int i = 0; i < package.Countries.Count; i++)
-            {
-                CountryId c = package.Countries[i];
-                long people = CountryPopulation(package, c);
-                int divisions = Divisions(people);
-                Require(economy.AddCountry(c, Fixed64.FromInt(20_000 + (int)(people / 100)), Fixed64.Parse("0.2")).IsSuccess);
-                economy.SeedStock(c, BaselineGoods.Food, Fixed64.FromInt(10_000 + (int)(people / 50)));
-                economy.SeedStock(c, BaselineGoods.InfantryEquipment, Fixed64.FromInt((divisions * 100) + 300));
-                economy.SeedStock(c, BaselineGoods.Steel, Fixed64.FromInt(300));
-                economy.SeedStock(c, BaselineGoods.Ship, Fixed64.FromInt(8));
-                Require(research.AddCountry(c, content.Technology, new TechnologyId[0], effects, today).IsSuccess);
-                Require(characters.AddCountry(c).IsSuccess);
-            }
-
             Require(politics.AddCountry(Ottoman, content.Politics, BaselineStatecraft.ConstitutionalMonarchy, BaselineStatecraft.UnionAndProgress,
                 new[] { Pair(BaselineStatecraft.UnionAndProgress, 7), Pair(BaselineStatecraft.FreedomAndAccord, 3) }, Fixed64.Parse("0.45"), today).IsSuccess);
             Require(politics.AddCountry(BaselineStatecraft.Greece, content.Politics, BaselineStatecraft.ConstitutionalMonarchy, BaselineStatecraft.GreekLiberal,
                 new[] { Pair(BaselineStatecraft.GreekLiberal, 6), Pair(BaselineStatecraft.GreekPeoples, 4) }, Fixed64.Parse("0.55"), today).IsSuccess);
-
-            int slotsPerLevel = content.Economy.Parameters.BuildingSlotsPerDevelopment;
-            for (int i = 0; i < package.Cities.Count; i++)
-            {
-                PlaceFacilities(package, world, economy, content, package.Cities[i], slotsPerLevel);
-            }
         }
 
-        public static long CountryPopulation(GeoPackage package, CountryId country)
-        {
-            long total = 0L;
-            for (int i = 0; i < package.Regions.Count; i++)
-            {
-                if (package.Regions[i].Owner == country)
-                {
-                    total += package.Regions[i].Population;
-                }
-            }
+        public static long CountryPopulation(GeoPackage package, CountryId country) => PackageScenario.CountryPopulation(package, country);
 
-            return total;
-        }
-
-        /// <summary>
-        /// Başlangıç tümen sayısı: ölçekli nüfus / 400 bin, en çok 10. 400 binin altındaki küçük devletler
-        /// (Karadağ, Arnavutluk, İran'ın kapsamdaki kısmı) tümensiz başlar: 10 binlik tümen çalışma çağı
-        /// nüfuslarının %12 seferberlik tavanını aşar; savunmayı şehir garnizonu yapar.
-        /// </summary>
-        public static int Divisions(long people)
-        {
-            long n = people / PeoplePerDivision;
-            return n > 10L ? 10 : (int)n;
-        }
-
-        /// <summary>
-        /// Şehir tesisleri: önce sanayi (kademe ≥ 3: kömür, demir, çelik, silah; kademe 5: top; büyük liman:
-        /// tersane), sonra bölge nüfusunu besleyecek kadar çiftlik (çiftlik 25 gıda/gün, 1000 kişi 1 gıda/gün,
-        /// %8 pay) kalan slot kadar. Slot yetmezse eksik gıda başlangıç stoğundan ve ticaretten karşılanır.
-        /// </summary>
-        private static void PlaceFacilities(GeoPackage package, GeoWorld world, EconomyState economy, GameContent content, PackageCity city, int slotsPerLevel)
-        {
-            if (city.Tier >= 3)
-            {
-                Place(economy, content, world, city, BaselineFacilities.CoalMine);
-                Place(economy, content, world, city, BaselineFacilities.IronMine);
-                Place(economy, content, world, city, BaselineFacilities.SteelWorks);
-                Place(economy, content, world, city, BaselineFacilities.ArmsFactory);
-            }
-
-            if (city.Tier >= 5)
-            {
-                Place(economy, content, world, city, BaselineFacilities.ArtilleryFactory);
-            }
-
-            if (city.IsPort && city.Tier >= 4)
-            {
-                Place(economy, content, world, city, BaselineFacilities.Shipyard);
-            }
-
-            long people = 0L;
-            for (int i = 0; i < package.Regions.Count; i++)
-            {
-                if (package.Regions[i].Id == city.Region)
-                {
-                    people = package.Regions[i].Population;
-                }
-            }
-
-            int farms = (int)(((people * 108) / 100 + 24_999) / 25_000);
-            world.TryGetCity(city.Id, out City c);
-            int free = CitySlotRules.Capacity(c, slotsPerLevel) - EconomyGeography.UsedSlots(economy, content.Economy, city.Id);
-            for (int f = 0; f < farms && f < free; f++)
-            {
-                Place(economy, content, world, city, BaselineFacilities.Farm);
-            }
-        }
-
-        private static void Place(EconomyState economy, GameContent content, GeoWorld world, PackageCity city, FacilityTypeId type)
-        {
-            Result<FacilityId> placed = ConstructionRules.PlaceExisting(economy, content.Economy, world, city.Owner, type, city.Id);
-            if (!placed.IsSuccess)
-            {
-                throw new InvalidOperationException("1914 senaryosu tesisi yerleştirilemedi (" + city.NameKey + "): " + placed.ErrorKey);
-            }
-        }
+        public static int Divisions(long people) => PackageScenario.Divisions(people);
 
         private static KeyValuePair<PartyId, Fixed64> Pair(PartyId party, int weight) => new KeyValuePair<PartyId, Fixed64>(party, Fixed64.FromInt(weight));
 
