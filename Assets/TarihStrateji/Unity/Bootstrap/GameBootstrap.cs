@@ -29,6 +29,7 @@ namespace TarihStrateji.Unity.Bootstrap
         private BootstrapCommandFactory _orders;
         private float _accumulator;
         private int _pendingDays;
+        private DeviceMeasurement _measurement;
 
         /// <summary>Tek seferde istenebilecek en çok gün (+30 düğmesi ve biraz pay).</summary>
         public const int MaxSkipDays = 90;
@@ -60,6 +61,18 @@ namespace TarihStrateji.Unity.Bootstrap
 
         public int PendingDays => _pendingDays;
 
+        public string MeasurementStatus => _measurement == null ? string.Empty : _measurement.Status;
+
+        public bool IsMeasuring => _measurement != null && _measurement.IsRunning;
+
+        public void StartMeasurement()
+        {
+            if (_kernel != null && !_kernel.IsHalted)
+            {
+                _measurement.Start();
+            }
+        }
+
         public void SkipDays(int days)
         {
             if (days > 0 && _kernel != null && !_kernel.IsHalted)
@@ -84,6 +97,7 @@ namespace TarihStrateji.Unity.Bootstrap
             Directory.CreateDirectory(directory);
             _store = new FileSaveStore(directory);
             SimulationSetup setup = CreateSetup(content, package, _store);
+            _measurement = new DeviceMeasurement(() => _kernel, () => CreateSetup(content, package, null), Application.persistentDataPath);
 
             Result<LoadedGame> loaded = GameSaveService.Load(_store, LastSessionSlot, setup);
             if (loaded.IsSuccess)
@@ -132,8 +146,9 @@ namespace TarihStrateji.Unity.Bootstrap
                 Capitals = CapitalTable.FromCityKeys(package.BuildWorld(), Scenario1914.CapitalCityKeys).Of,
                 AiEarliestWarDate = Scenario1914.AiEarliestWar,
                 HashIntervalDays = 30,
-                AutosaveIntervalDays = 30,
-                AutosaveSink = new AutosaveRing(store),
+                // Ölçüm kopyası (store yok) otomatik kayıt yapmaz: oyuncunun kayıt halkasına dokunulmaz.
+                AutosaveIntervalDays = store == null ? 0 : 30,
+                AutosaveSink = store == null ? null : new AutosaveRing(store),
             };
             StandardRules.Install(setup, content);
             return StandardRules.InstallArtificialIntelligence(setup, content);
@@ -143,6 +158,13 @@ namespace TarihStrateji.Unity.Bootstrap
         {
             if (_kernel == null)
             {
+                return;
+            }
+
+            // Cihaz ölçümü sürerken asıl oyun ilerlemez (süreler karışmasın).
+            if (_measurement.IsRunning)
+            {
+                _measurement.Tick();
                 return;
             }
 

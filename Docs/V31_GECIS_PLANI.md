@@ -17,7 +17,7 @@ kaynağı olarak §22 hattından geçirilir.
 |---|---|---|
 | Unity derlemesi (F0-01) | Unity 6000.3.28f1, CI'da derleniyor | KABUL EDİLDİ (Editor/CI) |
 | EditMode testleri (F0-02) | CI'da koşuyor ve geçiyor | KABUL EDİLDİ (CI) |
-| Android ARM64 IL2CPP (F0-03) | APK CI'da üretiliyor (`tarih-strateji-android` yapıtı) | KISMİ: cihaz testi yapılmadı (Adım 17) |
+| Android ARM64 IL2CPP (F0-03) | APK CI'da üretiliyor (`tarih-strateji-android` yapıtı) | KISMİ: oyun içi ölçüm aracı hazır (Adım 17); cihazda ölçüm depo sahibinde |
 | Tek emir kapısı, oyuncu/YZ yetkisi (F1-01) | `SimulationKernel.Submit/Validate`, YZ aynı kapı | MEVCUT/KODDA + headless test |
 | owner/controller (F1-02) | Bölge ve şehir düzeyinde (`RegionControl`, `City`), aşamalı kontrol | MEVCUT/KODDA + test |
 | Teleport/ücretsiz çıkarma engeli (F1-03) | Ulaşım grafında A*, `transportCapacity > 0` | MEVCUT/KODDA + test |
@@ -115,6 +115,7 @@ Her adım headless testleriyle gelir; altıgen kodu yalnız yerine geçen sistem
 | 14 eki: kaynak CShapes 2.0'a geçti (birincil kaynak kararı uygulandı) | TESTED (headless 324/324); paket yeniden derlendi, determinist |
 | 15 çokgen harita: sınır zincirleri + LOD sadeleştirme, mekânsal indeksli dokunma, liman simgesi, çakışmasız şehir adları, yığın rozetleri | Unity EditMode (MapGeometryTests, MapLabelTests); Unity CI sonucu commit notunda; başkent verisi (`CapitalTable`) ve yıldız simgesi eklendi; Unity CI ve Android APK geçti |
 | 16 mobil akış: önizle → onayla (rota, süre, ikmal, risk; çekirdek `PreviewOrder`), +1/+7/+30 gün, diplomasi ekranı (teklif kabul/ret, savaş, barış, saldırmazlık, ittifak) | TESTED (headless OrderPreviewTests + teklif listesi; EditMode OrderFlowTests); Unity CI sonucu commit notunda; cihaz dokunmatik denemesi Adım 17 |
+| 17 1914 denge (tarama, barış eşiği 120 gün, Temmuz Krizi tarihi, bant kapıları) ve cihaz ölçüm aracı | TESTED (headless 330/330, 32 tohum taraması bantta); cihaz ölçümü depo sahibinin telefonunda bekliyor (`Docs/CIHAZ_OLCUMU.md`) |
 
 Not (tarihî): Altıgen kural dosyaları Adım 12'de değil 13'te silindi; çünkü Simulation onlara bağlıdır ve her
 commit derlenebilir kalmalıdır (§4 "sıfır eksik kod"). Adım 12 yeni kuralları `*.Geo` isim alanlarında

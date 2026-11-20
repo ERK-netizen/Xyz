@@ -515,6 +515,19 @@ Yeni bir Core modülü eklemek anayasa değişikliğidir.
   (Kabul/Ret), bekleyenleri ve ülkeleri (savaş ilanı, beyaz barış, saldırmazlık, ittifak) gösterir; düğmeler
   `Validate` ile önceden doğrulanır.
 
+**Uygulama kararları (Adım 17, 1914 denge ve cihaz ölçümü):**
+- Denge `game-balance` becerisiyle: `BalanceSweep1914` (Category=Denge, CI dışı; 32 tohum × 365 gün, P10/P50/P90),
+  bantlar ve ölçümler `Docs/DENGE_1914.md`'de. Savaş süresi sansürlü veridir: "biten savaşın süresi" yerine
+  başlayanlara oranlı "120 günden kısa biten pay" ve "yıl sonunda süren pay" ölçülür.
+- Tek ayarlı taramayla `AiParameters.PeaceAfterWarDays` 60 → 120 (etki 120'de doyar). Senaryo verisi
+  `SimulationSetup.AiEarliestWarDate` (1914: 28.07.1914) → `AiPerception.EarliestWar`: YZ bu tarihten önce savaş
+  ilan etmez (savunma/ittifak/oyuncu serbest). Bant kapısı: `Campaign1914Tests` yıl sonunda süren savaş ister,
+  `Scenario1914Tests` YZ'nin 28.07'den önce savaş ilan etmediğini sınar.
+- Cihaz ölçümü oyun içinde: `IGameSession.StartMeasurement` → `DeviceMeasurement` (asıl oyunun anlık görüntüsünden
+  otomatik kayıtsız kopya; kare süresi, YZ dahil 60 gün adımı, kayıt süresi, bellek), rapor
+  `persistentDataPath/olcum_*.txt` + günlük; sayılar `MeasurementLog` (mikrosaniye tamsayı, en yakın sıra yüzdeliği).
+  Süre ölçümü yalnız Unity katmanındadır. Yöntem ve hedefler `Docs/CIHAZ_OLCUMU.md`.
+
 ---
 
 ## 3. Depo düzeni

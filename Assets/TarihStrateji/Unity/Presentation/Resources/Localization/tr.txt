@@ -389,6 +389,7 @@ arayuz.teklif.saldirmazlik = Saldırmazlık paktı
 arayuz.teklif.ittifak = İttifak
 arayuz.saldirmazlikOner = Saldırmazlık öner
 arayuz.ittifakOner = İttifak öner
+arayuz.olcum = Ölçüm
 arayuz.gozlemci = Gözlemci modu
 arayuz.karaBirligi = kara birliği
 arayuz.filo = filo

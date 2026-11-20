@@ -5,7 +5,8 @@
         "UnityEngine.TestRunner",
         "UnityEditor.TestRunner",
         "TarihStrateji.Core.Domain",
-        "TarihStrateji.Unity.Presentation"
+        "TarihStrateji.Unity.Presentation",
+        "TarihStrateji.Unity.Bootstrap"
     ],
     "includePlatforms": [
         "Editor"

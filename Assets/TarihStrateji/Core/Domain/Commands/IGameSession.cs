@@ -27,5 +27,16 @@ namespace TarihStrateji.Core.Domain.Commands
 
         /// <summary>İşlenmeyi bekleyen gün sayısı (0 = boşta).</summary>
         int PendingDays { get; }
+
+        /// <summary>
+        /// Cihaz performans ölçümünü başlatır (Adım 17): kare süresi, oyunun ayrı bir kopyasında gün adımı süresi,
+        /// kayıt süresi, bellek; rapor cihazdaki dosyaya yazılır. Oyuncunun oyunu ilerlemez, kayıtlarına dokunulmaz.
+        /// </summary>
+        void StartMeasurement();
+
+        bool IsMeasuring { get; }
+
+        /// <summary>Boş, ölçüm ilerlemesi ya da son ölçümün tek satırlık özeti.</summary>
+        string MeasurementStatus { get; }
     }
 }

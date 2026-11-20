@@ -182,6 +182,7 @@ namespace TarihStrateji.Unity.Presentation.UI
 
             // Zaman atlama (+1/+7/+30 gün, hızdan bağımsız) ve diplomasi ekranı.
             var timeRow = Row();
+            timeRow.style.flexWrap = Wrap.Wrap;
             int[] skips = { 1, 7, 30 };
             string[] skipKeys = { "arayuz.atla1", "arayuz.atla7", "arayuz.atla30" };
             for (int i = 0; i < skips.Length; i++)
@@ -195,6 +196,13 @@ namespace TarihStrateji.Unity.Presentation.UI
             _diplomacyButton = MakeButton("arayuz.diplomasi", ToggleDiplomacy);
             _diplomacyButton.style.flexGrow = 1;
             timeRow.Add(_diplomacyButton);
+            Button measure = MakeButton("arayuz.olcum", () =>
+            {
+                _session.StartMeasurement();
+                MarkDirty();
+            });
+            measure.style.flexGrow = 1;
+            timeRow.Add(measure);
             _top.Add(timeRow);
 
             _summary = MakeLabel(32, false);
@@ -331,6 +339,17 @@ namespace TarihStrateji.Unity.Presentation.UI
             }
 
             RefreshSummary(model);
+            if (!string.IsNullOrEmpty(_session.MeasurementStatus))
+            {
+                _summary.text += "\n" + _session.MeasurementStatus;
+            }
+
+            if (_session.IsMeasuring)
+            {
+                // Ölçüm kare kare ilerler; durum sürümü değişmediği için panel her yenilemede tazelenir.
+                _dirty = true;
+            }
+
             RefreshSelection(model);
             RefreshPreview();
             _diplomacy.Refresh();
