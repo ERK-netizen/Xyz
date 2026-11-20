@@ -88,3 +88,25 @@ Kapsamdaki Polonya, Çekoslovakya ve Suudi Arabistan kırıntıları senaryoya a
 | Onikiadalar Yunanistan'dan İtalya'ya | 1912'den beri İtalyan, 1923 Lozan ile İtalya'ya bırakıldı; CShapes Yunanistan'da gösterir. |
 | Arnavutluk → İtalya (kaynak adı eşlemesi) | 7–12 Nisan 1939 İtalyan işgali ve İtalyan tacına bağlanma; CShapes (Gleditsch–Ward) ayrı tutar. |
 | Avusturya → Alman Reich (kaynak adı eşlemesi) | Mart 1938 Anschluss; CShapes ayrı tutar. |
+
+## 1936 senaryosu (`Assets/TarihStrateji/Unity/Bootstrap/Resources/Senaryolar/1936_mvp.bytes`)
+
+Kaynak, lisans, kapsam ve şehir listesi 1939 ile aynıdır; seçim tarihi 07.03.1936 (Ren işgali; Montrö Sözleşmesi'nden
+önce). Yapılandırma `Tools/ContentCompiler/data/1936_mvp.json`; ad anahtarları `ulke.1936.*`, `sehir.1936.*`. 15 ülke,
+133 bölge/şehir. Nüfuslar kapsam içindeki tahmini 1936 nüfusudur (Türkiye 1935 sayımı ≈ 16,2 milyon).
+
+| Senaryo ülkesi | CShapes kayıtları (07.03.1936) |
+|---|---|
+| Türkiye Cumhuriyeti | Turkey (Ottoman Empire) — Hatay hariç (düzeltme) |
+| Avusturya Federal Devleti | Austria (kapsamda yalnız Graz) |
+| İtalya Krallığı | Italy/Sardinia, Libya |
+| Arnavutluk Krallığı | Albania |
+| Diğerleri | 1939 tablosuyla aynı (Almanya kapsamda şehirsizdir, alınmaz) |
+
+| Düzeltme | Gerekçe |
+|---|---|
+| Onikiadalar Yunanistan'dan İtalya'ya | 1939 ile aynı. |
+| Hatay Türkiye'den Fransa'ya (Levant) | İskenderun Sancağı 1936'da Fransız mandası Suriye'nin parçasıdır (1938 Hatay Devleti, 29.06.1939 Türkiye'ye katılım); CShapes Türkiye'de gösterir. Sancak sınırı yaklaşık bir dörtgendir (1921 Ankara Antlaşması çizgisi), Türkiye sınırıyla kesişimi alınır. |
+
+Derleyici notu: ham halkası E6 yuvarlamasında kendini kesen bölge (Antakya'nın kaynak sınırındaki ince çıkıntı) kapanışla
+(dışa + içe tampon) giderilip sadeleştirilir; bu yol yalnız ham halka geçersizken çalışır, 1914 ve 1939 paketleri bayt bayt aynı kalır.

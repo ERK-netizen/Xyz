@@ -12,7 +12,7 @@ using UnityEngine;
 namespace TarihStrateji.Unity.Bootstrap
 {
     /// <summary>
-    /// Oyun oturumu: içerik, kurallar ve YZ kurulur; senaryolar <see cref="ScenarioCatalog"/>'tadır (1914, 1939). Son
+    /// Oyun oturumu: içerik, kurallar ve YZ kurulur; senaryolar <see cref="ScenarioCatalog"/>'tadır (1914, 1936, 1939). Son
     /// oturum kaydı varsa kendi senaryosunun haritasıyla (yan dosya <c>son_oturum.senaryo</c>; yoksa 1914) yüklenir,
     /// yoksa 1914 Osmanlı ile başlar; yeni oyun <see cref="StartNewGame"/> ile seçilir. Günler <see cref="DaysPerSecond"/> hızında ana iş
     /// parçacığında ilerler (karede en çok 4 gün). Oyun kuralı yazmaz: yalnız çekirdeği çalıştırır

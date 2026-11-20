@@ -1,0 +1,1828 @@
+{
+ "scenario": "1936_mvp",
+ "title": "1936 Balkanlar–Anadolu–Doğu Akdeniz",
+ "date": [
+  1936,
+  3,
+  7
+ ],
+ "bbox": [
+  12.0,
+  29.5,
+  46.5,
+  48.0
+ ],
+ "source": {
+  "id": "cshapes-2.0",
+  "format": "cshapes",
+  "url": "https://icr.ethz.ch/data/cshapes/CShapes-2.0.geojson",
+  "license": "CC BY-NC-SA 4.0",
+  "author": "Schvitz, Girardin, Rüegger, Weidmann, Cederman ve Gleditsch (ETH Zürich, International Conflict Research)",
+  "citation": "Schvitz, G., Girardin, L., Rüegger, S., Weidmann, N. B., Cederman, L.-E., & Gleditsch, K. S. (2022). Mapping the International System, 1886-2019: The CShapes 2.0 Dataset. Journal of Conflict Resolution, 66(1), 144-161.",
+  "accuracy": "Gleditsch–Ward devlet sistemi; Biger (1995) sınır ansiklopedisine dayalı kodlama",
+  "sha256": "384b1ea90b9419f30a858d7ec237c85a22c60d1b35b5f85f215a1204f9989d42"
+ },
+ "countries": [
+  {
+   "key": "turkiye",
+   "id": 1,
+   "name": "Türkiye Cumhuriyeti",
+   "sources": [
+    "Turkey (Ottoman Empire)"
+   ],
+   "population": 16200
+  },
+  {
+   "key": "yunanistan",
+   "id": 2,
+   "name": "Yunanistan Krallığı",
+   "sources": [
+    "Greece"
+   ],
+   "population": 6900
+  },
+  {
+   "key": "bulgaristan",
+   "id": 3,
+   "name": "Bulgaristan Çarlığı",
+   "sources": [
+    "Bulgaria"
+   ],
+   "population": 6100
+  },
+  {
+   "key": "yugoslavya",
+   "id": 4,
+   "name": "Yugoslavya Krallığı",
+   "sources": [
+    "Yugoslavia"
+   ],
+   "population": 15000
+  },
+  {
+   "key": "misir",
+   "id": 5,
+   "name": "Mısır Krallığı",
+   "sources": [
+    "Egypt"
+   ],
+   "population": 12000
+  },
+  {
+   "key": "irak",
+   "id": 6,
+   "name": "Irak Krallığı",
+   "sources": [
+    "Iraq"
+   ],
+   "population": 3600
+  },
+  {
+   "key": "romanya",
+   "id": 7,
+   "name": "Romanya Krallığı",
+   "sources": [
+    "Rumania"
+   ],
+   "population": 18000
+  },
+  {
+   "key": "avusturya",
+   "id": 8,
+   "name": "Avusturya Federal Devleti",
+   "sources": [
+    "Austria"
+   ],
+   "population": 2500
+  },
+  {
+   "key": "italya",
+   "id": 9,
+   "name": "İtalya Krallığı",
+   "sources": [
+    "Italy/Sardinia",
+    "Libya"
+   ],
+   "population": 17000
+  },
+  {
+   "key": "sovyetler",
+   "id": 10,
+   "name": "Sovyetler Birliği",
+   "sources": [
+    "Russia (Soviet Union)"
+   ],
+   "population": 16000
+  },
+  {
+   "key": "britanya",
+   "id": 11,
+   "name": "Birleşik Krallık",
+   "sources": [
+    "Cyprus",
+    "Malta",
+    "Palestine",
+    "Jordan"
+   ],
+   "population": 2400
+  },
+  {
+   "key": "iran",
+   "id": 12,
+   "name": "İran Şahlığı",
+   "sources": [
+    "Iran (Persia)"
+   ],
+   "population": 1600
+  },
+  {
+   "key": "fransa",
+   "id": 13,
+   "name": "Fransa (Levant mandası)",
+   "sources": [
+    "Syria",
+    "Lebanon"
+   ],
+   "population": 3700
+  },
+  {
+   "key": "macaristan",
+   "id": 14,
+   "name": "Macaristan Krallığı",
+   "sources": [
+    "Hungary"
+   ],
+   "population": 8400
+  },
+  {
+   "key": "arnavutluk",
+   "id": 15,
+   "name": "Arnavutluk Krallığı",
+   "sources": [
+    "Albania"
+   ],
+   "population": 1000
+  }
+ ],
+ "corrections": [
+  {
+   "kind": "transfer",
+   "from": "yunanistan",
+   "to": "italya",
+   "note": "Onikiadalar 1912'den beri İtalyan; 1923 Lozan ile İtalya'ya bırakıldı (1947'de Yunan). CShapes Yunanistan'da gösterir.",
+   "polygon": [
+    [
+     26.6,
+     35.35
+    ],
+    [
+     28.4,
+     35.35
+    ],
+    [
+     28.4,
+     37.45
+    ],
+    [
+     26.4,
+     37.45
+    ],
+    [
+     26.4,
+     35.6
+    ]
+   ]
+  },
+  {
+   "kind": "transfer",
+   "from": "turkiye",
+   "to": "fransa",
+   "note": "Hatay (İskenderun Sancağı) 1936'da Fransız mandası Suriye'nin parçasıdır (1938 Hatay Devleti, 29.06.1939 Türkiye'ye katılım); CShapes Türkiye'de gösterir. Sancak sınırı yaklaşıktır (1921 Ankara Antlaşması çizgisi).",
+   "polygon": [
+    [
+     35.7,
+     35.75
+    ],
+    [
+     36.15,
+     35.8
+    ],
+    [
+     36.4,
+     35.95
+    ],
+    [
+     36.65,
+     36.2
+    ],
+    [
+     36.7,
+     36.6
+    ],
+    [
+     36.55,
+     36.78
+    ],
+    [
+     36.15,
+     36.78
+    ],
+    [
+     35.9,
+     36.6
+    ],
+    [
+     35.7,
+     36.2
+    ]
+   ]
+  },
+  {
+   "kind": "note",
+   "note": "Arnavutluk (Zogu krallığı) ve Avusturya (Federal Devlet) bağımsızdır; Graz dışında Avusturya şehirleri kapsam dışındadır."
+  },
+  {
+   "kind": "note",
+   "note": "Suriye ve Lübnan Fransız; Filistin, Ürdün, Kıbrıs ve Malta İngiliz manda/sömürge yönetimindedir (Milletler Cemiyeti mandaları); CShapes'te ayrı kayıtlardır."
+  }
+ ],
+ "islands": [],
+ "straits": [
+  {
+   "name": "İstanbul Boğazı",
+   "a": [
+    29.0,
+    41.05
+   ],
+   "b": [
+    29.05,
+    41.05
+   ]
+  },
+  {
+   "name": "Çanakkale Boğazı",
+   "a": [
+    26.62,
+    40.32
+   ],
+   "b": [
+    26.55,
+    40.2
+   ]
+  },
+  {
+   "name": "Messina Boğazı",
+   "a": [
+    15.62,
+    38.24
+   ],
+   "b": [
+    15.66,
+    38.2
+   ]
+  },
+  {
+   "name": "Kerç Boğazı",
+   "a": [
+    36.5,
+    45.3
+   ],
+   "b": [
+    36.62,
+    45.25
+   ]
+  }
+ ],
+ "seaLinks": [
+  {
+   "name": "Boğazlar",
+   "points": [
+    [
+     31.0,
+     41.6
+    ],
+    [
+     29.08,
+     41.2
+    ],
+    [
+     28.9,
+     40.85
+    ],
+    [
+     28.0,
+     40.7
+    ],
+    [
+     27.0,
+     40.55
+    ],
+    [
+     26.5,
+     40.25
+    ],
+    [
+     26.05,
+     40.0
+    ],
+    [
+     25.3,
+     39.8
+    ]
+   ]
+  },
+  {
+   "name": "Messina",
+   "points": [
+    [
+     15.9,
+     38.6
+    ],
+    [
+     15.62,
+     38.15
+    ],
+    [
+     15.6,
+     37.7
+    ]
+   ]
+  },
+  {
+   "name": "Kerç",
+   "points": [
+    [
+     36.4,
+     45.1
+    ],
+    [
+     36.55,
+     45.35
+    ],
+    [
+     36.8,
+     45.6
+    ]
+   ]
+  },
+  {
+   "name": "Selanik Körfezi",
+   "points": [
+    [
+     22.88,
+     40.52
+    ],
+    [
+     22.95,
+     40.25
+    ],
+    [
+     23.35,
+     39.95
+    ]
+   ]
+  }
+ ],
+ "seaGridStep": 0.75,
+ "cities": [
+  {
+   "key": "istanbul",
+   "name": "İstanbul",
+   "country": "turkiye",
+   "lat": 41.01,
+   "lon": 28.98,
+   "tier": 5,
+   "port": true
+  },
+  {
+   "key": "edirne",
+   "name": "Edirne",
+   "country": "turkiye",
+   "lat": 41.68,
+   "lon": 26.56,
+   "tier": 3,
+   "port": false
+  },
+  {
+   "key": "tekirdag",
+   "name": "Tekirdağ",
+   "country": "turkiye",
+   "lat": 40.98,
+   "lon": 27.51,
+   "tier": 2,
+   "port": true
+  },
+  {
+   "key": "gelibolu",
+   "name": "Gelibolu",
+   "country": "turkiye",
+   "lat": 40.41,
+   "lon": 26.67,
+   "tier": 2,
+   "port": true
+  },
+  {
+   "key": "bursa",
+   "name": "Bursa",
+   "country": "turkiye",
+   "lat": 40.19,
+   "lon": 29.06,
+   "tier": 4,
+   "port": false
+  },
+  {
+   "key": "izmit",
+   "name": "İzmit",
+   "country": "turkiye",
+   "lat": 40.77,
+   "lon": 29.92,
+   "tier": 2,
+   "port": true
+  },
+  {
+   "key": "izmir",
+   "name": "İzmir",
+   "country": "turkiye",
+   "lat": 38.42,
+   "lon": 27.14,
+   "tier": 5,
+   "port": true
+  },
+  {
+   "key": "aydin",
+   "name": "Aydın",
+   "country": "turkiye",
+   "lat": 37.85,
+   "lon": 27.85,
+   "tier": 3,
+   "port": false
+  },
+  {
+   "key": "balikesir",
+   "name": "Balıkesir",
+   "country": "turkiye",
+   "lat": 39.65,
+   "lon": 27.88,
+   "tier": 3,
+   "port": false
+  },
+  {
+   "key": "canakkale",
+   "name": "Çanakkale",
+   "country": "turkiye",
+   "lat": 40.15,
+   "lon": 26.41,
+   "tier": 2,
+   "port": true
+  },
+  {
+   "key": "eskisehir",
+   "name": "Eskişehir",
+   "country": "turkiye",
+   "lat": 39.78,
+   "lon": 30.52,
+   "tier": 3,
+   "port": false
+  },
+  {
+   "key": "ankara",
+   "name": "Ankara",
+   "country": "turkiye",
+   "lat": 39.93,
+   "lon": 32.86,
+   "tier": 4,
+   "port": false
+  },
+  {
+   "key": "konya",
+   "name": "Konya",
+   "country": "turkiye",
+   "lat": 37.87,
+   "lon": 32.48,
+   "tier": 4,
+   "port": false
+  },
+  {
+   "key": "afyon",
+   "name": "Afyon",
+   "country": "turkiye",
+   "lat": 38.76,
+   "lon": 30.54,
+   "tier": 3,
+   "port": false
+  },
+  {
+   "key": "antalya",
+   "name": "Antalya",
+   "country": "turkiye",
+   "lat": 36.89,
+   "lon": 30.71,
+   "tier": 3,
+   "port": true
+  },
+  {
+   "key": "adana",
+   "name": "Adana",
+   "country": "turkiye",
+   "lat": 37.0,
+   "lon": 35.32,
+   "tier": 4,
+   "port": false
+  },
+  {
+   "key": "mersin",
+   "name": "Mersin",
+   "country": "turkiye",
+   "lat": 36.8,
+   "lon": 34.63,
+   "tier": 2,
+   "port": true
+  },
+  {
+   "key": "kayseri",
+   "name": "Kayseri",
+   "country": "turkiye",
+   "lat": 38.72,
+   "lon": 35.49,
+   "tier": 3,
+   "port": false
+  },
+  {
+   "key": "sivas",
+   "name": "Sivas",
+   "country": "turkiye",
+   "lat": 39.75,
+   "lon": 37.02,
+   "tier": 3,
+   "port": false
+  },
+  {
+   "key": "samsun",
+   "name": "Samsun",
+   "country": "turkiye",
+   "lat": 41.29,
+   "lon": 36.33,
+   "tier": 3,
+   "port": true
+  },
+  {
+   "key": "trabzon",
+   "name": "Trabzon",
+   "country": "turkiye",
+   "lat": 41.0,
+   "lon": 39.72,
+   "tier": 3,
+   "port": true
+  },
+  {
+   "key": "erzurum",
+   "name": "Erzurum",
+   "country": "turkiye",
+   "lat": 39.9,
+   "lon": 41.27,
+   "tier": 3,
+   "port": false
+  },
+  {
+   "key": "van",
+   "name": "Van",
+   "country": "turkiye",
+   "lat": 38.49,
+   "lon": 43.38,
+   "tier": 3,
+   "port": false
+  },
+  {
+   "key": "diyarbakir",
+   "name": "Diyarbakır",
+   "country": "turkiye",
+   "lat": 37.91,
+   "lon": 40.24,
+   "tier": 3,
+   "port": false
+  },
+  {
+   "key": "harput",
+   "name": "Harput",
+   "country": "turkiye",
+   "lat": 38.67,
+   "lon": 39.22,
+   "tier": 2,
+   "port": false
+  },
+  {
+   "key": "malatya",
+   "name": "Malatya",
+   "country": "turkiye",
+   "lat": 38.35,
+   "lon": 38.31,
+   "tier": 2,
+   "port": false
+  },
+  {
+   "key": "halep",
+   "name": "Halep",
+   "country": "fransa",
+   "lat": 36.2,
+   "lon": 37.16,
+   "tier": 4,
+   "port": false
+  },
+  {
+   "key": "beyrut",
+   "name": "Beyrut",
+   "country": "fransa",
+   "lat": 33.89,
+   "lon": 35.5,
+   "tier": 4,
+   "port": true
+  },
+  {
+   "key": "sam",
+   "name": "Şam",
+   "country": "fransa",
+   "lat": 33.51,
+   "lon": 36.29,
+   "tier": 4,
+   "port": false
+  },
+  {
+   "key": "kudus",
+   "name": "Kudüs",
+   "country": "britanya",
+   "lat": 31.77,
+   "lon": 35.21,
+   "tier": 3,
+   "port": false
+  },
+  {
+   "key": "yafa",
+   "name": "Yafa",
+   "country": "britanya",
+   "lat": 32.05,
+   "lon": 34.75,
+   "tier": 2,
+   "port": true
+  },
+  {
+   "key": "musul",
+   "name": "Musul",
+   "country": "irak",
+   "lat": 36.34,
+   "lon": 43.13,
+   "tier": 3,
+   "port": false
+  },
+  {
+   "key": "kastamonu",
+   "name": "Kastamonu",
+   "country": "turkiye",
+   "lat": 41.38,
+   "lon": 33.78,
+   "tier": 2,
+   "port": false
+  },
+  {
+   "key": "sinop",
+   "name": "Sinop",
+   "country": "turkiye",
+   "lat": 42.03,
+   "lon": 35.15,
+   "tier": 2,
+   "port": true
+  },
+  {
+   "key": "urfa",
+   "name": "Urfa",
+   "country": "turkiye",
+   "lat": 37.16,
+   "lon": 38.79,
+   "tier": 2,
+   "port": false
+  },
+  {
+   "key": "bagdat",
+   "name": "Bağdat",
+   "country": "irak",
+   "lat": 33.31,
+   "lon": 44.37,
+   "tier": 4,
+   "port": false
+  },
+  {
+   "key": "hama",
+   "name": "Hama",
+   "country": "fransa",
+   "lat": 35.13,
+   "lon": 36.75,
+   "tier": 2,
+   "port": false
+  },
+  {
+   "key": "trablussam",
+   "name": "Trablusşam",
+   "country": "fransa",
+   "lat": 34.43,
+   "lon": 35.84,
+   "tier": 2,
+   "port": true
+  },
+  {
+   "key": "gazze",
+   "name": "Gazze",
+   "country": "britanya",
+   "lat": 31.5,
+   "lon": 34.46,
+   "tier": 2,
+   "port": true
+  },
+  {
+   "key": "deirizzor",
+   "name": "Deyrizor",
+   "country": "fransa",
+   "lat": 35.33,
+   "lon": 40.14,
+   "tier": 2,
+   "port": false
+  },
+  {
+   "key": "atina",
+   "name": "Atina",
+   "country": "yunanistan",
+   "lat": 37.98,
+   "lon": 23.73,
+   "tier": 5,
+   "port": true
+  },
+  {
+   "key": "selanik",
+   "name": "Selanik",
+   "country": "yunanistan",
+   "lat": 40.64,
+   "lon": 22.94,
+   "tier": 4,
+   "port": true
+  },
+  {
+   "key": "patras",
+   "name": "Patras",
+   "country": "yunanistan",
+   "lat": 38.25,
+   "lon": 21.74,
+   "tier": 3,
+   "port": true
+  },
+  {
+   "key": "larisa",
+   "name": "Larisa",
+   "country": "yunanistan",
+   "lat": 39.64,
+   "lon": 22.42,
+   "tier": 2,
+   "port": false
+  },
+  {
+   "key": "yanya",
+   "name": "Yanya",
+   "country": "yunanistan",
+   "lat": 39.66,
+   "lon": 20.85,
+   "tier": 2,
+   "port": false
+  },
+  {
+   "key": "kandiye",
+   "name": "Kandiye",
+   "country": "yunanistan",
+   "lat": 35.34,
+   "lon": 25.13,
+   "tier": 3,
+   "port": true
+  },
+  {
+   "key": "hanya",
+   "name": "Hanya",
+   "country": "yunanistan",
+   "lat": 35.51,
+   "lon": 24.02,
+   "tier": 2,
+   "port": true
+  },
+  {
+   "key": "kavala",
+   "name": "Kavala",
+   "country": "yunanistan",
+   "lat": 40.94,
+   "lon": 24.41,
+   "tier": 2,
+   "port": true
+  },
+  {
+   "key": "kalamata",
+   "name": "Kalamata",
+   "country": "yunanistan",
+   "lat": 37.04,
+   "lon": 22.11,
+   "tier": 2,
+   "port": true
+  },
+  {
+   "key": "volos",
+   "name": "Volos",
+   "country": "yunanistan",
+   "lat": 39.36,
+   "lon": 22.94,
+   "tier": 2,
+   "port": true
+  },
+  {
+   "key": "midilli",
+   "name": "Midilli",
+   "country": "yunanistan",
+   "lat": 39.11,
+   "lon": 26.55,
+   "tier": 2,
+   "port": true
+  },
+  {
+   "key": "sakiz",
+   "name": "Sakız",
+   "country": "yunanistan",
+   "lat": 38.37,
+   "lon": 26.14,
+   "tier": 2,
+   "port": true
+  },
+  {
+   "key": "korfu",
+   "name": "Korfu",
+   "country": "yunanistan",
+   "lat": 39.62,
+   "lon": 19.92,
+   "tier": 2,
+   "port": true
+  },
+  {
+   "key": "serez",
+   "name": "Serez",
+   "country": "yunanistan",
+   "lat": 41.09,
+   "lon": 23.55,
+   "tier": 2,
+   "port": false
+  },
+  {
+   "key": "kozani",
+   "name": "Kozani",
+   "country": "yunanistan",
+   "lat": 40.3,
+   "lon": 21.79,
+   "tier": 2,
+   "port": false
+  },
+  {
+   "key": "sofya",
+   "name": "Sofya",
+   "country": "bulgaristan",
+   "lat": 42.7,
+   "lon": 23.32,
+   "tier": 4,
+   "port": false
+  },
+  {
+   "key": "filibe",
+   "name": "Filibe",
+   "country": "bulgaristan",
+   "lat": 42.14,
+   "lon": 24.75,
+   "tier": 3,
+   "port": false
+  },
+  {
+   "key": "varna",
+   "name": "Varna",
+   "country": "bulgaristan",
+   "lat": 43.21,
+   "lon": 27.91,
+   "tier": 3,
+   "port": true
+  },
+  {
+   "key": "burgaz",
+   "name": "Burgaz",
+   "country": "bulgaristan",
+   "lat": 42.5,
+   "lon": 27.47,
+   "tier": 2,
+   "port": true
+  },
+  {
+   "key": "ruscuk",
+   "name": "Rusçuk",
+   "country": "bulgaristan",
+   "lat": 43.85,
+   "lon": 25.97,
+   "tier": 3,
+   "port": false
+  },
+  {
+   "key": "tirnova",
+   "name": "Tırnova",
+   "country": "bulgaristan",
+   "lat": 43.08,
+   "lon": 25.63,
+   "tier": 2,
+   "port": false
+  },
+  {
+   "key": "dedeagac",
+   "name": "Dedeağaç",
+   "country": "yunanistan",
+   "lat": 40.85,
+   "lon": 25.87,
+   "tier": 2,
+   "port": true
+  },
+  {
+   "key": "gumulcine",
+   "name": "Gümülcine",
+   "country": "yunanistan",
+   "lat": 41.12,
+   "lon": 25.4,
+   "tier": 2,
+   "port": false
+  },
+  {
+   "key": "vidin",
+   "name": "Vidin",
+   "country": "bulgaristan",
+   "lat": 43.99,
+   "lon": 22.88,
+   "tier": 2,
+   "port": false
+  },
+  {
+   "key": "sumnu",
+   "name": "Şumnu",
+   "country": "bulgaristan",
+   "lat": 43.27,
+   "lon": 26.92,
+   "tier": 2,
+   "port": false
+  },
+  {
+   "key": "belgrad",
+   "name": "Belgrad",
+   "country": "yugoslavya",
+   "lat": 44.79,
+   "lon": 20.45,
+   "tier": 4,
+   "port": false
+  },
+  {
+   "key": "nis",
+   "name": "Niş",
+   "country": "yugoslavya",
+   "lat": 43.32,
+   "lon": 21.9,
+   "tier": 3,
+   "port": false
+  },
+  {
+   "key": "uskup",
+   "name": "Üsküp",
+   "country": "yugoslavya",
+   "lat": 42.0,
+   "lon": 21.43,
+   "tier": 3,
+   "port": false
+  },
+  {
+   "key": "manastir",
+   "name": "Manastır",
+   "country": "yugoslavya",
+   "lat": 41.03,
+   "lon": 21.33,
+   "tier": 2,
+   "port": false
+  },
+  {
+   "key": "kragujevac",
+   "name": "Kragujevac",
+   "country": "yugoslavya",
+   "lat": 44.01,
+   "lon": 20.91,
+   "tier": 2,
+   "port": false
+  },
+  {
+   "key": "pristine",
+   "name": "Priştine",
+   "country": "yugoslavya",
+   "lat": 42.66,
+   "lon": 21.17,
+   "tier": 2,
+   "port": false
+  },
+  {
+   "key": "cetine",
+   "name": "Çetine",
+   "country": "yugoslavya",
+   "lat": 42.39,
+   "lon": 18.92,
+   "tier": 2,
+   "port": false
+  },
+  {
+   "key": "podgorica",
+   "name": "Podgorica",
+   "country": "yugoslavya",
+   "lat": 42.44,
+   "lon": 19.26,
+   "tier": 2,
+   "port": false
+  },
+  {
+   "key": "drac",
+   "name": "Dıraç",
+   "country": "arnavutluk",
+   "lat": 41.32,
+   "lon": 19.45,
+   "tier": 2,
+   "port": true
+  },
+  {
+   "key": "avlonya",
+   "name": "Avlonya",
+   "country": "arnavutluk",
+   "lat": 40.47,
+   "lon": 19.49,
+   "tier": 2,
+   "port": true
+  },
+  {
+   "key": "iskodra",
+   "name": "İşkodra",
+   "country": "arnavutluk",
+   "lat": 42.07,
+   "lon": 19.51,
+   "tier": 2,
+   "port": false
+  },
+  {
+   "key": "korce",
+   "name": "Görice",
+   "country": "arnavutluk",
+   "lat": 40.62,
+   "lon": 20.78,
+   "tier": 2,
+   "port": false
+  },
+  {
+   "key": "bukres",
+   "name": "Bükreş",
+   "country": "romanya",
+   "lat": 44.43,
+   "lon": 26.1,
+   "tier": 5,
+   "port": false
+  },
+  {
+   "key": "kostence",
+   "name": "Köstence",
+   "country": "romanya",
+   "lat": 44.17,
+   "lon": 28.63,
+   "tier": 2,
+   "port": true
+  },
+  {
+   "key": "yas",
+   "name": "Yaş",
+   "country": "romanya",
+   "lat": 47.16,
+   "lon": 27.59,
+   "tier": 3,
+   "port": false
+  },
+  {
+   "key": "craiova",
+   "name": "Craiova",
+   "country": "romanya",
+   "lat": 44.32,
+   "lon": 23.8,
+   "tier": 3,
+   "port": false
+  },
+  {
+   "key": "galac",
+   "name": "Kalas",
+   "country": "romanya",
+   "lat": 45.44,
+   "lon": 28.05,
+   "tier": 3,
+   "port": false
+  },
+  {
+   "key": "ploiesti",
+   "name": "Ploieşti",
+   "country": "romanya",
+   "lat": 44.94,
+   "lon": 26.02,
+   "tier": 2,
+   "port": false
+  },
+  {
+   "key": "saraybosna",
+   "name": "Saraybosna",
+   "country": "yugoslavya",
+   "lat": 43.86,
+   "lon": 18.41,
+   "tier": 3,
+   "port": false
+  },
+  {
+   "key": "zagreb",
+   "name": "Zagreb",
+   "country": "yugoslavya",
+   "lat": 45.81,
+   "lon": 15.98,
+   "tier": 3,
+   "port": false
+  },
+  {
+   "key": "trieste",
+   "name": "Trieste",
+   "country": "italya",
+   "lat": 45.65,
+   "lon": 13.78,
+   "tier": 4,
+   "port": true
+  },
+  {
+   "key": "budapeste",
+   "name": "Budapeşte",
+   "country": "macaristan",
+   "lat": 47.5,
+   "lon": 19.04,
+   "tier": 5,
+   "port": false
+  },
+  {
+   "key": "temesvar",
+   "name": "Temeşvar",
+   "country": "romanya",
+   "lat": 45.75,
+   "lon": 21.23,
+   "tier": 3,
+   "port": false
+  },
+  {
+   "key": "kolojvar",
+   "name": "Koloşvar",
+   "country": "romanya",
+   "lat": 46.77,
+   "lon": 23.59,
+   "tier": 3,
+   "port": false
+  },
+  {
+   "key": "ragusa",
+   "name": "Ragusa",
+   "country": "yugoslavya",
+   "lat": 42.65,
+   "lon": 18.09,
+   "tier": 2,
+   "port": true
+  },
+  {
+   "key": "split",
+   "name": "Split",
+   "country": "yugoslavya",
+   "lat": 43.51,
+   "lon": 16.44,
+   "tier": 2,
+   "port": true
+  },
+  {
+   "key": "pola",
+   "name": "Pola",
+   "country": "yugoslavya",
+   "lat": 44.87,
+   "lon": 13.85,
+   "tier": 2,
+   "port": true
+  },
+  {
+   "key": "mostar",
+   "name": "Mostar",
+   "country": "yugoslavya",
+   "lat": 43.34,
+   "lon": 17.81,
+   "tier": 2,
+   "port": false
+  },
+  {
+   "key": "segedin",
+   "name": "Segedin",
+   "country": "macaristan",
+   "lat": 46.25,
+   "lon": 20.15,
+   "tier": 3,
+   "port": false
+  },
+  {
+   "key": "graz",
+   "name": "Graz",
+   "country": "avusturya",
+   "lat": 47.07,
+   "lon": 15.44,
+   "tier": 3,
+   "port": false
+  },
+  {
+   "key": "fiume",
+   "name": "Fiume",
+   "country": "yugoslavya",
+   "lat": 45.33,
+   "lon": 14.44,
+   "tier": 3,
+   "port": true
+  },
+  {
+   "key": "roma",
+   "name": "Roma",
+   "country": "italya",
+   "lat": 41.9,
+   "lon": 12.5,
+   "tier": 5,
+   "port": false
+  },
+  {
+   "key": "napoli",
+   "name": "Napoli",
+   "country": "italya",
+   "lat": 40.85,
+   "lon": 14.27,
+   "tier": 5,
+   "port": true
+  },
+  {
+   "key": "bari",
+   "name": "Bari",
+   "country": "italya",
+   "lat": 41.12,
+   "lon": 16.87,
+   "tier": 3,
+   "port": true
+  },
+  {
+   "key": "taranto",
+   "name": "Taranto",
+   "country": "italya",
+   "lat": 40.47,
+   "lon": 17.24,
+   "tier": 3,
+   "port": true
+  },
+  {
+   "key": "palermo",
+   "name": "Palermo",
+   "country": "italya",
+   "lat": 38.12,
+   "lon": 13.36,
+   "tier": 4,
+   "port": true
+  },
+  {
+   "key": "messina",
+   "name": "Messina",
+   "country": "italya",
+   "lat": 38.19,
+   "lon": 15.55,
+   "tier": 3,
+   "port": true
+  },
+  {
+   "key": "ankona",
+   "name": "Ankona",
+   "country": "italya",
+   "lat": 43.62,
+   "lon": 13.52,
+   "tier": 3,
+   "port": true
+  },
+  {
+   "key": "trablusgarp",
+   "name": "Trablusgarp",
+   "country": "italya",
+   "lat": 32.89,
+   "lon": 13.19,
+   "tier": 3,
+   "port": true
+  },
+  {
+   "key": "bingazi",
+   "name": "Bingazi",
+   "country": "italya",
+   "lat": 32.12,
+   "lon": 20.09,
+   "tier": 2,
+   "port": true
+  },
+  {
+   "key": "derne",
+   "name": "Derne",
+   "country": "italya",
+   "lat": 32.76,
+   "lon": 22.64,
+   "tier": 2,
+   "port": true
+  },
+  {
+   "key": "rodos",
+   "name": "Rodos",
+   "country": "italya",
+   "lat": 36.43,
+   "lon": 28.22,
+   "tier": 2,
+   "port": true
+  },
+  {
+   "key": "katanya",
+   "name": "Katanya",
+   "country": "italya",
+   "lat": 37.5,
+   "lon": 15.09,
+   "tier": 3,
+   "port": true
+  },
+  {
+   "key": "odessa",
+   "name": "Odessa",
+   "country": "sovyetler",
+   "lat": 46.48,
+   "lon": 30.73,
+   "tier": 4,
+   "port": true
+  },
+  {
+   "key": "sivastopol",
+   "name": "Sivastopol",
+   "country": "sovyetler",
+   "lat": 44.62,
+   "lon": 33.52,
+   "tier": 3,
+   "port": true
+  },
+  {
+   "key": "tiflis",
+   "name": "Tiflis",
+   "country": "sovyetler",
+   "lat": 41.72,
+   "lon": 44.79,
+   "tier": 4,
+   "port": false
+  },
+  {
+   "key": "batum",
+   "name": "Batum",
+   "country": "sovyetler",
+   "lat": 41.64,
+   "lon": 41.64,
+   "tier": 2,
+   "port": true
+  },
+  {
+   "key": "kars",
+   "name": "Kars",
+   "country": "turkiye",
+   "lat": 40.6,
+   "lon": 43.1,
+   "tier": 2,
+   "port": false
+  },
+  {
+   "key": "erivan",
+   "name": "Erivan",
+   "country": "sovyetler",
+   "lat": 40.18,
+   "lon": 44.51,
+   "tier": 2,
+   "port": false
+  },
+  {
+   "key": "akmescit",
+   "name": "Akmescit",
+   "country": "sovyetler",
+   "lat": 44.95,
+   "lon": 34.1,
+   "tier": 2,
+   "port": false
+  },
+  {
+   "key": "kerc",
+   "name": "Kerç",
+   "country": "sovyetler",
+   "lat": 45.36,
+   "lon": 36.47,
+   "tier": 2,
+   "port": true
+  },
+  {
+   "key": "novorossiysk",
+   "name": "Novorossiysk",
+   "country": "sovyetler",
+   "lat": 44.72,
+   "lon": 37.77,
+   "tier": 2,
+   "port": true
+  },
+  {
+   "key": "kisinev",
+   "name": "Kişinev",
+   "country": "romanya",
+   "lat": 47.01,
+   "lon": 28.86,
+   "tier": 3,
+   "port": false
+  },
+  {
+   "key": "kutais",
+   "name": "Kutais",
+   "country": "sovyetler",
+   "lat": 42.27,
+   "lon": 42.7,
+   "tier": 2,
+   "port": false
+  },
+  {
+   "key": "nikolayev",
+   "name": "Nikolayev",
+   "country": "sovyetler",
+   "lat": 46.97,
+   "lon": 32.0,
+   "tier": 3,
+   "port": true
+  },
+  {
+   "key": "kahire",
+   "name": "Kahire",
+   "country": "misir",
+   "lat": 30.04,
+   "lon": 31.24,
+   "tier": 5,
+   "port": false
+  },
+  {
+   "key": "iskenderiye",
+   "name": "İskenderiye",
+   "country": "misir",
+   "lat": 31.2,
+   "lon": 29.92,
+   "tier": 4,
+   "port": true
+  },
+  {
+   "key": "portsait",
+   "name": "Port Said",
+   "country": "misir",
+   "lat": 31.26,
+   "lon": 32.3,
+   "tier": 2,
+   "port": true
+  },
+  {
+   "key": "lefkosa",
+   "name": "Lefkoşa",
+   "country": "britanya",
+   "lat": 35.17,
+   "lon": 33.36,
+   "tier": 2,
+   "port": false
+  },
+  {
+   "key": "larnaka",
+   "name": "Larnaka",
+   "country": "britanya",
+   "lat": 34.92,
+   "lon": 33.63,
+   "tier": 2,
+   "port": true
+  },
+  {
+   "key": "valletta",
+   "name": "Valletta",
+   "country": "britanya",
+   "lat": 35.9,
+   "lon": 14.51,
+   "tier": 2,
+   "port": true
+  },
+  {
+   "key": "suveys",
+   "name": "Süveyş",
+   "country": "misir",
+   "lat": 29.97,
+   "lon": 32.55,
+   "tier": 2,
+   "port": false
+  },
+  {
+   "key": "tebriz",
+   "name": "Tebriz",
+   "country": "iran",
+   "lat": 38.08,
+   "lon": 46.29,
+   "tier": 3,
+   "port": false
+  },
+  {
+   "key": "urmiye",
+   "name": "Urmiye",
+   "country": "iran",
+   "lat": 37.55,
+   "lon": 45.07,
+   "tier": 2,
+   "port": false
+  },
+  {
+   "key": "amman",
+   "name": "Amman",
+   "lat": 31.95,
+   "lon": 35.93,
+   "tier": 2,
+   "port": false,
+   "country": "britanya"
+  },
+  {
+   "key": "tiran",
+   "name": "Tiran",
+   "lat": 41.33,
+   "lon": 19.82,
+   "tier": 3,
+   "port": false,
+   "country": "arnavutluk"
+  },
+  {
+   "key": "antakya",
+   "name": "Antakya",
+   "lat": 36.2,
+   "lon": 36.16,
+   "tier": 2,
+   "port": false,
+   "country": "fransa"
+  },
+  {
+   "key": "iskenderun",
+   "name": "İskenderun",
+   "lat": 36.59,
+   "lon": 36.17,
+   "tier": 2,
+   "port": true,
+   "country": "fransa"
+  }
+ ],
+ "rails": [
+  [
+   "istanbul",
+   "edirne"
+  ],
+  [
+   "edirne",
+   "filibe"
+  ],
+  [
+   "filibe",
+   "sofya"
+  ],
+  [
+   "sofya",
+   "nis"
+  ],
+  [
+   "nis",
+   "belgrad"
+  ],
+  [
+   "belgrad",
+   "segedin"
+  ],
+  [
+   "segedin",
+   "budapeste"
+  ],
+  [
+   "selanik",
+   "uskup"
+  ],
+  [
+   "uskup",
+   "nis"
+  ],
+  [
+   "selanik",
+   "serez"
+  ],
+  [
+   "serez",
+   "dedeagac"
+  ],
+  [
+   "dedeagac",
+   "edirne"
+  ],
+  [
+   "selanik",
+   "manastir"
+  ],
+  [
+   "atina",
+   "larisa"
+  ],
+  [
+   "atina",
+   "patras"
+  ],
+  [
+   "patras",
+   "kalamata"
+  ],
+  [
+   "varna",
+   "ruscuk"
+  ],
+  [
+   "filibe",
+   "burgaz"
+  ],
+  [
+   "varna",
+   "sumnu"
+  ],
+  [
+   "sumnu",
+   "tirnova"
+  ],
+  [
+   "bukres",
+   "kostence"
+  ],
+  [
+   "bukres",
+   "ploiesti"
+  ],
+  [
+   "ploiesti",
+   "yas"
+  ],
+  [
+   "bukres",
+   "craiova"
+  ],
+  [
+   "bukres",
+   "galac"
+  ],
+  [
+   "izmit",
+   "eskisehir"
+  ],
+  [
+   "eskisehir",
+   "ankara"
+  ],
+  [
+   "eskisehir",
+   "afyon"
+  ],
+  [
+   "afyon",
+   "konya"
+  ],
+  [
+   "adana",
+   "mersin"
+  ],
+  [
+   "halep",
+   "hama"
+  ],
+  [
+   "hama",
+   "sam"
+  ],
+  [
+   "sam",
+   "beyrut"
+  ],
+  [
+   "kudus",
+   "yafa"
+  ],
+  [
+   "izmir",
+   "aydin"
+  ],
+  [
+   "izmir",
+   "afyon"
+  ],
+  [
+   "izmir",
+   "balikesir"
+  ],
+  [
+   "kahire",
+   "iskenderiye"
+  ],
+  [
+   "kahire",
+   "portsait"
+  ],
+  [
+   "kahire",
+   "suveys"
+  ],
+  [
+   "trieste",
+   "zagreb"
+  ],
+  [
+   "zagreb",
+   "budapeste"
+  ],
+  [
+   "zagreb",
+   "fiume"
+  ],
+  [
+   "segedin",
+   "temesvar"
+  ],
+  [
+   "budapeste",
+   "kolojvar"
+  ],
+  [
+   "saraybosna",
+   "mostar"
+  ],
+  [
+   "mostar",
+   "ragusa"
+  ],
+  [
+   "odessa",
+   "nikolayev"
+  ],
+  [
+   "odessa",
+   "kisinev"
+  ],
+  [
+   "sivastopol",
+   "akmescit"
+  ],
+  [
+   "tiflis",
+   "batum"
+  ],
+  [
+   "tiflis",
+   "kars"
+  ],
+  [
+   "tiflis",
+   "kutais"
+  ],
+  [
+   "tiflis",
+   "erivan"
+  ],
+  [
+   "napoli",
+   "roma"
+  ],
+  [
+   "roma",
+   "ankona"
+  ],
+  [
+   "bari",
+   "taranto"
+  ],
+  [
+   "ankona",
+   "bari"
+  ],
+  [
+   "messina",
+   "palermo"
+  ],
+  [
+   "messina",
+   "katanya"
+  ]
+ ]
+}

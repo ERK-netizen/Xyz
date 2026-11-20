@@ -542,6 +542,12 @@ Yeni bir Core modülü eklemek anayasa değişikliğidir.
   karede yıkıp aynı oturumla yeniden kurar. `NewGamePanel`: senaryo → ülke. Harita renkleri 16 kimlik.
 - Açık bulgu: 1939 barış ekonomisi (hazine P90 3,03 > 3,0) — ayrı gelir/gider denge geçişi (`Docs/DENGE_1914.md`).
 
+**Uygulama kararları (Adım 19, 1936 senaryosu):**
+- `1936_mvp` paketi 07.03.1936 CShapes'ten; 15 ülke (Avusturya 8 ve Arnavutluk 15 bağımsız, İtalya = İtalya + Libya), 133
+  bölge/şehir. Düzeltmeler: Onikiadalar İtalyan, Hatay Fransız Levant'ında (yaklaşık sancak dörtgeni). `Scenario1936`:
+  Türkiye CHP tek parti (istikrar 0,65), 10 başkent (Tiran dahil), YZ'nin ilk savaşı ≥ 07.04.1939 (ilk yıl tam barış, testle).
+  `ScenarioFactory.Create1936`, katalogda 1914 → 1936 → 1939 sırası.
+
 ---
 
 ## 3. Depo düzeni

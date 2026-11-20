@@ -341,8 +341,16 @@ def to_rings(region):
             continue
         outer = ring_e6(poly.exterior.coords)
         if not ring_ok(outer):
-            simplified = Polygon(poly.exterior).simplify(0.002, preserve_topology=True)
-            outer = ring_e6(simplified.exterior.coords) if isinstance(simplified, Polygon) else []
+            outer = []
+            for tolerance in (0.002, 0.01, 0.03):
+                # İnce çıkıntılar (kaynak sınırındaki iğneler) E6 yuvarlamasında kendini kesebilir: önce kapanışla
+                # (dışa + içe tampon) giderilir, sonra sadeleştirilir. Yalnız ham halka geçersizse çalışır.
+                closed = Polygon(poly.exterior).buffer(tolerance).buffer(-tolerance) if tolerance > 0.002 else Polygon(poly.exterior)
+                closed = max(polygons_of(closed), key=lambda q: q.area) if not isinstance(closed, Polygon) else closed
+                simplified = closed.simplify(tolerance, preserve_topology=True)
+                outer = ring_e6(simplified.exterior.coords) if isinstance(simplified, Polygon) else []
+                if ring_ok(outer):
+                    break
             if not ring_ok(outer):
                 log("uyarı: geçersiz halka atlandı (alan", round(poly.area, 4), ")")
                 continue

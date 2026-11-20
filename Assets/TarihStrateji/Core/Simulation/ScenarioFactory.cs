@@ -45,6 +45,10 @@ namespace TarihStrateji.Core.Simulation
         public static GameState Create1914(GameContent content, GeoPackage package, ulong seed, GameMode mode, CountryId player) =>
             CreateFromPackage(content, package, seed, mode, player, Scenario1914.Populate);
 
+        /// <summary>"1936" (7 Mart 1936): 1914 ile aynı ordu/filo kuralıyla, <see cref="Scenario1936"/> kurulumu.</summary>
+        public static GameState Create1936(GameContent content, GeoPackage package, ulong seed, GameMode mode, CountryId player) =>
+            CreateFromPackage(content, package, seed, mode, player, Scenario1936.Populate);
+
         /// <summary>"1939" (1 Eylül 1939): 1914 ile aynı ordu/filo kuralıyla, <see cref="Scenario1939"/> kurulumu.</summary>
         public static GameState Create1939(GameContent content, GeoPackage package, ulong seed, GameMode mode, CountryId player) =>
             CreateFromPackage(content, package, seed, mode, player, Scenario1939.Populate);
