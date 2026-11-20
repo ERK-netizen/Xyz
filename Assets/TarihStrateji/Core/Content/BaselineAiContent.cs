@@ -7,7 +7,7 @@ namespace TarihStrateji.Core.Content
     /// Temel YZ ayarları. Haftalık karar; savaş ilanı için kendi gücü, hedefin tahmini gücünün
     /// 1,6 katı ve en az 3 tümen eşdeğeri, istikrar ≥ 0,45. Görülmeyen düşman şehri başına 1 tümen
     /// varsayılır. Saldırı için yerel güç, tahmini savunmanın 1,2 katı ve teşkilat ≥ %50. Barış
-    /// en erken 60 gün sonra; 240 günde çıkmaz savaşta beyaz barış; şehirlerin %60'ından azı elde
+    /// en erken 120 gün sonra (Adım 17 denge taraması; 60 günde savaşların yarısı 120 günden kısa bitiyordu); 240 günde çıkmaz savaşta beyaz barış; şehirlerin %60'ından azı elde
     /// kaldıysa veya güç düşmanın 0,6'sının altındaysa "kaybediyoruz". Ordu hedefi barışta şehir
     /// başına 2 tümen, savaşta düşman tahmininin 1,2 katı; seferber nüfus çalışma çağının %12'sini
     /// aşmaz. Hazine 15 000'in üstündeyse aynı anda en çok 2 inşaat: önce silah, çelik, maden, tarım.
@@ -27,7 +27,7 @@ namespace TarihStrateji.Core.Content
             defendRadius: 150_000L,
             advanceSearchRadius: 600_000L,
             unitsPerAdvanceTarget: 2,
-            peaceAfterWarDays: 60,
+            peaceAfterWarDays: 120,
             stalemateDays: 240,
             losingHeldShare: F("0.6"),
             losingPowerRatio: F("0.6"),

@@ -32,9 +32,9 @@ namespace TarihStrateji.Core.Tests.Support
         public const string DiplomacyDay60 = "1e0fc84344d65c056d80bc99f2e63597a12d0996b216d301a76db5edafa8b785"; // aynı tohum ve kaydet/yükle aynı dosyada doğrulanır
 
         /// <summary>365 günlük "Ege 1925" YZ kampanyası (Gözlemci modu, savaşla başlar, tohum 7) son gün durum hash'i.</summary>
-        public const string CampaignDay365 = "f9c6ba04accfa872a97ebd642788f8db1731082dcd1dad7ca6df83903d3a6ea0"; // aynı kampanya ve 180. gün kaydet/yükle aynı testte doğrulanır
+        public const string CampaignDay365 = "501d5b310b16a5110f8e861bc718d5d4846065dc9538d6f8dc0b534bb23d6972"; // aynı kampanya ve 180. gün kaydet/yükle aynı testte doğrulanır
 
         /// <summary>"1914 MVP" YZ'li Gözlemci koşusu (tohum 11) 180. gün durum hash'i; paket ve senaryo kurulumu dahil.</summary>
-        public const string Scenario1914Day180 = "c411c8228e1dc3bec2e37c300f0c8c4f97c60aeef04a0e4d5a66cd335331ca10"; // aynı tohum ve 90. gün kaydet/yükle aynı testte doğrulanır
+        public const string Scenario1914Day180 = "0280bef1e49f9542963f5a97247869468b0754d4c56cc41398b421d8ff6ba81a"; // aynı tohum ve 90. gün kaydet/yükle aynı testte doğrulanır
     }
 }
