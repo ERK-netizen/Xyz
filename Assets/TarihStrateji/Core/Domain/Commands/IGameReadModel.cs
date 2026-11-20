@@ -41,6 +41,9 @@ namespace TarihStrateji.Core.Domain.Commands
 
         bool TryGetCountry(CountryId country, out CountryView view);
 
+        /// <summary>Ülkenin bu senaryodaki ad anahtarı (ör. <c>ulke.1914.osmanli</c>); tanımsızsa <c>ulke.N</c>.</summary>
+        string CountryNameKey(CountryId country);
+
         /// <summary>Ekonomisi olan ülkeler (kimlik sırasıyla).</summary>
         void GetCountries(List<CountryId> into);
 

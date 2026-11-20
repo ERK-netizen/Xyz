@@ -28,6 +28,8 @@ namespace TarihStrateji.Core.Content
                 new PartyDefinition(BaselineStatecraft.Progressive, "parti.terakkiperverCumhuriyetFirkasi", BaselineStatecraft.Turkey, Ideology.Liberal),
                 new PartyDefinition(BaselineStatecraft.GreekLiberal, "parti.yunanLiberalParti", BaselineStatecraft.Greece, Ideology.Liberal),
                 new PartyDefinition(BaselineStatecraft.GreekPeoples, "parti.yunanHalkPartisi", BaselineStatecraft.Greece, Ideology.Monarchist),
+                new PartyDefinition(BaselineStatecraft.UnionAndProgress, "parti.ittihatVeTerakki", BaselineStatecraft.Turkey, Ideology.Nationalist),
+                new PartyDefinition(BaselineStatecraft.FreedomAndAccord, "parti.hurriyetVeItilaf", BaselineStatecraft.Turkey, Ideology.Liberal),
             };
             var institutions = new[]
             {

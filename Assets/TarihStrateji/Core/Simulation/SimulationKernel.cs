@@ -43,6 +43,7 @@ namespace TarihStrateji.Core.Simulation
         private readonly CanonicalWriter _hashWriter = new CanonicalWriter(64 * 1024);
         private byte[] _lastStateHash;
         private readonly Content.GameContent _content;
+        private readonly System.Func<CountryId, string> _countryNames;
 
         private SimulationKernel(SimulationSetup setup, GameState state)
         {
@@ -52,6 +53,7 @@ namespace TarihStrateji.Core.Simulation
             _autosaveIntervalDays = setup.AutosaveIntervalDays;
             _hashIntervalDays = setup.HashIntervalDays;
             _content = setup.Content;
+            _countryNames = setup.CountryNameKeys;
             _phases = new List<ISimulationSystem>[SimulationPhases.Count];
             for (int p = 0; p < _phases.Length; p++)
             {
@@ -91,6 +93,12 @@ namespace TarihStrateji.Core.Simulation
         public void GetCities(List<CityView> into) => ReadModelProjection.Cities(_state, into);
 
         public bool TryGetCountry(CountryId country, out CountryView view) => ReadModelProjection.TryCountry(_state, country, out view);
+
+        public string CountryNameKey(CountryId country)
+        {
+            string key = _countryNames?.Invoke(country);
+            return string.IsNullOrEmpty(key) ? "ulke." + country.Value.ToString(System.Globalization.CultureInfo.InvariantCulture) : key;
+        }
 
         public void GetCountries(List<CountryId> into)
         {

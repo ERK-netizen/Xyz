@@ -510,7 +510,7 @@ namespace TarihStrateji.Unity.Presentation.UI
             MarkDirty();
         }
 
-        private string CountryName(CountryId country) => country.IsValid ? _text.Get("ulke." + country.Value) : "—";
+        private string CountryName(CountryId country) => country.IsValid ? _text.Get(_session.ReadModel.CountryNameKey(country)) : "—";
 
         private static string KindKey(UnitViewKind kind)
         {

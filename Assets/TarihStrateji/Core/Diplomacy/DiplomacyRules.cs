@@ -59,7 +59,10 @@ namespace TarihStrateji.Core.Diplomacy
             return ValidationResult.Ok;
         }
 
-        /// <summary>Savaşı başlatır; savunanın müttefikleri antlaşma kimliği sırasıyla katılır. Açılan savaşları döndürür.</summary>
+        /// <summary>
+        /// Savaşı başlatır; savunanın müttefikleri antlaşma kimliği sırasıyla katılır (saldırganla antlaşması
+        /// olanlar hariç). Açılan savaşları döndürür.
+        /// </summary>
         public static List<WarId> DeclareWar(DiplomacyState state, CountryId attacker, CountryId defender, IReadOnlyList<RegionId> goals, GameDate today)
         {
             var opened = new List<WarId>();
@@ -79,7 +82,9 @@ namespace TarihStrateji.Core.Diplomacy
                 }
 
                 CountryId ally = t.Other(defender);
-                if (ally == attacker || state.AtWar(ally, attacker) || state.HasTreaty(TreatyKind.Alliance, ally, attacker, today))
+                // Saldırganla ittifakı, saldırmazlık paktı ya da barış sonrası ateşkesi olan müttefik çağrılmaz.
+                if (ally == attacker || state.AtWar(ally, attacker) || state.HasTreaty(TreatyKind.Alliance, ally, attacker, today)
+                    || state.HasTreaty(TreatyKind.NonAggression, ally, attacker, today) || state.HasTreaty(TreatyKind.Peace, ally, attacker, today))
                 {
                     continue;
                 }

@@ -106,6 +106,23 @@ namespace TarihStrateji.Core.Tests.Diplomacy
         }
 
         [Test]
+        public void DefensiveAlly_WithATruceOrPactWithTheAttacker_StaysOut()
+        {
+            WarWorld s = Peaceful();
+            DiplomacyState d = s.State.Diplomacy;
+            GameDate today = s.State.Today;
+            DiplomacyRules.Propose(d, Prm, ProposalKind.Alliance, B, C, NoTransfers, today);
+            DiplomacyRules.Respond(d, s.State.World, Prm, new ProposalId(1), true, today);
+            DiplomacyRules.StartWar(d, A, C, today);
+            DiplomacyRules.ConcludePeace(d, s.State.World, Prm, A, C, NoTransfers, today); // A–C ateşkesi
+            List<WarId> opened = DiplomacyRules.DeclareWar(d, A, B, NoGoals, today);
+            Assert.That(opened.Count, Is.EqualTo(1), "ateşkesli müttefik savunmaya çağrılmaz");
+            Assert.That(d.AtWar(A, C), Is.False);
+            var violations = new List<string>();
+            Assert.That(DiplomacyInvariants.Check(d, s.State.World, today, violations), Is.EqualTo(0), string.Join("\n", violations));
+        }
+
+        [Test]
         public void NonAggressionPact_BlocksWar_UntilItExpires()
         {
             WarWorld s = Peaceful();

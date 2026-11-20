@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using TarihStrateji.Core.Simulation.Commands;
 using TarihStrateji.Core.Simulation.Phases;
 
+using TarihStrateji.Core.Domain.Ids;
+
 namespace TarihStrateji.Core.Simulation
 {
     /// <summary>
@@ -43,6 +45,9 @@ namespace TarihStrateji.Core.Simulation
         /// üretici (ADR-011, §16.4); kayıtta yalnız geometrinin parmak izi vardır.
         /// </summary>
         public System.Func<World.Geography.GeoWorld> GeoWorldTemplate { get; set; }
+
+        /// <summary>Senaryonun ülke ad anahtarları (sunum içindir; durum değildir). Boşsa <c>ulke.N</c>.</summary>
+        public System.Func<CountryId, string> CountryNameKeys { get; set; }
 
         public SimulationSetup AddSystem(ISimulationSystem system)
         {

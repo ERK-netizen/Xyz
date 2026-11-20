@@ -66,10 +66,15 @@ namespace TarihStrateji.Core.Content.Packages
                 }
 
                 var countries = new CountryId[r.ReadCount(r.Remaining)];
+                var countryNames = new string[countries.Length];
                 for (int i = 0; i < countries.Length; i++)
                 {
                     countries[i] = new CountryId(r.ReadUInt64());
-                    r.ReadString(); // ad anahtarı (ulke.N); sunum tr.txt'den okur
+                    countryNames[i] = r.ReadString();
+                    if (i > 0 && countries[i - 1] >= countries[i])
+                    {
+                        return Result<GeoPackage>.Failure(ContentErrorKeys.PaketBozuk);
+                    }
                 }
 
                 var regions = new PackageRegion[r.ReadCount(r.Remaining)];
@@ -165,7 +170,7 @@ namespace TarihStrateji.Core.Content.Packages
                 }
 
                 r.ExpectEnd();
-                var package = new GeoPackage(scenario, GameDate.FromYmd(year, month, day), sources, countries, regions, borders, nodes, edges, cities);
+                var package = new GeoPackage(scenario, GameDate.FromYmd(year, month, day), sources, countries, countryNames, regions, borders, nodes, edges, cities);
                 Result<GeoWorld> world = package.TryBuildWorld();
                 return world.IsSuccess ? Result<GeoPackage>.Success(package) : Result<GeoPackage>.Failure(world.ErrorKey);
             }

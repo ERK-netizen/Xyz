@@ -23,15 +23,17 @@ namespace TarihStrateji.Core.Content.Packages
         private readonly TransportEdge[] _edges;
         private readonly PackageCity[] _cities;
         private readonly CountryId[] _countries;
+        private readonly string[] _countryNames;
         private readonly PackageSource[] _sources;
 
-        internal GeoPackage(string scenario, GameDate date, PackageSource[] sources, CountryId[] countries, PackageRegion[] regions,
+        internal GeoPackage(string scenario, GameDate date, PackageSource[] sources, CountryId[] countries, string[] countryNames, PackageRegion[] regions,
             (RegionId, RegionId, long, bool)[] borders, TransportNode[] nodes, TransportEdge[] edges, PackageCity[] cities)
         {
             Scenario = scenario;
             Date = date;
             _sources = sources;
             _countries = countries;
+            _countryNames = countryNames;
             _regions = regions;
             _borders = borders;
             _nodes = nodes;
@@ -47,6 +49,20 @@ namespace TarihStrateji.Core.Content.Packages
 
         /// <summary>Paketteki ülkeler (kimlik sırasıyla).</summary>
         public IReadOnlyList<CountryId> Countries => _countries;
+
+        /// <summary>Ülkenin senaryodaki ad anahtarı (ör. <c>ulke.1914.osmanli</c>); pakette yoksa <c>ulke.N</c>.</summary>
+        public string CountryNameKey(CountryId country)
+        {
+            for (int i = 0; i < _countries.Length; i++)
+            {
+                if (_countries[i] == country)
+                {
+                    return _countryNames[i];
+                }
+            }
+
+            return "ulke." + country.Value.ToString(System.Globalization.CultureInfo.InvariantCulture);
+        }
 
         public IReadOnlyList<PackageRegion> Regions => _regions;
 

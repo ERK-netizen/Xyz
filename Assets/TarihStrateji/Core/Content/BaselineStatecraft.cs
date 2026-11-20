@@ -16,6 +16,8 @@ namespace TarihStrateji.Core.Content
         public static readonly PartyId Progressive = new PartyId(2);
         public static readonly PartyId GreekLiberal = new PartyId(3);
         public static readonly PartyId GreekPeoples = new PartyId(4);
+        public static readonly PartyId UnionAndProgress = new PartyId(5);
+        public static readonly PartyId FreedomAndAccord = new PartyId(6);
 
         public static readonly InstitutionId Army = new InstitutionId(1);
         public static readonly InstitutionId Parliament = new InstitutionId(2);

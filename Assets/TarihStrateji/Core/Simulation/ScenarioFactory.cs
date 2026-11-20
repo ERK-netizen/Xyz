@@ -1,5 +1,7 @@
 using System;
+using System.Collections.Generic;
 using TarihStrateji.Core.Content;
+using TarihStrateji.Core.Content.Packages;
 using TarihStrateji.Core.Domain.Commands;
 using TarihStrateji.Core.Domain.Ids;
 using TarihStrateji.Core.Simulation.State;
@@ -32,6 +34,61 @@ namespace TarihStrateji.Core.Simulation
             Army(war, state, BaselineStatecraft.Greece, new[] { "sehir.ege.atina", "sehir.ege.atina", "sehir.ege.selanik", "sehir.ege.selanik", "sehir.ege.larisa" });
             Require(GeoNavalRules.Build(war, BaselineStatecraft.Turkey, BaselineUnits.DestroyerFlotilla, CityOf(state, "sehir.ege.istanbul")).IsSuccess);
             Require(GeoNavalRules.Build(war, BaselineStatecraft.Greece, BaselineUnits.DestroyerFlotilla, CityOf(state, "sehir.ege.atina")).IsSuccess);
+            return state;
+        }
+
+        /// <summary>
+        /// "1914 MVP" (28 Haziran 1914, barış): coğrafya paketten; her ülkeye nüfusuna göre 1–10 tümen
+        /// (büyükten küçüğe şehirlerine sırayla dağıtılır, toplanabilen şehirlerde) ve ana liman sahibi
+        /// büyük güçlere birer muhrip filotillası.
+        /// </summary>
+        public static GameState Create1914(GameContent content, GeoPackage package, ulong seed, GameMode mode, CountryId player)
+        {
+            if (content == null || package == null)
+            {
+                throw new ArgumentNullException(content == null ? nameof(content) : nameof(package));
+            }
+
+            GameState state = GameState.CreateNew(seed, mode, package.Date, mode == GameMode.Observer ? CountryId.None : player, package.BuildWorld());
+            Scenario1914.Populate(package, state.World, state.Population, state.Economy, state.Research, state.Politics, state.Characters, state.Effects, content, state.Today);
+            GeoWarfareContext war = GeoWarfareContexts.From(state, content);
+            for (int i = 0; i < package.Countries.Count; i++)
+            {
+                CountryId country = package.Countries[i];
+                int divisions = Scenario1914.Divisions(Scenario1914.CountryPopulation(package, country));
+                var sites = new List<PackageCity>();
+                for (int c = 0; c < package.Cities.Count; c++)
+                {
+                    if (package.Cities[c].Owner == country)
+                    {
+                        sites.Add(package.Cities[c]);
+                    }
+                }
+
+                // Büyük şehir önce (kademe azalan, eşitlikte kimlik sırası; kararlı sıralama).
+                sites.Sort((a, b) => a.Tier != b.Tier ? b.Tier.CompareTo(a.Tier) : a.Id.CompareTo(b.Id));
+                int placed = 0;
+                for (int round = 0; round < 4 && placed < divisions; round++)
+                {
+                    for (int c = 0; c < sites.Count && placed < divisions; c++)
+                    {
+                        if (GeoUnitRules.Recruit(war, country, BaselineUnits.InfantryDivision, sites[c].Id).IsSuccess)
+                        {
+                            placed++;
+                        }
+                    }
+                }
+
+                for (int c = 0; c < sites.Count; c++)
+                {
+                    if (sites[c].IsPort && sites[c].Tier >= 4
+                        && GeoNavalRules.Build(war, country, BaselineUnits.DestroyerFlotilla, sites[c].Id).IsSuccess)
+                    {
+                        break;
+                    }
+                }
+            }
+
             return state;
         }
 

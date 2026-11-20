@@ -1,6 +1,7 @@
 using System;
 using System.IO;
 using TarihStrateji.Core.Content;
+using TarihStrateji.Core.Content.Packages;
 using TarihStrateji.Core.Domain;
 using TarihStrateji.Core.Domain.Commands;
 using TarihStrateji.Core.Persistence;
@@ -10,8 +11,9 @@ using UnityEngine;
 namespace TarihStrateji.Unity.Bootstrap
 {
     /// <summary>
-    /// Oyun oturumu: içerik, kurallar ve YZ kurulur; son oturum kaydı varsa yüklenir, yoksa "Ege
-    /// 1925" senaryosu Türkiye ile başlar. Günler <see cref="DaysPerSecond"/> hızında ana iş
+    /// Oyun oturumu: içerik, kurallar ve YZ kurulur; "1914 MVP" coğrafi paketi
+    /// (<c>Resources/Senaryolar/1914_mvp</c>) okunur; son oturum kaydı varsa (aynı haritayla) yüklenir, yoksa
+    /// senaryo Osmanlı İmparatorluğu ile başlar. Günler <see cref="DaysPerSecond"/> hızında ana iş
     /// parçacığında ilerler (karede en çok 4 gün). Oyun kuralı yazmaz: yalnız çekirdeği çalıştırır
     /// ve sunuma <see cref="IGameSession"/> verir. Uygulama arka plana alınınca veya kapanınca
     /// "son_oturum" yuvasına atomik kayıt yapılır; 30 günde bir otomatik kayıt halkası işler.
@@ -19,6 +21,7 @@ namespace TarihStrateji.Unity.Bootstrap
     public sealed class GameBootstrap : MonoBehaviour, IGameSession
     {
         public const string LastSessionSlot = "son_oturum";
+        public const string PackageResource = "Senaryolar/1914_mvp";
         private const int MaxDaysPerFrame = 4;
 
         private SimulationKernel _kernel;
@@ -62,10 +65,11 @@ namespace TarihStrateji.Unity.Bootstrap
             Application.targetFrameRate = 60;
             Screen.orientation = ScreenOrientation.Portrait;
             GameContent content = BaselineContent.Create();
+            GeoPackage package = LoadPackage();
             string directory = Path.Combine(Application.persistentDataPath, "kayitlar");
             Directory.CreateDirectory(directory);
             _store = new FileSaveStore(directory);
-            SimulationSetup setup = CreateSetup(content, _store);
+            SimulationSetup setup = CreateSetup(content, package, _store);
 
             Result<LoadedGame> loaded = GameSaveService.Load(_store, LastSessionSlot, setup);
             if (loaded.IsSuccess)
@@ -75,7 +79,7 @@ namespace TarihStrateji.Unity.Bootstrap
             else
             {
                 ulong seed = (ulong)Environment.TickCount;
-                Result<SimulationKernel> created = SimulationKernel.Create(setup, ScenarioFactory.CreateAegean(content, seed, GameMode.Normal, BaselineStatecraft.Turkey));
+                Result<SimulationKernel> created = SimulationKernel.Create(setup, ScenarioFactory.Create1914(content, package, seed, GameMode.Normal, Scenario1914.Ottoman));
                 if (!created.IsSuccess)
                 {
                     throw new InvalidOperationException("Oyun çekirdeği kurulamadı: " + created.ErrorKey);
@@ -87,12 +91,30 @@ namespace TarihStrateji.Unity.Bootstrap
             _orders = new BootstrapCommandFactory(() => _kernel);
         }
 
-        private static SimulationSetup CreateSetup(GameContent content, FileSaveStore store)
+        private static GeoPackage LoadPackage()
+        {
+            var asset = Resources.Load<TextAsset>(PackageResource);
+            if (asset == null)
+            {
+                throw new InvalidOperationException("Senaryo paketi bulunamadı: Resources/" + PackageResource);
+            }
+
+            Result<GeoPackage> package = GeoPackageReader.Read(asset.bytes);
+            if (!package.IsSuccess)
+            {
+                throw new InvalidOperationException("Senaryo paketi okunamadı: " + package.ErrorKey);
+            }
+
+            return package.Value;
+        }
+
+        private static SimulationSetup CreateSetup(GameContent content, GeoPackage package, FileSaveStore store)
         {
             // Cihazda durum hash'i ve otomatik kayıt seyrek: 30 günde bir (CLAUDE.md §2.5).
             var setup = new SimulationSetup
             {
-                GeoWorldTemplate = AegeanScenario.BuildWorld,
+                GeoWorldTemplate = package.BuildWorld,
+                CountryNameKeys = package.CountryNameKey,
                 HashIntervalDays = 30,
                 AutosaveIntervalDays = 30,
                 AutosaveSink = new AutosaveRing(store),
