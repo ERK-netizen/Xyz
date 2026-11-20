@@ -47,8 +47,12 @@ namespace TarihStrateji.Core.Tests.Scenario
             Assert.That(fleets, Is.InRange(4, 12), "büyük limanı olan güçlerin filoları");
             for (int i = 0; i < Package.Countries.Count; i++)
             {
-                Assert.That(k.TryGetCountry(Package.Countries[i], out CountryView c) && c.Divisions >= 1, Is.True, "ülke " + Package.Countries[i]);
+                CountryId id = Package.Countries[i];
+                int expected = Scenario1914.Divisions(Scenario1914.CountryPopulation(Package, id));
+                Assert.That(k.TryGetCountry(id, out CountryView c) && c.Divisions == expected, Is.True, "ülke " + id);
             }
+
+            Assert.That(Scenario1914.Divisions(50_000), Is.EqualTo(0), "küçük devlet tümensiz başlar (seferberlik tavanı)");
 
             TestSimulation.AdvanceOk(k, 30);
         }
@@ -82,6 +86,7 @@ namespace TarihStrateji.Core.Tests.Scenario
             }
 
             List<string> full = Run(Kernel(11, GameMode.Observer, true), 0, 180);
+            Assert.That(full[179], Is.EqualTo(Support.GoldenValues.Scenario1914Day180), "yeni hash: " + full[179]);
             SimulationKernel b = Kernel(11, GameMode.Observer, true);
             Run(b, 0, 90);
             Result<SimulationKernel> restored = SimulationKernel.Restore(Setup(true), b.CaptureSnapshot());

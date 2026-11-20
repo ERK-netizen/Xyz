@@ -453,6 +453,32 @@ Yeni bir Core modülü eklemek anayasa değişikliğidir.
   seferber ≤ 0,20, bölge payı artışı ≤ 0,25, her tohumda barış ve ≥ 1 muharebe. YZ vergi eşikleri 80 bin/25 bin,
   saldırı oranı 1,0 (ölçümle).
 
+**Uygulama kararları (Adım 14, `Tools/ContentCompiler`, `Core.Content.Packages`, "1914 MVP"):**
+- Veri hattı: `compile_geo_package.py` (Python + shapely, yalnız geliştirme aracı) kaynak GeoJSON'u indirir,
+  SHA-256'sını yapılandırmadakiyle doğrular, kapsam kutusuna kırpar, ülkeleri kaynak adlarından birleştirir,
+  tarihî düzeltmeleri (alan devri) ve ada atamalarını uygular, her ülkeyi kendi şehirlerinin Voronoi
+  hücreleriyle idari bölgelere böler, kara komşuluğunu, Delaunay yollarını (denizi geçmeyen, komşu bölgeler
+  arası, sınır kavşaklı), elle listelenmiş 1914 demiryollarını, boğaz geçişlerini, deniz ızgarasını (0,75°)
+  ve limanları üretir. Düğüm/şehir konumları çekirdeğin tamsayı nokta-çokgen kuralına göre yerleştirilir.
+  Çıktı determinist; ikili biçim `CanonicalWriter` eşi, sonda SHA-256 (TSGP sürüm 1).
+- Paket çalışma anında `GeoPackageReader` ile okunur (özet, sürüm, biçim ve tam dünya doğrulaması);
+  `GeoPackage.BuildWorld` her çağrıda taze dünya kurar (yeni oyun + kayıt şablonu aynı veriden).
+  Kademe → gelişim (5→7, 4→6, 3→4, 2→3), kademe ≥ 4 tahkimat 1,5.
+- Kaynak: historical-basemaps 1914 (GPL-3.0; CShapes erişilemedi). Düzeltmeler ve türetilmiş veri
+  `Docs/KAYNAK_ENVANTERI.md`'de: Doğu Trakya/İstanbul Osmanlı (1913), Kars–Ardahan ve Besarabya Rus,
+  Kafkasya Rus, adalar. Kapsam 12–46,5° D, 29,5–48° K; 12 ülke, 129 bölge/şehir; nüfus 1/5 ölçek.
+- Ülke adları senaryo verisidir: `IGameReadModel.CountryNameKey` (`SimulationSetup.CountryNameKeys`,
+  ör. `ulke.1914.osmanli`); `tr.txt`'teki 1914 ad bloğunu derleyici yazar.
+- `Scenario1914`: 12 ülkeye ekonomi/araştırma/karakter; Osmanlı (İttihat ve Terakki iktidar) ve Yunanistan
+  meşruti monarşi; şehirlerde sanayi kademeyle, çiftlik bölge nüfusuna ve slota göre. Başlangıç ordusu
+  ölçekli nüfus / 400 bin tümen (en çok 10; küçük devletler tümensiz), büyük limanlı güçlere filo.
+  Oyun açılışı (Bootstrap) 1914'tür, oyuncu Osmanlı.
+- Savunma ittifakı çağrısı saldırganla ittifakı, saldırmazlık paktı ya da ateşkesi olan müttefiki savaşa
+  sokmaz (12 ülkeli koşuda değişmez ihlaliyle bulundu).
+- 365 günlük 1914 bantları (`Campaign1914Tests`, 4 tohum; asıl denge Adım 17): hazine [0,25; 3,0], başlangıç
+  bölgelerinin nüfus değişimi [−%25; +%5], seferber ≤ 0,30, ülke başına bölge kazancı ≤ 6, her tohumda
+  savaş, barış ve muharebe. Masaüstünde ≈ 6–8 s / 365 gün.
+
 ---
 
 ## 3. Depo düzeni
@@ -465,6 +491,7 @@ Assets/TarihStrateji/Unity/        MonoBehaviour sunum, bootstrap, Editor derlem
 Assets/Tests/EditMode/             Unity içi EditMode testleri (UNITY_INCLUDE_TESTS)
 Packages/manifest.json             Unity paketleri
 ProjectSettings/                   Unity proje ayarları (ProjectVersion.txt sabit)
+Tools/ContentCompiler/             GeoJSON → coğrafi senaryo paketi (Python + shapely; çıktı depoya girer)
 Tools/HeadlessTests/               .NET 8 NUnit; Core kaynaklarını Unity olmadan derler
   CoreProjects/                    .asmdef başına üretilmiş netstandard2.1 projeleri (elle düzenlenmez)
   sync_core_projects.py            .asmdef → .csproj üreteci (--check: CI denetimi)

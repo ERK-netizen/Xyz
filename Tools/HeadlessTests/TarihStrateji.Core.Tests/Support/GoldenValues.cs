@@ -33,5 +33,8 @@ namespace TarihStrateji.Core.Tests.Support
 
         /// <summary>365 günlük "Ege 1925" YZ kampanyası (Gözlemci modu, savaşla başlar, tohum 7) son gün durum hash'i.</summary>
         public const string CampaignDay365 = "f9c6ba04accfa872a97ebd642788f8db1731082dcd1dad7ca6df83903d3a6ea0"; // aynı kampanya ve 180. gün kaydet/yükle aynı testte doğrulanır
+
+        /// <summary>"1914 MVP" YZ'li Gözlemci koşusu (tohum 11) 180. gün durum hash'i; paket ve senaryo kurulumu dahil.</summary>
+        public const string Scenario1914Day180 = "be4adf8d4bcbc8aad00989ca25368e25f12be0b60a562311d221de65e423eeed"; // aynı tohum ve 90. gün kaydet/yükle aynı testte doğrulanır
     }
 }

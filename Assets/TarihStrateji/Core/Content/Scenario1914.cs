@@ -86,11 +86,15 @@ namespace TarihStrateji.Core.Content
             return total;
         }
 
-        /// <summary>Başlangıç tümen sayısı: ölçekli nüfus / 400 bin, en az 1, en çok 10.</summary>
+        /// <summary>
+        /// Başlangıç tümen sayısı: ölçekli nüfus / 400 bin, en çok 10. 400 binin altındaki küçük devletler
+        /// (Karadağ, Arnavutluk, İran'ın kapsamdaki kısmı) tümensiz başlar: 10 binlik tümen çalışma çağı
+        /// nüfuslarının %12 seferberlik tavanını aşar; savunmayı şehir garnizonu yapar.
+        /// </summary>
         public static int Divisions(long people)
         {
             long n = people / PeoplePerDivision;
-            return n < 1L ? 1 : n > 10L ? 10 : (int)n;
+            return n > 10L ? 10 : (int)n;
         }
 
         /// <summary>

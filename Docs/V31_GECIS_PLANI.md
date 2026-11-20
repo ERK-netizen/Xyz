@@ -110,6 +110,7 @@ Her adım headless testleriyle gelir; altıgen kodu yalnız yerine geçen sistem
 | 11 coğrafi çekirdek | TESTED (headless) + Unity EditMode geçti |
 | 12 coğrafi kurallar (ikmal, hareket, muharebe, kuşatma, bölge kontrolü, deniz, hava, konvoy, slot) | TESTED (headless) + Unity EditMode geçti |
 | 13/1 coğrafi oyun durumu, günlük sistemler, emirler, kayıt şeması 4 | CODED + TESTED (headless 392/392) |
+| 14 ContentCompiler + 1914 MVP (12 ülke, 129 bölge/şehir, tarihî düzeltmeler, senaryo kurulumu, açılış 1914) | TESTED (headless 322/322); Unity CI sonucu commit notunda |
 | 13/2–4 altıgen silindi; ekonomi/diplomasi/istihbarat/YZ/senaryo/kayıt (şema 5) coğrafi; Unity ülke haritası (yalnız ülke sınırları + şehirler) | TESTED (headless 309/309); Unity CI sonucu commit notunda |
 
 Not (tarihî): Altıgen kural dosyaları Adım 12'de değil 13'te silindi; çünkü Simulation onlara bağlıdır ve her
