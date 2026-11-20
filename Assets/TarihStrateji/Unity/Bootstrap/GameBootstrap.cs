@@ -159,7 +159,7 @@ namespace TarihStrateji.Unity.Bootstrap
             }
 
             ulong seed = (ulong)Environment.TickCount;
-            GameState state = ScenarioFactory.CreateFromPackage(_content, package, seed, GameMode.Normal, player, entry.Populate);
+            GameState state = entry.Create(_content, package, seed, GameMode.Normal, player);
             Result<SimulationKernel> created = SimulationKernel.Create(CreateSetup(entry, _store), state);
             if (!created.IsSuccess)
             {

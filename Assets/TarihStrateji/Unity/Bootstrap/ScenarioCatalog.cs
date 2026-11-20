@@ -6,7 +6,9 @@ using TarihStrateji.Core.Domain;
 using TarihStrateji.Core.Domain.Ids;
 using TarihStrateji.Core.Domain.Time;
 using TarihStrateji.Core.Domain.Views;
+using TarihStrateji.Core.Domain.Commands;
 using TarihStrateji.Core.Simulation;
+using TarihStrateji.Core.Simulation.State;
 using UnityEngine;
 
 namespace TarihStrateji.Unity.Bootstrap
@@ -22,13 +24,13 @@ namespace TarihStrateji.Unity.Bootstrap
 
         public sealed class Entry
         {
-            public Entry(string id, string titleKey, string packageResource, ScenarioFactory.PackagePopulator populate, string[] capitalCityKeys,
+            public Entry(string id, string titleKey, string packageResource, Func<GameContent, GeoPackage, ulong, GameMode, CountryId, GameState> create, string[] capitalCityKeys,
                 GameDate aiEarliestWar, CountryId defaultPlayer)
             {
                 Id = id;
                 TitleKey = titleKey;
                 PackageResource = packageResource;
-                Populate = populate;
+                Create = create;
                 CapitalCityKeys = capitalCityKeys;
                 AiEarliestWar = aiEarliestWar;
                 DefaultPlayer = defaultPlayer;
@@ -40,7 +42,8 @@ namespace TarihStrateji.Unity.Bootstrap
 
             public string PackageResource { get; }
 
-            public ScenarioFactory.PackagePopulator Populate { get; }
+            /// <summary>Senaryo durumu kurucusu (ScenarioFactory.Create1914/Create1939; Bootstrap'in başvurduğu türlerle).</summary>
+            public Func<GameContent, GeoPackage, ulong, GameMode, CountryId, GameState> Create { get; }
 
             public string[] CapitalCityKeys { get; }
 
@@ -51,8 +54,8 @@ namespace TarihStrateji.Unity.Bootstrap
 
         private readonly List<Entry> _entries = new List<Entry>
         {
-            new Entry("1914", "senaryo.1914", "Senaryolar/1914_mvp", Scenario1914.Populate, Scenario1914.CapitalCityKeys, Scenario1914.AiEarliestWar, Scenario1914.Ottoman),
-            new Entry("1939", "senaryo.1939", "Senaryolar/1939_mvp", Scenario1939.Populate, Scenario1939.CapitalCityKeys, Scenario1939.AiEarliestWar, Scenario1939.Turkey),
+            new Entry("1914", "senaryo.1914", "Senaryolar/1914_mvp", ScenarioFactory.Create1914, Scenario1914.CapitalCityKeys, Scenario1914.AiEarliestWar, Scenario1914.Ottoman),
+            new Entry("1939", "senaryo.1939", "Senaryolar/1939_mvp", ScenarioFactory.Create1939, Scenario1939.CapitalCityKeys, Scenario1939.AiEarliestWar, Scenario1939.Turkey),
         };
 
         private readonly Dictionary<string, GeoPackage> _packages = new Dictionary<string, GeoPackage>(StringComparer.Ordinal);
