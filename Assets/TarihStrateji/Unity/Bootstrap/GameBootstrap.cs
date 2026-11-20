@@ -92,6 +92,7 @@ namespace TarihStrateji.Unity.Bootstrap
             // Cihazda durum hash'i ve otomatik kayıt seyrek: 30 günde bir (CLAUDE.md §2.5).
             var setup = new SimulationSetup
             {
+                GeoWorldTemplate = AegeanScenario.BuildWorld,
                 HashIntervalDays = 30,
                 AutosaveIntervalDays = 30,
                 AutosaveSink = new AutosaveRing(store),

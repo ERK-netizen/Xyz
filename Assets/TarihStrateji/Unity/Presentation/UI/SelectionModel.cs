@@ -1,53 +1,51 @@
 using System;
 using System.Collections.Generic;
+using TarihStrateji.Core.Domain.Geography;
 using TarihStrateji.Core.Domain.Views;
 
 namespace TarihStrateji.Unity.Presentation.UI
 {
     /// <summary>
-    /// Dokunmatik seçim durumu (yalnız sunum). Dokunuş hücre seçer; kendi birliği seçiliyken başka
-    /// hücreye dokunmak o hücreyi hedef yapar (yürü / saldır), birliğin hücresine dokunmak hedefi
-    /// kaldırır. Birlik yok olursa veya artık oyuncunun değilse seçim temizlenir; hareket ederse
-    /// izlenir.
+    /// Dokunmatik seçim durumu (yalnız sunum, ADR-011). Dokunuş bir harita nesnesini odaklar
+    /// (<see cref="Focus"/>); kendi kara birliği seçiliyken başka bir yere dokunmak orayı hedef yapar
+    /// (<see cref="Target"/>: birlik, şehir veya nokta → yürü / saldır), birliğin kendisine dokunmak hedefi
+    /// kaldırır. Birlik yok olursa veya artık oyuncunun değilse seçim temizlenir.
     /// </summary>
     public sealed class SelectionModel
     {
-        public const int None = -1;
-
-        public int Cell { get; private set; } = None;
+        public MapPick Focus { get; private set; }
 
         public ulong Unit { get; private set; }
 
-        public int UnitCell { get; private set; } = None;
-
-        public int Target { get; private set; } = None;
+        public TargetRef Target { get; private set; }
 
         public bool HasUnit => Unit != 0UL;
+
+        public bool HasTarget => Target.IsValid;
 
         /// <summary>Her değişimde artar (çizim ve panel önbellekleri için).</summary>
         public int Version { get; private set; }
 
         public event Action Changed;
 
-        public void Tap(int cell)
+        public void Tap(MapPick pick)
         {
-            if (cell < 0)
+            if (pick.Kind == MapPickKind.None)
             {
                 Clear();
                 return;
             }
 
-            Cell = cell;
-            Target = HasUnit && cell != UnitCell ? cell : None;
+            Focus = pick;
+            bool self = pick.Kind == MapPickKind.Unit && pick.Unit == Unit;
+            Target = HasUnit && !self ? pick.ToTarget() : TargetRef.None;
             Notify();
         }
 
-        public void SelectUnit(ulong unitId, int cell)
+        public void SelectUnit(ulong unitId)
         {
             Unit = unitId;
-            UnitCell = cell;
-            Cell = cell;
-            Target = None;
+            Target = TargetRef.None;
             Notify();
         }
 
@@ -59,21 +57,19 @@ namespace TarihStrateji.Unity.Presentation.UI
             }
 
             Unit = 0UL;
-            UnitCell = None;
-            Target = None;
+            Target = TargetRef.None;
             Notify();
         }
 
         public void Clear()
         {
-            Cell = None;
+            Focus = MapPick.None;
             Unit = 0UL;
-            UnitCell = None;
-            Target = None;
+            Target = TargetRef.None;
             Notify();
         }
 
-        /// <summary>Durum değişiminden sonra seçili birliği görünür birlik listesine göre günceller.</summary>
+        /// <summary>Durum değişiminden sonra seçili birliğin hâlâ oyuncunun kara birliği olduğunu doğrular.</summary>
         public void Reconcile(List<UnitView> visibleUnits)
         {
             if (!HasUnit)
@@ -86,23 +82,6 @@ namespace TarihStrateji.Unity.Presentation.UI
                 UnitView unit = visibleUnits[i];
                 if (unit.Id == Unit && unit.IsOwn && unit.Kind == UnitViewKind.Land)
                 {
-                    if (unit.CellIndex != UnitCell)
-                    {
-                        bool followed = Cell == UnitCell;
-                        UnitCell = unit.CellIndex;
-                        if (followed)
-                        {
-                            Cell = UnitCell;
-                        }
-
-                        if (Target == UnitCell)
-                        {
-                            Target = None;
-                        }
-
-                        Notify();
-                    }
-
                     return;
                 }
             }

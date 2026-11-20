@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Text;
 using TarihStrateji.Core.Domain.Commands;
+using TarihStrateji.Core.Domain.Geography;
 using TarihStrateji.Core.Domain.Ids;
 using TarihStrateji.Core.Domain.Views;
 using UnityEngine;
@@ -10,7 +11,7 @@ namespace TarihStrateji.Unity.Presentation.UI
 {
     /// <summary>
     /// Dikey telefon arayüzü (UI Toolkit, koddan kurulur): üstte tarih, oyun hızı ve ülke özeti; altta
-    /// seçili hücrenin bilgisi, oradaki görünür birlikler ve emir düğmeleri. Düğmeler emri
+    /// odaklanan şehir/bölgenin bilgisi, oradaki görünür birlikler ve emir düğmeleri. Düğmeler emri
     /// <see cref="IGameCommandGateway.Validate"/> ile önceden doğrular (geçersizse pasif); basınca
     /// <see cref="IGameCommandGateway.Submit"/> sonucu Türkçe bildirim olarak görünür. Durumu
     /// değiştirmez; yalnız emir gönderir (CLAUDE.md §2.1). Dokunma hedefleri ≥ 112 referans pikseli
@@ -30,6 +31,9 @@ namespace TarihStrateji.Unity.Presentation.UI
 
         private readonly List<UnitView> _units = new List<UnitView>(256);
         private readonly List<CityView> _cities = new List<CityView>(64);
+        private readonly List<RegionView> _regions = new List<RegionView>(64);
+        private CountryId _focusCountry;
+        private CityId _focusCity;
         private readonly StringBuilder _builder = new StringBuilder(256);
 
         private IGameSession _session;
@@ -269,8 +273,8 @@ namespace TarihStrateji.Unity.Presentation.UI
         private void RefreshSelection(IGameReadModel model)
         {
             _unitList.Clear();
-            int cellIndex = _selection.Cell;
-            if (cellIndex < 0)
+            MapPick focus = _selection.Focus;
+            if (focus.Kind == MapPickKind.None)
             {
                 _title.text = _text.Get("arayuz.secimYok");
                 _info.text = string.Empty;
@@ -278,58 +282,97 @@ namespace TarihStrateji.Unity.Presentation.UI
                 return;
             }
 
-            CellView cell = model.GetCell(cellIndex);
-            int width = model.MapWidth;
+            _cities.Clear();
+            model.GetCities(_cities);
+            _regions.Clear();
+            model.GetRegions(_regions);
             CityView city = default;
             bool hasCity = false;
-            if (cell.City.IsValid)
+            CityId cityId = focus.City;
+            if (!cityId.IsValid && focus.Kind == MapPickKind.Unit)
             {
-                _cities.Clear();
-                model.GetCities(_cities);
-                for (int i = 0; i < _cities.Count; i++)
+                cityId = CityAt(focus.Point);
+            }
+
+            for (int i = 0; i < _cities.Count && cityId.IsValid; i++)
+            {
+                if (_cities[i].Id == cityId)
                 {
-                    if (_cities[i].Id == cell.City)
-                    {
-                        city = _cities[i];
-                        hasCity = true;
-                        break;
-                    }
+                    city = _cities[i];
+                    hasCity = true;
+                    break;
                 }
             }
 
-            _title.text = hasCity
-                ? _text.Get(city.NameKey)
-                : _text.Get("arayuz.hucre") + " " + (cellIndex % width) + "," + (cellIndex / width);
+            RegionView region = default;
+            bool hasRegion = false;
+            for (int i = 0; i < _regions.Count && focus.Region.IsValid; i++)
+            {
+                if (_regions[i].Id == focus.Region)
+                {
+                    region = _regions[i];
+                    hasRegion = true;
+                    break;
+                }
+            }
 
             _builder.Clear();
-            _builder.Append(_text.Get("arayuz.arazi")).Append(": ").Append(_text.Get("arazi." + cell.Terrain));
-            if (!cell.IsWater)
+            if (hasCity)
             {
-                _builder.Append("  ·  ").Append(_text.Get("arayuz.sahip")).Append(": ").Append(CountryName(cell.Owner))
-                    .Append("  ·  ").Append(_text.Get("arayuz.kontrol")).Append(": ").Append(CountryName(cell.Controller));
-            }
+                _title.text = _text.Get(city.NameKey);
+                _builder.Append(_text.Get("arayuz.gelisim")).Append(": ").Append(city.DevelopmentLevel)
+                    .Append("  ·  ").Append(_text.Get("arayuz.sahip")).Append(": ").Append(CountryName(city.Owner))
+                    .Append("  ·  ").Append(_text.Get("arayuz.kontrol")).Append(": ").Append(CountryName(city.Controller));
+                if (city.IsPort)
+                {
+                    _builder.Append("  ·  ").Append(_text.Get("arayuz.liman"));
+                }
 
-            if (hasCity && city.IsBesieged)
-            {
-                _builder.Append('\n').Append(_text.Get("arayuz.kusatma"));
+                if (city.IsBesieged)
+                {
+                    _builder.Append('\n').Append(_text.Get("arayuz.kusatma"));
+                }
             }
-
-            if (!model.IsCellVisible(cellIndex))
+            else if (hasRegion)
             {
-                _builder.Append('\n').Append(_text.Get("arayuz.gorunmuyor"));
+                _title.text = CountryName(region.Owner);
+                _builder.Append(_text.Get("arayuz.kontrol")).Append(": ").Append(CountryName(region.Controller));
+                if (region.IsOccupied)
+                {
+                    _builder.Append("  ·  ").Append(_text.Get("arayuz.isgal"));
+                }
+            }
+            else
+            {
+                _title.text = _text.Get("arayuz.deniz");
             }
 
             _info.text = _builder.ToString();
-            FillUnits(cellIndex);
-            RefreshActions(model, cell, hasCity ? city : default, hasCity);
+            FillUnits(focus, hasCity ? city.Location : focus.Point);
+            RefreshActions(model, hasCity ? city : default, hasCity, hasRegion ? region : default, hasRegion);
         }
 
-        private void FillUnits(int cellIndex)
+        private CityId CityAt(GeoPoint point)
+        {
+            for (int i = 0; i < _cities.Count; i++)
+            {
+                if (_cities[i].Location == point)
+                {
+                    return _cities[i].Id;
+                }
+            }
+
+            return CityId.None;
+        }
+
+        /// <summary>Odaktaki yerde (aynı konumda) görünen birlikler.</summary>
+        private void FillUnits(MapPick focus, GeoPoint place)
         {
             for (int i = 0; i < _units.Count; i++)
             {
                 UnitView unit = _units[i];
-                if (unit.CellIndex != cellIndex)
+                bool here = focus.Kind == MapPickKind.Unit ? unit.Location == focus.Point : unit.Location == place;
+                if (!here)
                 {
                     continue;
                 }
@@ -345,9 +388,8 @@ namespace TarihStrateji.Unity.Presentation.UI
                 if (unit.IsOwn && unit.Kind == UnitViewKind.Land)
                 {
                     ulong id = unit.Id;
-                    int at = unit.CellIndex;
                     bool selected = _selection.Unit == id;
-                    Button select = MakeButton(null, () => _selection.SelectUnit(id, at));
+                    Button select = MakeButton(null, () => _selection.SelectUnit(id));
                     select.text = (selected ? "▶ " : string.Empty) + _builder + "  —  " + _text.Get("arayuz.birlikSec");
                     select.style.backgroundColor = selected ? ActiveButtonColor : ButtonColor;
                     select.style.unityTextAlign = TextAnchor.MiddleLeft;
@@ -363,11 +405,11 @@ namespace TarihStrateji.Unity.Presentation.UI
             }
         }
 
-        private void RefreshActions(IGameReadModel model, CellView cell, CityView city, bool hasCity)
+        private void RefreshActions(IGameReadModel model, CityView city, bool hasCity, RegionView region, bool hasRegion)
         {
             IGameCommandFactory orders = _session.Orders;
             bool unit = _selection.HasUnit;
-            bool target = unit && _selection.Target >= 0;
+            bool target = unit && _selection.HasTarget;
             Show(_move, target, target ? orders.MoveUnit(_selection.Unit, _selection.Target) : null);
             Show(_attack, target, target ? orders.Attack(_selection.Unit, _selection.Target) : null);
             Show(_hold, unit, unit ? orders.HoldPosition(_selection.Unit) : null);
@@ -375,13 +417,30 @@ namespace TarihStrateji.Unity.Presentation.UI
 
             CountryId player = model.PlayerCountry;
             bool ownCity = player.IsValid && hasCity && city.Owner == player && city.Controller == player;
-            Show(_recruit, ownCity, ownCity ? orders.RecruitInfantry(city.CellIndex) : null);
+            Show(_recruit, ownCity, ownCity ? orders.RecruitInfantry(city.Id) : null);
 
-            CountryId other = cell.Controller.IsValid && cell.Controller != player ? cell.Controller : cell.Owner;
+            CountryId other = TargetCountry(player, city, hasCity, region, hasRegion);
             bool foreign = player.IsValid && other.IsValid && other != player;
             bool atWar = foreign && model.IsAtWarWith(other);
             Show(_declareWar, foreign && !atWar, foreign && !atWar ? orders.DeclareWar(other) : null);
             Show(_proposePeace, atWar, atWar ? orders.ProposeWhitePeace(other) : null);
+            _focusCountry = other;
+            _focusCity = hasCity ? city.Id : CityId.None;
+        }
+
+        private static CountryId TargetCountry(CountryId player, CityView city, bool hasCity, RegionView region, bool hasRegion)
+        {
+            if (hasCity)
+            {
+                return city.Controller.IsValid && city.Controller != player ? city.Controller : city.Owner;
+            }
+
+            if (hasRegion)
+            {
+                return region.Controller.IsValid && region.Controller != player ? region.Controller : region.Owner;
+            }
+
+            return CountryId.None;
         }
 
         private void Show(Button button, bool visible, GameCommand command)
@@ -410,7 +469,13 @@ namespace TarihStrateji.Unity.Presentation.UI
 
         private void OnHold() => Submit(_session.Orders.HoldPosition(_selection.Unit));
 
-        private void OnRecruit() => Submit(_session.Orders.RecruitInfantry(_selection.Cell));
+        private void OnRecruit()
+        {
+            if (_focusCity.IsValid)
+            {
+                Submit(_session.Orders.RecruitInfantry(_focusCity));
+            }
+        }
 
         private void OnDeclareWar()
         {
@@ -430,17 +495,7 @@ namespace TarihStrateji.Unity.Presentation.UI
             }
         }
 
-        private CountryId TargetCountry()
-        {
-            if (_selection.Cell < 0)
-            {
-                return CountryId.None;
-            }
-
-            IGameReadModel model = _session.ReadModel;
-            CellView cell = model.GetCell(_selection.Cell);
-            return cell.Controller.IsValid && cell.Controller != model.PlayerCountry ? cell.Controller : cell.Owner;
-        }
+        private CountryId TargetCountry() => _focusCountry;
 
         private void Submit(GameCommand command)
         {

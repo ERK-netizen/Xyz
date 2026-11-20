@@ -10,14 +10,15 @@ namespace TarihStrateji.Unity.Presentation
 {
     /// <summary>
     /// Sunum katmanının kökü: sahne yüklendikten sonra oturumu (<see cref="IGameSession"/>, Bootstrap
-    /// uygular) arayüz üzerinden bulur ve harita kamerasını, parçalı haritayı, işaret katmanını,
-    /// dokunmatik denetimi ve dikey arayüzü kurar. Sunum derlemesi yalnız Domain sözleşmelerine
+    /// uygular) arayüz üzerinden bulur ve harita kamerasını, ülke haritasını (bölge çokgenleri, yalnız ülke
+    /// sınırları), şehir/birlik işaretlerini, dokunmatik denetimi ve dikey arayüzü kurar. Sunum derlemesi yalnız Domain sözleşmelerine
     /// başvurur (CLAUDE.md §2.2); oyun kuralı yazmaz.
     /// </summary>
     public sealed class PresentationRoot : MonoBehaviour
     {
         public const string MapShaderResource = "Shaders/HaritaRenk";
-        private const float StartOrthographicSize = 14f;
+        private const float StartOrthographicSize = 6f;
+        private const float TapTolerancePixels = 40f;
 
         private Material _material;
 
@@ -65,12 +66,14 @@ namespace TarihStrateji.Unity.Presentation
 
             var map = new GameObject("Harita");
             map.transform.SetParent(transform, false);
-            map.AddComponent<MapView>().Initialize(model, mapCamera, _material);
+            CountryMapView countries = map.AddComponent<CountryMapView>();
+            countries.Initialize(model, mapCamera, _material);
 
             var markers = new GameObject("Isaretler");
             markers.transform.SetParent(transform, false);
             markers.transform.localPosition = new Vector3(0f, 0f, -0.1f);
-            markers.AddComponent<MarkerLayer>().Initialize(model, selection, mapCamera, _material);
+            MarkerLayer markerLayer = markers.AddComponent<MarkerLayer>();
+            markerLayer.Initialize(model, selection, mapCamera, _material);
 
             var hudHost = new GameObject("Arayuz");
             hudHost.transform.SetParent(transform, false);
@@ -78,15 +81,18 @@ namespace TarihStrateji.Unity.Presentation
             hud.Initialize(session, selection, text);
 
             MapCameraController controller = mapCamera.gameObject.AddComponent<MapCameraController>();
-            controller.Initialize(mapCamera, model.MapWidth, model.MapHeight);
+            controller.Initialize(mapCamera, countries.Bounds);
             controller.IsOverUi = hud.IsOverUi;
-            int width = model.MapWidth;
-            int height = model.MapHeight;
-            controller.Tapped += world => selection.Tap(HexLayout.Pick(world, width, height));
-            controller.CenterOn(StartPoint(model));
+            controller.Tapped += world =>
+            {
+                markerLayer.RefreshUnits();
+                float tolerance = (mapCamera.orthographicSize * 2f / Mathf.Max(1, Screen.height)) * TapTolerancePixels;
+                selection.Tap(MapPicker.Pick(model, world, tolerance, markerLayer.VisibleUnits, markerLayer.Cities));
+            };
+            controller.CenterOn(StartPoint(model, countries.Bounds));
         }
 
-        private static Vector2 StartPoint(IGameReadModel model)
+        private static Vector2 StartPoint(IGameReadModel model, Rect bounds)
         {
             var cities = new List<CityView>();
             model.GetCities(cities);
@@ -94,13 +100,11 @@ namespace TarihStrateji.Unity.Presentation
             {
                 if (cities[i].Owner == model.PlayerCountry)
                 {
-                    return HexLayout.CellCenterOfIndex(cities[i].CellIndex, model.MapWidth);
+                    return MapProjection.ToWorld(cities[i].Location);
                 }
             }
 
-            return cities.Count > 0
-                ? HexLayout.CellCenterOfIndex(cities[0].CellIndex, model.MapWidth)
-                : HexLayout.CellCenter(model.MapWidth / 2, model.MapHeight / 2);
+            return bounds.center;
         }
 
         private static Camera CreateCamera()

@@ -12,13 +12,11 @@ namespace TarihStrateji.Unity.Presentation.Input
     /// </summary>
     public sealed class MapCameraController : MonoBehaviour
     {
-        public const float MinOrthographicSize = 4f;
-        public const float MaxOrthographicSize = 180f;
+        public const float MinOrthographicSize = 0.6f;
+        public const float MaxOrthographicSize = 30f;
 
         private Camera _camera;
-        private float _worldWidth;
-        private float _mapTop;
-        private float _mapBottom;
+        private Rect _bounds;
 
         private bool _pointerActive;
         private bool _pointerBlocked;
@@ -37,12 +35,11 @@ namespace TarihStrateji.Unity.Presentation.Input
 
         public Camera Camera => _camera;
 
-        public void Initialize(Camera mapCamera, int mapWidth, int mapHeight)
+        /// <summary><paramref name="worldBounds"/>: haritanın dünya birimindeki kutusu; kamera merkezi bunun içinde kalır.</summary>
+        public void Initialize(Camera mapCamera, Rect worldBounds)
         {
             _camera = mapCamera;
-            _worldWidth = HexLayout.WorldWidth(mapWidth);
-            _mapTop = 1f;
-            _mapBottom = (-HexLayout.RowHeight * (mapHeight - 1)) - 1f;
+            _bounds = worldBounds;
 
             // Dokunuşlar ayrıca fare olayı üretmesin (çift dokunuş işlenmesini önler).
             UnityEngine.Input.simulateMouseWithTouches = false;
@@ -225,8 +222,8 @@ namespace TarihStrateji.Unity.Presentation.Input
         private void ClampCamera()
         {
             Vector3 p = _camera.transform.position;
-            float x = GestureMath.WrapX(p.x, _worldWidth);
-            float y = GestureMath.ClampY(p.y, _camera.orthographicSize, _mapTop, _mapBottom);
+            float x = Mathf.Clamp(p.x, _bounds.xMin, _bounds.xMax);
+            float y = Mathf.Clamp(p.y, _bounds.yMin, _bounds.yMax);
             _camera.transform.position = new Vector3(x, y, p.z);
         }
     }

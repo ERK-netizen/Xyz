@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using NUnit.Framework;
+using TarihStrateji.Core.Domain.Geography;
 using TarihStrateji.Core.Domain.Ids;
 using TarihStrateji.Core.Domain.Numerics;
 using TarihStrateji.Core.Domain.Time;
@@ -10,7 +11,7 @@ using UnityEngine;
 
 namespace TarihStrateji.Tests.EditMode
 {
-    /// <summary>Metin tablosu, Türkçe biçimler, dokunmatik seçim, güvenli alan ve harita renkleri.</summary>
+    /// <summary>Metin tablosu, Türkçe biçimler, dokunmatik seçim (odak/hedef), güvenli alan ve harita renkleri.</summary>
     public class PresentationUiTests
     {
         [Test]
@@ -65,32 +66,34 @@ namespace TarihStrateji.Tests.EditMode
         }
 
         [Test]
-        public void Selection_TapUnitThenTarget_ThenUnitFollowsMovement()
+        public void Selection_TapUnitThenTarget_AndTappingTheUnitClearsTheTarget()
         {
             var selection = new SelectionModel();
             int changes = 0;
             selection.Changed += () => changes++;
+            var istanbul = MapPick.OfCity(new CityId(1UL), new RegionId(1UL), new GeoPoint(41_010_000, 28_970_000));
+            var field = MapPick.OfRegion(new RegionId(2UL), new GeoPoint(39_900_000, 32_800_000));
 
-            selection.Tap(10);
-            Assert.That(selection.Cell, Is.EqualTo(10));
-            Assert.That(selection.Target, Is.EqualTo(SelectionModel.None), "birlik yokken hedef olmaz");
+            selection.Tap(istanbul);
+            Assert.That(selection.Focus.City, Is.EqualTo(new CityId(1UL)));
+            Assert.That(selection.HasTarget, Is.False, "birlik yokken hedef olmaz");
 
-            selection.SelectUnit(7UL, 10);
-            selection.Tap(11);
-            Assert.That(selection.Target, Is.EqualTo(11));
-            Assert.That(selection.Cell, Is.EqualTo(11));
-            selection.Tap(10);
-            Assert.That(selection.Target, Is.EqualTo(SelectionModel.None), "kendi hücresine dokunmak hedefi kaldırır");
+            selection.SelectUnit(7UL);
+            selection.Tap(field);
+            Assert.That(selection.Target, Is.EqualTo(TargetRef.AtPoint(field.Point)), "bölgeye dokunmak nokta hedefi verir");
+            selection.Tap(istanbul);
+            Assert.That(selection.Target, Is.EqualTo(TargetRef.Entity(TargetKind.City, 1UL)), "şehre dokunmak şehir hedefi verir");
+            selection.Tap(MapPick.OfUnit(7UL, true, new RegionId(1UL), istanbul.Point));
+            Assert.That(selection.HasTarget, Is.False, "kendi birliğine dokunmak hedefi kaldırır");
+            selection.Tap(MapPick.OfUnit(9UL, false, new RegionId(1UL), istanbul.Point));
+            Assert.That(selection.Target, Is.EqualTo(TargetRef.Entity(TargetKind.LandUnit, 9UL)));
 
-            var units = new List<UnitView> { Own(7UL, 12) };
-            selection.Reconcile(units);
-            Assert.That(selection.UnitCell, Is.EqualTo(12));
-            Assert.That(selection.Cell, Is.EqualTo(12), "izlenen birlikle seçim kayar");
-
+            selection.Reconcile(new List<UnitView> { Own(7UL) });
+            Assert.That(selection.HasUnit, Is.True);
             selection.Reconcile(new List<UnitView>());
             Assert.That(selection.HasUnit, Is.False, "yok olan birlik seçimden düşer");
-            selection.Tap(-1);
-            Assert.That(selection.Cell, Is.EqualTo(SelectionModel.None));
+            selection.Tap(MapPick.None);
+            Assert.That(selection.Focus.Kind, Is.EqualTo(MapPickKind.None));
             Assert.That(changes, Is.EqualTo(selection.Version));
         }
 
@@ -98,8 +101,8 @@ namespace TarihStrateji.Tests.EditMode
         public void Selection_IgnoresForeignUnitsWithTheSameId()
         {
             var selection = new SelectionModel();
-            selection.SelectUnit(7UL, 10);
-            selection.Reconcile(new List<UnitView> { new UnitView(7UL, UnitViewKind.Land, new CountryId(2UL), 10, Fixed64.One, false, false) });
+            selection.SelectUnit(7UL);
+            selection.Reconcile(new List<UnitView> { new UnitView(7UL, UnitViewKind.Land, new CountryId(2UL), default, Fixed64.One, false, false) });
             Assert.That(selection.HasUnit, Is.False);
         }
 
@@ -116,20 +119,18 @@ namespace TarihStrateji.Tests.EditMode
         }
 
         [Test]
-        public void Palette_ShowsControllerFogAndOccupation()
+        public void Palette_ShowsControllerAndOccupation()
         {
             var turkey = new CountryId(1UL);
             var greece = new CountryId(2UL);
-            Color32 own = MapPalette.Cell(new CellView(2, false, turkey, turkey, CityId.None), true);
-            Color32 fogged = MapPalette.Cell(new CellView(2, false, turkey, turkey, CityId.None), false);
-            Color32 occupied = MapPalette.Cell(new CellView(2, false, turkey, greece, CityId.None), true);
-            Color32 sea = MapPalette.Cell(new CellView(0, true, CountryId.None, CountryId.None, CityId.None), true);
-            Assert.That(fogged.r + fogged.g + fogged.b, Is.LessThan(own.r + own.g + own.b), "sis karartır");
+            Color32 own = MapPalette.Region(turkey, turkey);
+            Color32 occupied = MapPalette.Region(turkey, greece);
             Assert.That(occupied.b, Is.GreaterThan(own.b), "Yunan işgali mavi ton katar");
-            Assert.That(sea.b, Is.GreaterThan(sea.r));
+            Assert.That(MapPalette.Region(CountryId.None, CountryId.None), Is.EqualTo(MapPalette.Unclaimed));
+            Assert.That(MapPalette.Background.b, Is.GreaterThan(MapPalette.Background.r), "deniz mavi");
             Assert.That(MapPalette.Country(turkey), Is.Not.EqualTo(MapPalette.Country(greece)));
         }
 
-        private static UnitView Own(ulong id, int cell) => new UnitView(id, UnitViewKind.Land, new CountryId(1UL), cell, Fixed64.One, true, true);
+        private static UnitView Own(ulong id) => new UnitView(id, UnitViewKind.Land, new CountryId(1UL), default, Fixed64.One, true, true);
     }
 }

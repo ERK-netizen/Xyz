@@ -103,9 +103,10 @@ Yeni bir Core modülü eklemek anayasa değişikliğidir.
 > (`TransportGraph`, metre), komşuluk `BorderGraph`'tadır. Şehir sektörlere bölünmez: gelişim
 > seviyesi 1–10, yapı slotu veriden, garnizon + `SiegeState`. Emir hedefi `TargetRef`
 > (birlik/şehir/bölge/nokta/filo/üs). Şehir işgali hukukî ilhak değildir; bölge kontrolü
-> `contested → occupied → secured`. Aşağıdaki altıgen ve 2–6 sektör hükümleri **emeklidir**:
-> yeni kod onlara bağlanmaz; Adım 11–13'te yerlerine geçen sistemler testle kabul edilince
-> kod ve testleriyle silinir (EK A, MAP-G10). Değişmeyenler: tek dünya, owner ≠ controller,
+> `contested → occupied → secured`. Aşağıdaki altıgen ve 2–6 sektör hükümleri **emeklidir**
+> ve Adım 13'te kod ve testleriyle **silinmiştir** (EK A, MAP-G10); yalnız tarih kaydı olarak
+> durur. Haritada yalnız ülke sınırları ve şehirler çizilir; idari bölgeler iç veridir
+> (depo sahibinin 20.11.2026 talimatı). Değişmeyenler: tek dünya, owner ≠ controller,
 > altyapının slot tüketmemesi, ±180° sarmalama, Fixed64, determinizm, tek yazıcı.
 - Tüm `LandUnit`, `Fleet`, `AirWing` ve şehirler **tek** dünya `Hex` haritasındadır; ayrı
   "taktik harita" yoktur.
@@ -423,6 +424,35 @@ Yeni bir Core modülü eklemek anayasa değişikliğidir.
 - Ekonomi (`CitySlotRules`): kapasite = gelişim × seviye başına slot; inşaat yalnız sahip = kontrol.
 - Kayıp/terhis çekirdeği (`CasualtyRules`) nüfus durumu üzerinden; iki model aynı kodu kullanır.
 
+**Uygulama kararları (Adım 13, altıgen modelin silinmesi; şema 5):**
+- Tek dünya `GeoWorld`'dür (`GameState.World`); `WorldMap`, `HexGrid`, sektörler, `HexId`/`SectorId`,
+  `CellView`, altıgen savaş/ikmal kuralları ve altıgen sistem/emirleri silindi. `TerrainType` ve
+  `PathNodeHeap` `World.Geography`'e taşındı. Etki kapsamı 3 (hücre) ve 5 (sektör) emeklidir.
+- Ekonomi: tesis ve inşaat `CityId` taşır; kapasite = gelişim × `EconomyParameters.BuildingSlotsPerDevelopment`
+  (6), süren inşaat slot sayılır; `RequiresPort` tesisi (tersane) yalnız liman şehrine. Üretim/iş gücü
+  şehrin fiilî kontrolcüsü sahipse çalışır; gıdayı bölgenin kontrolcüsü karşılar.
+- Diplomasi: bölge payı = (bölge kontrolü + bölgedeki şehirlerin kontrolü) / (1 + şehir sayısı); talep için
+  > `DemandControlShare`. Barışta `GeoWorld.TransferRegionOwnership` (bölge + şehirleri) ve karşılıklı
+  işgal iadesi (bölge kontrolcüsü ve şehir kontrolcüsü sahibine, aşama güvenli). Kapitülasyon şehir kontrolüyle.
+- İstihbarat: sensör = (düğüm, metre); görüş ulaşım grafında yol uzunluğuyla yayılır (kara 250 km, filo
+  250 km, şehir 150 km, hava 100 km), kesinlik 60 km; temas raporu düğüm taşır.
+- YZ: niyet hedefi `TargetRef`; saldırı aynı/bitişik düğüme (birlik veya şehir), ilerleme düşman bölgesinin
+  şehirsiz kara düğümüne ya da düşman şehrine bitişik düğüme, takviye düşmana bitişik kendi cephe
+  düğümüne; savunma ve arama yarıçapları metre. Komşuluk `BorderGraph` + bölge kontrolünden.
+- Okuma modeli: `RegionView` + `RegionRingView` (geometri), `CityView`/`UnitView` gerçek konum (yoldaki
+  birlik kenar üzerinde ara nokta), `FindRegion`; emir fabrikası `TargetRef`/`CityId` alır.
+- Sandbox hile emri: şehir gelişim seviyesi (`emir.sandbox.sehirGelisimi`). Barış yerleşimi
+  `GeoMovementRules.Redeploy` ile en yakın kendi şehrine.
+- Senaryo "Ege 1925": 14 bölge çokgeni (komşular köşe paylaşır), 14 şehir, 16 kavşak, 9 deniz düğümü,
+  2 boğaz geçişi; kayıttan yüklemede `AegeanScenario.BuildWorld` şablonu. Kayıt şeması 5.
+- Unity sunumu: `CountryMapView` bölgeleri kulak kırpmayla üçgenler, kontrolcü rengiyle boyar ve yalnız ülke
+  sınırı + kıyı çizer (`CountryBorders`: aynı sahipli bölgeler arası kenar çizilmez); `MarkerLayer` şehir ve
+  birlikleri gerçek koordinatta (`MapProjection`, boylam × 0,8) çizer; dokunma `MapPicker` (birlik → şehir →
+  bölge → nokta), seçim `SelectionModel` (odak + `TargetRef` hedef).
+- 365 günlük bantlar (`AiCampaignTests`, 4 tohum, Ege savaşla başlar): hazine [0,6; 2,5], nüfus [−%15; +%5],
+  seferber ≤ 0,20, bölge payı artışı ≤ 0,25, her tohumda barış ve ≥ 1 muharebe. YZ vergi eşikleri 80 bin/25 bin,
+  saldırı oranı 1,0 (ölçümle).
+
 ---
 
 ## 3. Depo düzeni
@@ -525,7 +555,7 @@ Adım 1–10 tamamlandı (altıgen model). TS-GDD-TDD-3.1 ile devam planı (ayr�
 |------|--------|
 | 11 | Core.World coğrafi çekirdek: GeoPoint, sabit noktalı mesafe, Polygon/MultiPolygon, BorderGraph, TransportGraph + A*, sektörsüz tekil şehir, bölge kontrol aşamaları, TargetRef |
 | 12 | Coğrafi kurallar (altıgen kurallarla yan yana, `*.Geo`): ikmal ağı, konumlu birlik ve rota, hedefli saldırı, garnizon/kuşatma, bölge kontrolü, deniz yolu/abluka, hava menzili, şehir slotları |
-| 13 | Simulation, Intelligence, AI, Content, Persistence yeni kurallara geçer; altıgen kod ve testleri silinir (MAP-G10); kayıt şeması 4 |
+| 13 | Simulation, Intelligence, AI, Content, Persistence yeni kurallara geçer; altıgen kod ve testleri silinir (MAP-G10); kayıt şeması 5; harita yalnız ülke sınırları + şehirler |
 | 14 | ContentCompiler + 1914 MVP bölgesi (ülke/bölge çokgenleri, şehirler, ulaşım grafı, kaynak envanteri) |
 | 15 | Unity çokgen harita çizicisi, LOD, ikonlar, mekânsal indeksli dokunma |
 | 16 | Mobil emir akışı: seç → hedef → önizleme → onay; şehir kartı, diplomasi, zaman kontrolü |

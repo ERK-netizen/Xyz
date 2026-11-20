@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using TarihStrateji.Core.Domain.Commands;
+using TarihStrateji.Core.Domain.Geography;
 using TarihStrateji.Core.Domain.Views;
 using TarihStrateji.Unity.Presentation.UI;
 using UnityEngine;
@@ -7,15 +8,16 @@ using UnityEngine;
 namespace TarihStrateji.Unity.Presentation.Map
 {
     /// <summary>
-    /// Şehir, birlik ve seçim işaretleri: tek dinamik ağ (tek çizim çağrısı). Şehir kare (kademeyle
-    /// büyür, kuşatmada kırmızı çerçeve), kara birliği eşkenar dörtgen, filo üçgen, hava kanadı ters
-    /// üçgen; çerçeve rengi kendi (beyaz) / savaştaki düşman (kırmızı) / diğer (gri). Yalnız oyuncunun
-    /// gördükleri çizilir (okuma modeli savaş sisini uygular). İşaretler kameraya en yakın harita
-    /// kopyasına yerleşir.
+    /// Şehir, birlik ve seçim işaretleri: tek dinamik ağ (tek çizim çağrısı). Şehir kare (gelişim
+    /// seviyesiyle büyür, kuşatmada kırmızı çerçeve), kara birliği eşkenar dörtgen, filo üçgen, hava kanadı
+    /// ters üçgen; çerçeve rengi kendi (beyaz) / savaştaki düşman (kırmızı) / diğer (gri). Yalnız oyuncunun
+    /// gördükleri çizilir (okuma modeli savaş sisini uygular). Konumlar gerçek koordinattır
+    /// (<see cref="MapProjection"/>); işaret boyu ekranda sabit kalacak şekilde kamera yakınlığıyla ölçeklenir.
     /// </summary>
     public sealed class MarkerLayer : MonoBehaviour
     {
-        private const int MaxUnitsDrawnPerCell = 4;
+        private const int MaxUnitsDrawnPerPlace = 4;
+        private const float ReferenceOrthographicSize = 6f;
         private static readonly Vector2[] UnitSlots = { new Vector2(-0.42f, -0.42f), new Vector2(0.42f, -0.42f), new Vector2(-0.42f, 0.42f), new Vector2(0.42f, 0.42f) };
         private static readonly Color32 TargetColor = new Color32(255, 140, 0, 255);
 
@@ -24,7 +26,7 @@ namespace TarihStrateji.Unity.Presentation.Map
         private readonly List<int> _triangles = new List<int>(4096);
         private readonly List<CityView> _cities = new List<CityView>(64);
         private readonly List<UnitView> _units = new List<UnitView>(256);
-        private readonly Dictionary<int, int> _unitsInCell = new Dictionary<int, int>(256);
+        private readonly Dictionary<GeoPoint, int> _unitsAtPlace = new Dictionary<GeoPoint, int>(256);
 
         private Mesh _mesh;
         private IGameReadModel _model;
@@ -32,9 +34,11 @@ namespace TarihStrateji.Unity.Presentation.Map
         private Camera _camera;
         private long _builtVersion = -1;
         private int _builtSelection = -1;
-        private int _builtBucket = int.MinValue;
+        private float _builtScale = -1f;
 
         public List<UnitView> VisibleUnits => _units;
+
+        public List<CityView> Cities => _cities;
 
         public void Initialize(IGameReadModel model, SelectionModel selection, Camera mapCamera, Material material)
         {
@@ -65,9 +69,8 @@ namespace TarihStrateji.Unity.Presentation.Map
                 return;
             }
 
-            float worldWidth = HexLayout.WorldWidth(_model.MapWidth);
-            int bucket = Mathf.FloorToInt(_camera.transform.position.x / (worldWidth * 0.25f));
-            if (_builtVersion == _model.StateVersion && _builtSelection == _selection.Version && _builtBucket == bucket)
+            float scale = Mathf.Pow(2f, Mathf.Round(Mathf.Log(_camera.orthographicSize / ReferenceOrthographicSize, 2f) * 2f) / 2f) * 0.12f;
+            if (_builtVersion == _model.StateVersion && _builtSelection == _selection.Version && Mathf.Approximately(_builtScale, scale))
             {
                 return;
             }
@@ -81,57 +84,56 @@ namespace TarihStrateji.Unity.Presentation.Map
 
             _builtVersion = _model.StateVersion;
             _builtSelection = _selection.Version;
-            _builtBucket = bucket;
-            Rebuild(_camera.transform.position.x, worldWidth);
+            _builtScale = scale;
+            Rebuild(scale);
         }
 
-        private void Rebuild(float cameraX, float worldWidth)
+        private void Rebuild(float k)
         {
             _vertices.Clear();
             _colors.Clear();
             _triangles.Clear();
-            _unitsInCell.Clear();
-            int width = _model.MapWidth;
+            _unitsAtPlace.Clear();
 
             for (int i = 0; i < _cities.Count; i++)
             {
                 CityView city = _cities[i];
-                Vector2 at = Place(city.CellIndex, width, cameraX, worldWidth);
-                float half = 0.2f + (0.06f * city.Tier);
-                AddSquare(at, half + 0.08f, city.IsBesieged ? MapPalette.EnemyOutline : MapPalette.Outline);
+                Vector2 at = MapProjection.ToWorld(city.Location);
+                float half = (0.16f + (0.03f * city.DevelopmentLevel)) * k * 4f;
+                AddSquare(at, half + (0.08f * k * 4f), city.IsBesieged ? MapPalette.EnemyOutline : MapPalette.Outline);
                 AddSquare(at, half, MapPalette.Country(city.Controller));
             }
 
             for (int i = 0; i < _units.Count; i++)
             {
                 UnitView unit = _units[i];
-                _unitsInCell.TryGetValue(unit.CellIndex, out int slot);
-                _unitsInCell[unit.CellIndex] = slot + 1;
-                if (slot >= MaxUnitsDrawnPerCell)
+                _unitsAtPlace.TryGetValue(unit.Location, out int slot);
+                _unitsAtPlace[unit.Location] = slot + 1;
+                if (slot >= MaxUnitsDrawnPerPlace)
                 {
                     continue;
                 }
 
-                Vector2 at = Place(unit.CellIndex, width, cameraX, worldWidth) + UnitSlots[slot];
+                Vector2 at = MapProjection.ToWorld(unit.Location) + (UnitSlots[slot] * k * 4f);
                 bool selected = unit.IsOwn && unit.Id == _selection.Unit && unit.Kind == UnitViewKind.Land;
                 Color32 outline = unit.IsOwn ? MapPalette.Outline : _model.IsAtWarWith(unit.Owner) ? MapPalette.EnemyOutline : MapPalette.EstimateOutline;
                 if (selected)
                 {
-                    AddShape(unit.Kind, at, 0.42f, MapPalette.Highlight);
+                    AddShape(unit.Kind, at, 0.42f * k * 4f, MapPalette.Highlight);
                 }
 
-                AddShape(unit.Kind, at, 0.32f, outline);
-                AddShape(unit.Kind, at, unit.IsExact ? 0.24f : 0.18f, MapPalette.Country(unit.Owner));
+                AddShape(unit.Kind, at, 0.32f * k * 4f, outline);
+                AddShape(unit.Kind, at, (unit.IsExact ? 0.24f : 0.18f) * k * 4f, MapPalette.Country(unit.Owner));
             }
 
-            if (_selection.Cell >= 0)
+            if (_selection.Focus.Kind != MapPickKind.None)
             {
-                AddRing(Place(_selection.Cell, width, cameraX, worldWidth), MapPalette.Highlight);
+                AddRing(MapProjection.ToWorld(_selection.Focus.Point), k * 5f, MapPalette.Highlight);
             }
 
-            if (_selection.Target >= 0)
+            if (_selection.HasTarget && TryTargetPoint(_selection.Target, out Vector2 target))
             {
-                AddRing(Place(_selection.Target, width, cameraX, worldWidth), TargetColor);
+                AddRing(target, k * 5f, TargetColor);
             }
 
             _mesh.Clear();
@@ -140,11 +142,39 @@ namespace TarihStrateji.Unity.Presentation.Map
             _mesh.SetTriangles(_triangles, 0, true);
         }
 
-        private static Vector2 Place(int cellIndex, int width, float cameraX, float worldWidth)
+        private bool TryTargetPoint(TargetRef target, out Vector2 at)
         {
-            Vector2 at = HexLayout.CellCenterOfIndex(cellIndex, width);
-            at.x += HexLayout.WrapShift(at.x, cameraX, worldWidth);
-            return at;
+            switch (target.Kind)
+            {
+                case TargetKind.Point:
+                    at = MapProjection.ToWorld(target.Point);
+                    return true;
+                case TargetKind.City:
+                    for (int i = 0; i < _cities.Count; i++)
+                    {
+                        if (_cities[i].Id.Value == target.EntityId)
+                        {
+                            at = MapProjection.ToWorld(_cities[i].Location);
+                            return true;
+                        }
+                    }
+
+                    break;
+                case TargetKind.LandUnit:
+                    for (int i = 0; i < _units.Count; i++)
+                    {
+                        if (_units[i].Id == target.EntityId && _units[i].Kind == UnitViewKind.Land)
+                        {
+                            at = MapProjection.ToWorld(_units[i].Location);
+                            return true;
+                        }
+                    }
+
+                    break;
+            }
+
+            at = default;
+            return false;
         }
 
         private void AddShape(UnitViewKind kind, Vector2 at, float size, Color32 color)
@@ -170,12 +200,15 @@ namespace TarihStrateji.Unity.Presentation.Map
             AddTriangle(at + new Vector2(-half, half), at + new Vector2(half, -half), at + new Vector2(-half, -half), color);
         }
 
-        private void AddRing(Vector2 center, Color32 color)
+        private void AddRing(Vector2 center, float radius, Color32 color)
         {
-            for (int i = 0; i < 6; i++)
+            const int Sides = 16;
+            for (int i = 0; i < Sides; i++)
             {
-                Vector2 a = HexLayout.Corner(i);
-                Vector2 b = HexLayout.Corner((i + 1) % 6);
+                float t0 = i * Mathf.PI * 2f / Sides;
+                float t1 = (i + 1) * Mathf.PI * 2f / Sides;
+                Vector2 a = new Vector2(Mathf.Cos(t0), Mathf.Sin(t0)) * radius;
+                Vector2 b = new Vector2(Mathf.Cos(t1), Mathf.Sin(t1)) * radius;
                 Vector2 outerA = center + a;
                 Vector2 outerB = center + b;
                 Vector2 innerA = center + (a * 0.86f);

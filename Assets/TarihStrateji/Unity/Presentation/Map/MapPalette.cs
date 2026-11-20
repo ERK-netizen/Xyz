@@ -1,20 +1,19 @@
 using TarihStrateji.Core.Domain.Ids;
-using TarihStrateji.Core.Domain.Views;
 using UnityEngine;
 
 namespace TarihStrateji.Unity.Presentation.Map
 {
     /// <summary>
-    /// Harita renkleri: fiili kontrolcünün (controller) rengi araziyle karıştırılır; işgal edilmiş
-    /// hücrede (sahip ≠ kontrolcü) hukuki sahibin rengi çizgili değil karışım olarak görünür ve ton
-    /// koyulaşır; savaş sisindeki hücre karartılır. Arazi kodları <c>TerrainType</c> ile aynıdır.
+    /// Harita renkleri: bölge fiilî kontrolcünün (controller) rengini alır; işgal edilmiş bölgede
+    /// (sahip ≠ kontrolcü) hukukî sahibin rengi karışım olarak görünür ve ton koyulaşır. Ülke sınırı koyu,
+    /// kıyı açık çizgidir; deniz arka plan rengidir.
     /// </summary>
     public static class MapPalette
     {
-        public const byte TerrainOcean = 0;
-        public const byte TerrainLake = 1;
-
-        public static readonly Color32 Background = new Color32(14, 26, 40, 255);
+        public static readonly Color32 Background = new Color32(28, 58, 92, 255);
+        public static readonly Color32 Border = new Color32(20, 20, 24, 255);
+        public static readonly Color32 Coast = new Color32(190, 210, 225, 255);
+        public static readonly Color32 Unclaimed = new Color32(150, 150, 140, 255);
         public static readonly Color32 Highlight = new Color32(255, 214, 64, 255);
         public static readonly Color32 Outline = new Color32(250, 250, 245, 255);
         public static readonly Color32 EnemyOutline = new Color32(200, 40, 40, 255);
@@ -32,18 +31,6 @@ namespace TarihStrateji.Unity.Presentation.Map
             new Color32(120, 120, 130, 255),
         };
 
-        private static readonly Color32[] TerrainColors =
-        {
-            new Color32(28, 58, 92, 255),    // 0 okyanus
-            new Color32(48, 96, 140, 255),   // 1 göl
-            new Color32(150, 170, 100, 255), // 2 ova
-            new Color32(70, 120, 70, 255),   // 3 orman
-            new Color32(150, 130, 90, 255),  // 4 tepe
-            new Color32(120, 110, 105, 255), // 5 dağ
-            new Color32(210, 190, 130, 255), // 6 çöl
-            new Color32(90, 120, 100, 255),  // 7 bataklık
-            new Color32(180, 190, 190, 255), // 8 tundra
-        };
 
         public static Color32 Country(CountryId country)
         {
@@ -55,29 +42,21 @@ namespace TarihStrateji.Unity.Presentation.Map
             return CountryColors[(int)((country.Value - 1UL) % (ulong)CountryColors.Length)];
         }
 
-        public static Color32 Terrain(byte terrain) => terrain < TerrainColors.Length ? TerrainColors[terrain] : TerrainColors[2];
-
-        public static Color32 Cell(in CellView cell, bool visible)
+        /// <summary>Bölge dolgusu: kontrolcü rengi; işgalde sahibin rengiyle karışık ve koyu.</summary>
+        public static Color32 Region(CountryId owner, CountryId controller)
         {
-            Color32 color;
-            if (cell.IsWater)
+            if (!controller.IsValid)
             {
-                color = Terrain(cell.Terrain);
-            }
-            else if (!cell.Controller.IsValid)
-            {
-                color = Terrain(cell.Terrain);
-            }
-            else
-            {
-                color = Color32.Lerp(Country(cell.Controller), Terrain(cell.Terrain), 0.3f);
-                if (cell.Owner.IsValid && cell.Owner != cell.Controller)
-                {
-                    color = Scale(Color32.Lerp(color, Country(cell.Owner), 0.35f), 0.8f);
-                }
+                return Unclaimed;
             }
 
-            return visible ? color : Scale(color, 0.55f);
+            Color32 color = Country(controller);
+            if (owner.IsValid && owner != controller)
+            {
+                color = Scale(Color32.Lerp(color, Country(owner), 0.35f), 0.8f);
+            }
+
+            return color;
         }
 
         public static Color32 Scale(Color32 color, float factor) =>
