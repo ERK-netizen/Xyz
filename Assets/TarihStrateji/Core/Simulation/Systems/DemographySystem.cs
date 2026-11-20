@@ -3,7 +3,7 @@ using TarihStrateji.Core.Domain.Numerics;
 using TarihStrateji.Core.Economy.State;
 using TarihStrateji.Core.Population;
 using TarihStrateji.Core.Simulation.Phases;
-using TarihStrateji.Core.World.Map;
+using TarihStrateji.Core.World.Geography;
 
 namespace TarihStrateji.Core.Simulation.Systems
 {
@@ -32,7 +32,7 @@ namespace TarihStrateji.Core.Simulation.Systems
             {
                 RegionPopulation p = population.Regions.ValueAt(i);
                 Fixed64 shortage = Fixed64.Zero;
-                if (context.World.Regions.TryGetValue(p.Region, out StrategicRegion region)
+                if (context.World.TryGetControl(p.Region, out RegionControl region)
                     && economy.Countries.TryGetValue(region.Controller, out CountryEconomy controller))
                 {
                     shortage = controller.FoodShortage;

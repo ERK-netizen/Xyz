@@ -8,16 +8,16 @@ namespace TarihStrateji.Core.Simulation.Commands.Economy
     {
         public const string KindKey = "emir.ekonomi.tesisInsaEt";
 
-        public BuildFacilityCommand(CountryId issuer, FacilityTypeId facilityType, SectorId sector)
+        public BuildFacilityCommand(CountryId issuer, FacilityTypeId facilityType, CityId city)
             : base(issuer)
         {
             FacilityType = facilityType;
-            Sector = sector;
+            City = city;
         }
 
         public FacilityTypeId FacilityType { get; }
 
-        public SectorId Sector { get; }
+        public CityId City { get; }
 
         public override CommandAuthority Authority => CommandAuthority.Player;
 

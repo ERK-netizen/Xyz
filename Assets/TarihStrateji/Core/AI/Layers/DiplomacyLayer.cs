@@ -5,7 +5,7 @@ using TarihStrateji.Core.Diplomacy;
 using TarihStrateji.Core.Diplomacy.State;
 using TarihStrateji.Core.Domain.Ids;
 using TarihStrateji.Core.Domain.Numerics;
-using TarihStrateji.Core.World.Map;
+using TarihStrateji.Core.World.Geography;
 
 namespace TarihStrateji.Core.AI.Layers
 {
@@ -166,12 +166,12 @@ namespace TarihStrateji.Core.AI.Layers
         public static RegionTransfer[] OccupiedDemands(AiPerception p, CountryId enemy)
         {
             var list = new List<RegionTransfer>();
-            for (int r = 0; r < p.Map.Regions.Count; r++)
+            for (int r = 0; r < p.World.Regions.Count; r++)
             {
-                StrategicRegion region = p.Map.Regions.ValueAt(r);
-                if (!region.IsSea && region.Owner == enemy && DiplomacyRules.ControlShare(p.Map, region, p.Country) > p.DiplomacyParameters.DemandControlShare)
+                p.World.TryGetControl(p.World.Regions[r], out RegionControl region);
+                if (region.Owner == enemy && DiplomacyRules.ControlShare(p.World, region.Region, p.Country) > p.DiplomacyParameters.DemandControlShare)
                 {
-                    list.Add(new RegionTransfer(region.Id, p.Country));
+                    list.Add(new RegionTransfer(region.Region, p.Country));
                 }
             }
 

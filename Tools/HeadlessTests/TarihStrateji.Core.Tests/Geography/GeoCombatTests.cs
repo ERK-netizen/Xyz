@@ -58,7 +58,7 @@ namespace TarihStrateji.Core.Tests.Geography
 
             var notes = new List<string>();
             GeoCombatRules.ResolveDay(f.Ctx, Seed, new HashSet<ResolutionId>(), notes);
-            Assert.That(notes.FindAll(n => n.StartsWith(CombatRules.BattleNote)).Count, Is.EqualTo(1), "aynı hedefe saldıranlar tek muharebede");
+            Assert.That(notes.FindAll(n => n.StartsWith(WarfareNotes.Battle)).Count, Is.EqualTo(1), "aynı hedefe saldıranlar tek muharebede");
             Assert.That(f.Warfare.Units.ContainsKey(blue.Id), Is.False, "çekilme koridoru yok → yok olur");
             Assert.That(f.Population.Regions[B].Mobilized, Is.LessThan(mobilizedBefore), "kayıplar nüfustan düşer (WAR-L08)");
             f.World.TryGetCity(GeoWarFixture.CityB1, out City b1);
@@ -84,7 +84,7 @@ namespace TarihStrateji.Core.Tests.Geography
 
             GeoCombatRules.SetAttack(red, target);
             GeoCombatRules.ResolveDay(f.Ctx, Seed, new HashSet<ResolutionId> { resolution }, notes);
-            Assert.That(notes.FindAll(n => n.StartsWith(CombatRules.BattleNote)).Count, Is.EqualTo(1), "REG-016");
+            Assert.That(notes.FindAll(n => n.StartsWith(WarfareNotes.Battle)).Count, Is.EqualTo(1), "REG-016");
 
             red.ActionPoints = Fixed64.Zero;
             Assert.That(GeoCombatRules.CheckImmediateAttack(f.Ctx, Red, red.Id, target).ErrorKey, Is.EqualTo(WarfareErrorKeys.ApYetersiz), "WAR-L04");

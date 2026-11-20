@@ -183,7 +183,7 @@ namespace TarihStrateji.Core.Warfare.Geo
                     if (HasHostileFleetAt(ctx, nextId, fleet.Owner))
                     {
                         Stop(fleet);
-                        notes.Add(FleetRules.ContactNote + " @ " + fleet.Id.Value.ToString(CultureInfo.InvariantCulture));
+                        notes.Add(WarfareNotes.NavalContact + " @ " + fleet.Id.Value.ToString(CultureInfo.InvariantCulture));
                         break;
                     }
                 }
@@ -269,7 +269,7 @@ namespace TarihStrateji.Core.Warfare.Geo
             Fixed64 powerA = (SidePower(ctx, sideA) * GeoCombatRules.CountryModifier(ctx, a, WarfareStatKeys.NavalAttack)) + GeoJointSupportRules.Support(ctx, node, a);
             Fixed64 powerB = (SidePower(ctx, sideB) * GeoCombatRules.CountryModifier(ctx, b, WarfareStatKeys.NavalAttack)) + GeoJointSupportRules.Support(ctx, node, b);
             CombatOutcome outcome = CombatResolver.Resolve(powerA, powerB, ctx.Catalog.Parameters, ref rng);
-            notes.Add(NavalCombatRules.BattleNote + " @ " + node.Value.ToString(CultureInfo.InvariantCulture));
+            notes.Add(WarfareNotes.NavalBattle + " @ " + node.Value.ToString(CultureInfo.InvariantCulture));
             Damage(ctx, sideA, outcome.AttackerDamage);
             Damage(ctx, sideB, outcome.DefenderDamage);
             Settle(ctx, sideA, notes);
@@ -344,7 +344,7 @@ namespace TarihStrateji.Core.Warfare.Geo
             CasualtyRules.RecordDeaths(ctx.Population, fleet.HomeRegion, fleet.Manpower);
             fleet.Manpower = 0L;
             ctx.Warfare.Fleets.Remove(fleet.Id);
-            notes.Add(FleetRules.SunkNote + " @ " + fleet.Id.Value.ToString(CultureInfo.InvariantCulture));
+            notes.Add(WarfareNotes.FleetSunk + " @ " + fleet.Id.Value.ToString(CultureInfo.InvariantCulture));
         }
 
         /// <summary>En yakın kendi limanına rota alır (yoksa yerinde kalır).</summary>

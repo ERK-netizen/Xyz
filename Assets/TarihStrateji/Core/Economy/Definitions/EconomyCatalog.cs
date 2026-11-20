@@ -4,7 +4,6 @@ using TarihStrateji.Core.Domain;
 using TarihStrateji.Core.Domain.Collections;
 using TarihStrateji.Core.Domain.Ids;
 using TarihStrateji.Core.Domain.Numerics;
-using TarihStrateji.Core.World.Cities;
 
 namespace TarihStrateji.Core.Economy.Definitions
 {
@@ -57,18 +56,10 @@ namespace TarihStrateji.Core.Economy.Definitions
                 FacilityTypeDefinition f = facilityTypes[i];
                 if (f == null || !f.Id.IsValid || string.IsNullOrEmpty(f.Key) || f.Outputs.Count == 0 || f.WorkersRequired <= 0L
                     || f.BuildingSlots <= 0 || f.BuildDays <= 0 || f.BuildMoney.IsNegative || f.UpkeepPerDay.IsNegative
-                    || f.AllowedSectors.Count == 0 || !ValidAmounts(f.Inputs, goodMap) || !ValidAmounts(f.Outputs, goodMap)
+                    || !ValidAmounts(f.Inputs, goodMap) || !ValidAmounts(f.Outputs, goodMap)
                     || !ValidAmounts(f.BuildGoods, goodMap))
                 {
                     return Result<EconomyCatalog>.Failure(EconomyErrorKeys.TanimGecersiz);
-                }
-
-                for (int s = 0; s < f.AllowedSectors.Count; s++)
-                {
-                    if (f.AllowedSectors[s] == SectorKind.Administrative || f.AllowedSectors[s] > SectorKind.Fortress)
-                    {
-                        return Result<EconomyCatalog>.Failure(EconomyErrorKeys.TanimGecersiz);
-                    }
                 }
 
                 for (int o = 0; o < f.Outputs.Count; o++)

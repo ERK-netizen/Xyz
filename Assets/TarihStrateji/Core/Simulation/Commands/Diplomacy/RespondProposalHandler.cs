@@ -6,6 +6,7 @@ using TarihStrateji.Core.Domain.Ids;
 using TarihStrateji.Core.Domain.Serialization;
 using TarihStrateji.Core.Simulation.State;
 using TarihStrateji.Core.Simulation.Systems;
+using TarihStrateji.Core.Simulation.Systems.Geo;
 
 namespace TarihStrateji.Core.Simulation.Commands.Diplomacy
 {
@@ -27,7 +28,7 @@ namespace TarihStrateji.Core.Simulation.Commands.Diplomacy
             GameState state = context.State;
             if (DiplomacyRules.Respond(state.Diplomacy, state.World, Content.Diplomacy, c.Proposal, c.Accept, state.Today))
             {
-                PeaceSettlement.Relocate(WarfareContexts.From(state, Content), state.Diplomacy, new List<string>());
+                PeaceSettlement.Relocate(GeoWarfareContexts.From(state, Content), state.Diplomacy, new List<string>());
             }
         }
 

@@ -21,23 +21,23 @@ namespace TarihStrateji.Core.Simulation.Commands.Economy
 
         protected override ValidationResult ValidateTyped(GameState state, BuildFacilityCommand command)
         {
-            return ConstructionRules.Validate(state.Economy, _catalog, state.World, command.Issuer, command.FacilityType, command.Sector);
+            return ConstructionRules.Validate(state.Economy, _catalog, state.World, command.Issuer, command.FacilityType, command.City);
         }
 
         protected override void ApplyTyped(CommandContext context, BuildFacilityCommand command)
         {
-            ConstructionRules.Order(context.State.Economy, _catalog, context.State.World, command.Issuer, command.FacilityType, command.Sector);
+            ConstructionRules.Order(context.State.Economy, _catalog, context.State.World, command.Issuer, command.FacilityType, command.City);
         }
 
         protected override void WriteTyped(BuildFacilityCommand command, CanonicalWriter writer)
         {
             writer.WriteId(command.FacilityType);
-            writer.WriteId(command.Sector);
+            writer.WriteId(command.City);
         }
 
         protected override BuildFacilityCommand ReadTyped(CountryId issuer, CanonicalReader reader)
         {
-            return new BuildFacilityCommand(issuer, new FacilityTypeId(reader.ReadUInt64()), new SectorId(reader.ReadUInt64()));
+            return new BuildFacilityCommand(issuer, new FacilityTypeId(reader.ReadUInt64()), new CityId(reader.ReadUInt64()));
         }
     }
 }

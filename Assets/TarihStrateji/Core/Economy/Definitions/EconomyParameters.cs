@@ -14,11 +14,13 @@ namespace TarihStrateji.Core.Economy.Definitions
             Fixed64 constructionRefundRatio,
             Fixed64 marketPriceStep,
             Fixed64 minPriceFactor,
-            Fixed64 maxPriceFactor)
+            Fixed64 maxPriceFactor,
+            int buildingSlotsPerDevelopment)
         {
             if (!foodGood.IsValid || foodPerThousandPerDay.IsNegative || maxTaxRate.IsNegative || maxTaxRate > Fixed64.One
                 || constructionRefundRatio.IsNegative || constructionRefundRatio > Fixed64.One || marketPriceStep.IsNegative
-                || !minPriceFactor.IsPositive || minPriceFactor > Fixed64.One || maxPriceFactor < Fixed64.One)
+                || !minPriceFactor.IsPositive || minPriceFactor > Fixed64.One || maxPriceFactor < Fixed64.One
+                || buildingSlotsPerDevelopment <= 0)
             {
                 throw new ArgumentException(EconomyErrorKeys.TanimGecersiz);
             }
@@ -30,6 +32,7 @@ namespace TarihStrateji.Core.Economy.Definitions
             MarketPriceStep = marketPriceStep;
             MinPriceFactor = minPriceFactor;
             MaxPriceFactor = maxPriceFactor;
+            BuildingSlotsPerDevelopment = buildingSlotsPerDevelopment;
         }
 
         /// <summary>Nüfusun tükettiği gıda malı.</summary>
@@ -49,5 +52,8 @@ namespace TarihStrateji.Core.Economy.Definitions
         public Fixed64 MinPriceFactor { get; }
 
         public Fixed64 MaxPriceFactor { get; }
+
+        /// <summary>Şehir yapı kapasitesi = gelişim seviyesi × bu değer (§4.2); altyapı slot tüketmez.</summary>
+        public int BuildingSlotsPerDevelopment { get; }
     }
 }

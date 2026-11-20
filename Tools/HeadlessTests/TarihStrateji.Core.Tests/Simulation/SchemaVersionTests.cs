@@ -6,11 +6,13 @@ using TarihStrateji.Core.Domain.Serialization;
 using TarihStrateji.Core.Simulation;
 using TarihStrateji.Core.Simulation.Persistence;
 using TarihStrateji.Core.Simulation.State;
-using TarihStrateji.Core.Tests.Naval;
-using TarihStrateji.Core.Tests.World;
-using TarihStrateji.Core.Warfare.Rules;
+using TarihStrateji.Core.Domain.Commands;
+using TarihStrateji.Core.Domain.Geography;
+using TarihStrateji.Core.Domain.Ids;
+using TarihStrateji.Core.Domain.Numerics;
+using TarihStrateji.Core.Simulation.Systems.Geo;
+using TarihStrateji.Core.Warfare.Geo;
 using TarihStrateji.Core.Warfare.State;
-using TarihStrateji.Core.World.Grid;
 
 namespace TarihStrateji.Core.Tests.Simulation
 {
@@ -22,16 +24,26 @@ namespace TarihStrateji.Core.Tests.Simulation
     [TestFixture]
     public class SchemaVersionTests
     {
+        private static readonly GameContent Content = BaselineContent.Create();
+
+        private static SimulationSetup Setup() =>
+            StandardRules.Install(new SimulationSetup { GeoWorldTemplate = AegeanScenario.BuildWorld }, Content);
+
         private static byte[] FixedSnapshot()
         {
-            var s = new StraitScenario(seed: 77);
-            HexCoord port = StraitScenario.At(s.PortA, s.State.World);
-            Fleet transports = s.Fleet(TestWorlds.CountryA, BaselineUnits.TransportFlotilla, port.Column, port.Row);
-            AmphibiousRules.Embark(s.War, s.Unit(TestWorlds.CountryA, 109, 4), transports);
-            s.Unit(TestWorlds.CountryB, 115, 4);
-            AirRules.SetMission(s.Wing(TestWorlds.CountryA, BaselineUnits.BomberWing, s.InlandA), AirMission.GroundSupport, s.Hex(113, 3));
-            SimulationSetup setup = StandardRules.Install(new SimulationSetup(), StraitScenario.Content);
-            return GameStateCodec.Encode(s.State, setup.Commands, true);
+            GameState state = ScenarioFactory.CreateAegean(Content, 77, GameMode.Normal, BaselineStatecraft.Turkey);
+            GeoWarfareContext war = GeoWarfareContexts.From(state, Content);
+            CityId istanbul = ScenarioFactory.CityOf(state, "sehir.ege.istanbul");
+            state.Economy.SeedStock(BaselineStatecraft.Turkey, BaselineGoods.Aircraft, Fixed64.FromInt(100));
+            Result<FleetId> transports = GeoNavalRules.Build(war, BaselineStatecraft.Turkey, BaselineUnits.TransportFlotilla, istanbul);
+            Assert.That(transports.IsSuccess, Is.True, transports.ErrorKey);
+            LandUnit first = state.Warfare.Units.ValueAt(0);
+            GeoAmphibiousRules.Embark(first, state.Warfare.Fleets[transports.Value]);
+            Result<AirWingId> wing = GeoAirRules.Recruit(war, BaselineStatecraft.Turkey, BaselineUnits.BomberWing, ScenarioFactory.CityOf(state, "sehir.ege.ankara"));
+            Assert.That(wing.IsSuccess, Is.True, wing.ErrorKey);
+            GeoAirRules.SetMission(state.Warfare.AirWings[wing.Value], AirMission.GroundSupport,
+                TargetRef.Entity(TargetKind.City, ScenarioFactory.CityOf(state, "sehir.ege.izmir").Value));
+            return GameStateCodec.Encode(state, Setup().Commands, true);
         }
 
         [Test]
@@ -56,8 +68,8 @@ namespace TarihStrateji.Core.Tests.Simulation
         [Test]
         public void OlderAndNewerSchemas_AreRejectedWithTheirOwnKeys()
         {
-            SimulationSetup setup = StandardRules.Install(new SimulationSetup(), StraitScenario.Content);
-            Assert.That(GameStateCodec.Decode(WithSchema(GameStateCodec.SchemaVersion), setup.Commands).IsSuccess, Is.True);
+            SimulationSetup setup = Setup();
+            Assert.That(GameStateCodec.Decode(WithSchema(GameStateCodec.SchemaVersion), setup.Commands, AegeanScenario.BuildWorld).IsSuccess, Is.True);
             Assert.That(GameStateCodec.Decode(WithSchema(1), setup.Commands).ErrorKey, Is.EqualTo(SimulationErrorKeys.DurumSemasiEski));
             Assert.That(GameStateCodec.Decode(WithSchema(GameStateCodec.SchemaVersion + 1), setup.Commands).ErrorKey, Is.EqualTo(SimulationErrorKeys.DurumSemasiYeni));
             Assert.That(GameStateCodec.Decode(WithSchema(0), setup.Commands).ErrorKey, Is.EqualTo(DomainErrorKeys.KayitBozuk));
@@ -66,9 +78,9 @@ namespace TarihStrateji.Core.Tests.Simulation
         [Test]
         public void SnapshotRoundTrip_IsByteExact()
         {
-            SimulationSetup setup = StandardRules.Install(new SimulationSetup(), StraitScenario.Content);
+            SimulationSetup setup = Setup();
             byte[] bytes = FixedSnapshot();
-            Result<GameState> back = GameStateCodec.Decode(bytes, setup.Commands);
+            Result<GameState> back = GameStateCodec.Decode(bytes, setup.Commands, AegeanScenario.BuildWorld);
             Assert.That(back.IsSuccess, Is.True, back.ErrorKey);
             Assert.That(GameStateCodec.Encode(back.Value, setup.Commands, true), Is.EqualTo(bytes));
         }

@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using TarihStrateji.Core.Content;
+using TarihStrateji.Core.Domain.Geography;
 using TarihStrateji.Core.Domain.Ids;
 using TarihStrateji.Core.Domain.Numerics;
 using TarihStrateji.Core.Domain.Views;
@@ -9,43 +10,54 @@ using TarihStrateji.Core.Politics.State;
 using TarihStrateji.Core.Population;
 using TarihStrateji.Core.Simulation.State;
 using TarihStrateji.Core.Warfare.State;
-using TarihStrateji.Core.World;
-using TarihStrateji.Core.World.Cities;
-using TarihStrateji.Core.World.Map;
+using TarihStrateji.Core.World.Geography;
 
 namespace TarihStrateji.Core.Simulation.ReadModel
 {
     /// <summary>
-    /// <see cref="GameState"/>'ten sunum görünümleri (Domain türleri). Savaş sisi burada uygulanır:
-    /// oyuncu kendi birliklerini ve kendi <see cref="ObservedWorld"/> temaslarını görür; Gözlemci
-    /// modunda (oyuncu ülkesi yok) her şey görünür ve güçler kesindir.
+    /// <see cref="GameState"/>'ten sunum görünümleri (Domain türleri). Harita altıgensizdir: bölgeler
+    /// (sahip/kontrolcü + değişmez halkalar), şehirler (nokta) ve birlik konumları (düğüm ya da yol üstündeki
+    /// ara nokta). Savaş sisi burada uygulanır: oyuncu kendi birliklerini ve kendi <see cref="ObservedWorld"/>
+    /// temaslarını görür; Gözlemci modunda (oyuncu ülkesi yok) her şey görünür ve güçler kesindir.
     /// </summary>
     public static class ReadModelProjection
     {
-        public static CellView Cell(GameState state, int index)
+        public static void Regions(GameState state, List<RegionView> into)
         {
-            HexCell c = state.World.CellAt(index);
-            return new CellView((byte)c.Terrain, c.IsWater, c.Owner, c.Controller, c.City);
+            GeoWorld world = state.World;
+            for (int i = 0; i < world.Regions.Count; i++)
+            {
+                world.TryGetControl(world.Regions[i], out RegionControl c);
+                into.Add(new RegionView(c.Region, c.Owner, c.Controller, (byte)c.Stage));
+            }
         }
 
-        public static bool IsVisible(GameState state, int index)
+        public static void RegionRings(GameState state, RegionId region, List<RegionRingView> into)
         {
-            if (!state.PlayerCountry.IsValid)
+            if (!state.World.Atlas.TryGetShape(region, out GeoMultiPolygon shape))
             {
-                return true;
+                return;
             }
 
-            return state.Intelligence.Countries.TryGetValue(state.PlayerCountry, out ObservedWorld view) && view.IsVisible(index);
+            for (int p = 0; p < shape.Count; p++)
+            {
+                GeoPolygon polygon = shape[p];
+                into.Add(new RegionRingView(p, false, Copy(polygon.Outer)));
+                for (int h = 0; h < polygon.HoleCount; h++)
+                {
+                    into.Add(new RegionRingView(p, true, Copy(polygon.Hole(h))));
+                }
+            }
         }
 
         public static void Cities(GameState state, List<CityView> into)
         {
-            WorldMap map = state.World;
-            for (int i = 0; i < map.Cities.Count; i++)
+            GeoWorld world = state.World;
+            for (int i = 0; i < world.Cities.Count; i++)
             {
-                City city = map.Cities.ValueAt(i);
-                HexCell cell = map.Cell(city.Hex);
-                into.Add(new CityView(city.Id, map.Grid.IndexOf(cell.Coord), city.NameKey, (byte)city.Tier, cell.Owner, cell.Controller, state.Warfare.IsBesieged(city.Id)));
+                world.TryGetCity(world.Cities[i], out City city);
+                into.Add(new CityView(city.Id, city.Location, city.NameKey, city.DevelopmentLevel, city.Owner, city.Controller,
+                    city.Siege == SiegeState.Besieged, world.IsPort(city)));
             }
         }
 
@@ -59,10 +71,11 @@ namespace TarihStrateji.Core.Simulation.ReadModel
 
             Fixed64 stability = state.Politics.Countries.TryGetValue(country, out CountryPolitics politics) ? politics.Stability : Fixed64.One;
             long population = 0L;
-            for (int i = 0; i < state.World.Regions.Count; i++)
+            GeoWorld world = state.World;
+            for (int i = 0; i < world.Regions.Count; i++)
             {
-                StrategicRegion region = state.World.Regions.ValueAt(i);
-                if (region.Owner == country && state.Population.Regions.TryGetValue(region.Id, out RegionPopulation p))
+                world.TryGetControl(world.Regions[i], out RegionControl region);
+                if (region.Owner == country && state.Population.Regions.TryGetValue(region.Region, out RegionPopulation p))
                 {
                     population += p.Total;
                 }
@@ -85,13 +98,14 @@ namespace TarihStrateji.Core.Simulation.ReadModel
         {
             CountryId player = state.PlayerCountry;
             bool observer = !player.IsValid;
-            WorldMap map = state.World;
+            GeoWorld world = state.World;
             for (int i = 0; i < state.Warfare.Units.Count; i++)
             {
                 LandUnit u = state.Warfare.Units.ValueAt(i);
                 if (observer || u.Owner == player)
                 {
-                    into.Add(new UnitView(u.Id.Value, UnitViewKind.Land, u.Owner, Index(map, u.Hex), u.Strength(content.Warfare.UnitTypes[u.Type]), true, u.Owner == player));
+                    GeoPoint at = Position(world, u.Node, u.Route, u.RouteProgress, content.GeoWarfare.LandCostPerKm);
+                    into.Add(new UnitView(u.Id.Value, UnitViewKind.Land, u.Owner, at, u.Strength(content.Warfare.UnitTypes[u.Type]), true, u.Owner == player));
                 }
             }
 
@@ -100,16 +114,17 @@ namespace TarihStrateji.Core.Simulation.ReadModel
                 Fleet f = state.Warfare.Fleets.ValueAt(i);
                 if (observer || f.Owner == player)
                 {
-                    into.Add(new UnitView(f.Id.Value, UnitViewKind.Fleet, f.Owner, Index(map, f.Hex), f.Strength(content.Warfare.ShipTypes[f.Type]), true, f.Owner == player));
+                    GeoPoint at = Position(world, f.Node, f.Route, f.RouteProgress, content.GeoWarfare.SeaCostPerKm);
+                    into.Add(new UnitView(f.Id.Value, UnitViewKind.Fleet, f.Owner, at, f.Strength(content.Warfare.ShipTypes[f.Type]), true, f.Owner == player));
                 }
             }
 
             for (int i = 0; i < state.Warfare.AirWings.Count; i++)
             {
                 AirWing w = state.Warfare.AirWings.ValueAt(i);
-                if (observer || w.Owner == player)
+                if ((observer || w.Owner == player) && world.TryGetCity(w.Base, out City baseCity))
                 {
-                    into.Add(new UnitView(w.Id.Value, UnitViewKind.AirWing, w.Owner, Index(map, map.Cities[w.Base].Hex), w.Strength(content.Warfare.AirWingTypes[w.Type]), true, w.Owner == player));
+                    into.Add(new UnitView(w.Id.Value, UnitViewKind.AirWing, w.Owner, baseCity.Location, w.Strength(content.Warfare.AirWingTypes[w.Type]), true, w.Owner == player));
                 }
             }
 
@@ -121,11 +136,66 @@ namespace TarihStrateji.Core.Simulation.ReadModel
             for (int i = 0; i < view.Contacts.Count; i++)
             {
                 ContactReport c = view.Contacts[i];
+                if (!world.Transport.TryGetNode(c.LastNode, out TransportNode node))
+                {
+                    continue;
+                }
+
                 UnitViewKind kind = c.Kind == SightingKind.Fleet ? UnitViewKind.Fleet : c.Kind == SightingKind.AirWing ? UnitViewKind.AirWing : UnitViewKind.Land;
-                into.Add(new UnitView(c.EntityId, kind, c.Owner, Index(map, c.LastHex), c.EstimatedStrength, c.IsExact, false));
+                into.Add(new UnitView(c.EntityId, kind, c.Owner, node.Location, c.EstimatedStrength, c.IsExact, false));
             }
         }
 
-        private static int Index(WorldMap map, HexId hex) => map.Grid.IndexOf(map.Grid.FromId(hex));
+        /// <summary>
+        /// Düğümdeki varlığın konumu; yol üstündeyse ilk kenarın üzerinde, harcanan maliyetin kenar maliyetine
+        /// oranıyla doğrusal ara nokta (yalnız görüntü içindir; kurallar düğüm + ilerlemeyi kullanır).
+        /// </summary>
+        public static GeoPoint Position(GeoWorld world, TransportNodeId nodeId, IReadOnlyList<TransportEdgeId> route, long progress, long[] costPerKm)
+        {
+            if (!world.Transport.TryGetNode(nodeId, out TransportNode node))
+            {
+                return default;
+            }
+
+            if (progress <= 0L || route.Count == 0 || !world.Transport.TryGetEdge(route[0], out TransportEdge edge)
+                || !world.Transport.TryGetNode(edge.Other(nodeId), out TransportNode next))
+            {
+                return node.Location;
+            }
+
+            int kind = (int)edge.Kind;
+            long perKm = kind >= 0 && kind < costPerKm.Length ? costPerKm[kind] : 0L;
+            long total = (edge.LengthMeters * perKm) / 1000L;
+            if (total <= 0L)
+            {
+                return node.Location;
+            }
+
+            long done = progress < total ? progress : total;
+            long lat = node.Location.LatitudeE6 + ((next.Location.LatitudeE6 - (long)node.Location.LatitudeE6) * done / total);
+            long dLon = next.Location.LongitudeE6 - (long)node.Location.LongitudeE6;
+            if (dLon > GeoPoint.HalfTurnE6)
+            {
+                dLon -= GeoPoint.FullTurnE6;
+            }
+            else if (dLon < -GeoPoint.HalfTurnE6)
+            {
+                dLon += GeoPoint.FullTurnE6;
+            }
+
+            long lon = node.Location.LongitudeE6 + (dLon * done / total);
+            return new GeoPoint((int)lat, GeoPoint.NormalizeLongitude(lon));
+        }
+
+        private static GeoPoint[] Copy(GeoRing ring)
+        {
+            var points = new GeoPoint[ring.Count];
+            for (int i = 0; i < points.Length; i++)
+            {
+                points[i] = ring[i];
+            }
+
+            return points;
+        }
     }
 }

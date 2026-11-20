@@ -1,21 +1,22 @@
+using TarihStrateji.Core.Domain.Geography;
 using TarihStrateji.Core.Domain.Ids;
 
 namespace TarihStrateji.Core.Domain.Commands
 {
     /// <summary>
     /// Sunum katmanının emir nesnelerini somut emir türlerini bilmeden kurması için (sunum yalnız
-    /// Domain'e başvurur). Hücreler dizinle (satır × genişlik + sütun) verilir; üretilen emir
-    /// <see cref="IGameCommandGateway"/> ile doğrulanıp gönderilir.
+    /// Domain'e başvurur). Hedefler <see cref="TargetRef"/> ile verilir (birlik, şehir, nokta…);
+    /// hücre kavramı yoktur. Üretilen emir <see cref="IGameCommandGateway"/> ile doğrulanıp gönderilir.
     /// </summary>
     public interface IGameCommandFactory
     {
-        GameCommand MoveUnit(ulong unitId, int cellIndex);
+        GameCommand MoveUnit(ulong unitId, TargetRef target);
 
-        GameCommand Attack(ulong unitId, int cellIndex);
+        GameCommand Attack(ulong unitId, TargetRef target);
 
         GameCommand HoldPosition(ulong unitId);
 
-        GameCommand RecruitInfantry(int cityCellIndex);
+        GameCommand RecruitInfantry(CityId city);
 
         GameCommand DeclareWar(CountryId target);
 

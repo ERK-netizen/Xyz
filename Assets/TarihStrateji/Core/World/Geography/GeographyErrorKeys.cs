@@ -25,6 +25,7 @@ namespace TarihStrateji.Core.World.Geography
         public const string RotaAramaSiniri = "hata.ulasim.aramaSiniriAsildi";
         public const string SehirTekrar = "hata.sehir.kimlikTekrar";
         public const string SehirGelisimGecersiz = "hata.sehir.gelisimSeviyesiGecersiz";
+        public const string SehirBulunamadi = "hata.sehir.bulunamadi";
         public const string SehirBolgeDisinda = "hata.sehir.konumBolgeDisinda";
         public const string SehirDugumUyumsuz = "hata.sehir.ulasimDugumuUyumsuz";
         public const string CografyaSablonuYok = "hata.kayit.cografyaSablonuYok";

@@ -1,18 +1,18 @@
-using TarihStrateji.Core.World.Grid;
+using TarihStrateji.Core.Domain.Ids;
 
 namespace TarihStrateji.Core.Intelligence.State
 {
-    /// <summary>Bir ülkenin gözlem kaynağı: merkez hücre ve görüş yarıçapı (hücre).</summary>
+    /// <summary>Bir ülkenin gözlem kaynağı: merkez ulaşım düğümü ve görüş yarıçapı (metre, graf yolu).</summary>
     public readonly struct Sensor
     {
-        public Sensor(HexCoord center, int radius)
+        public Sensor(TransportNodeId center, long radiusMeters)
         {
             Center = center;
-            Radius = radius;
+            RadiusMeters = radiusMeters;
         }
 
-        public HexCoord Center { get; }
+        public TransportNodeId Center { get; }
 
-        public int Radius { get; }
+        public long RadiusMeters { get; }
     }
 }

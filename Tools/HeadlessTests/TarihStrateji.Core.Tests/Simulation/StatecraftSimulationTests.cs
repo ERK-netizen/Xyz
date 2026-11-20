@@ -25,7 +25,7 @@ namespace TarihStrateji.Core.Tests.Simulation
         private static readonly CountryId Tr = BaselineStatecraft.Turkey;
         private static readonly CountryId Gr = BaselineStatecraft.Greece;
 
-        private static SimulationSetup Setup() => StandardRules.Install(new SimulationSetup(), Standard);
+        private static SimulationSetup Setup() => StandardRules.Install(new SimulationSetup { GeoWorldTemplate = () => TestWorlds.Coastal() }, Standard);
 
         private static SimulationKernel NewKernel(CountryId player, ulong seed = 1920)
         {

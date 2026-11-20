@@ -6,43 +6,44 @@ using TarihStrateji.Core.Economy.Rules;
 using TarihStrateji.Core.Economy.State;
 using TarihStrateji.Core.Population;
 using TarihStrateji.Core.Tests.World;
-using TarihStrateji.Core.World;
-using TarihStrateji.Core.World.Cities;
+
+using TarihStrateji.Core.World.Geography;
 
 namespace TarihStrateji.Core.Tests.Economy
 {
     /// <summary>
     /// Kıyı haritası üzerinde iki ülkeli ekonomi: A (batı, liman şehri) çiftçi; B (doğu, iç şehir)
-    /// çiftlik + maden + çelikhane. Nüfus: batı 60 bin, doğu 80 bin.
+    /// çiftlik + maden + çelikhane (tesisler şehirde, slot = gelişim × 6). Nüfus: batı 60 bin, doğu 80 bin.
     /// </summary>
     public sealed class EconomyScenario
     {
         public static readonly GameContent Content = BaselineContent.Create();
 
-
         public EconomyScenario()
-            : this(TestWorlds.Coastal(out _, out _), new PopulationState(), new EconomyState())
+            : this(TestWorlds.Coastal(), new PopulationState(), new EconomyState())
         {
         }
 
         /// <summary>Var olan bir oyun durumunun haritası, nüfusu ve ekonomisi üzerine kurar.</summary>
-        public EconomyScenario(WorldMap map, PopulationState population, EconomyState economy)
+        public EconomyScenario(GeoWorld map, PopulationState population, EconomyState economy)
         {
             Map = map;
-            Port = Map.Cities.ValueAt(0);
-            Inland = Map.Cities.ValueAt(1);
+            Map.TryGetCity(TestWorlds.PortCity, out City port);
+            Map.TryGetCity(TestWorlds.InlandCity, out City inland);
+            Port = port;
+            Inland = inland;
             Economy = economy;
             Population = population;
-            West = Map.Regions.ValueAt(0).Id;
-            East = Map.Regions.ValueAt(1).Id;
+            West = TestWorlds.West;
+            East = TestWorlds.East;
             Population.AddRegion(West, BaselineContent.AgePyramid(60_000));
             Population.AddRegion(East, BaselineContent.AgePyramid(80_000));
             Economy.AddCountry(TestWorlds.CountryA, Fixed64.FromInt(10_000), Fixed64.Parse("0.2"));
             Economy.AddCountry(TestWorlds.CountryB, Fixed64.FromInt(10_000), Fixed64.Parse("0.2"));
 
-            SectorId westResidential = Port.Sectors[2];
-            SectorId eastIndustrial = Inland.Sectors[1];
-            SectorId eastResidential = Inland.Sectors[2];
+            CityId westResidential = Port.Id;
+            CityId eastIndustrial = Inland.Id;
+            CityId eastResidential = Inland.Id;
             for (int i = 0; i < 3; i++)
             {
                 Place(TestWorlds.CountryA, BaselineFacilities.Farm, westResidential);
@@ -58,7 +59,7 @@ namespace TarihStrateji.Core.Tests.Economy
             Economy.SeedStock(TestWorlds.CountryB, BaselineGoods.Steel, Fixed64.FromInt(200));
         }
 
-        public WorldMap Map { get; }
+        public GeoWorld Map { get; }
 
         public City Port { get; }
 
@@ -78,9 +79,9 @@ namespace TarihStrateji.Core.Tests.Economy
 
         public CountryEconomy B => Economy.Countries[TestWorlds.CountryB];
 
-        public FacilityId Place(CountryId country, FacilityTypeId type, SectorId sector)
+        public FacilityId Place(CountryId country, FacilityTypeId type, CityId city)
         {
-            var result = ConstructionRules.PlaceExisting(Economy, Content.Economy, Map, country, type, sector);
+            var result = ConstructionRules.PlaceExisting(Economy, Content.Economy, Map, country, type, city);
             Assert.That(result.IsSuccess, Is.True, result.ErrorKey);
             return result.Value;
         }

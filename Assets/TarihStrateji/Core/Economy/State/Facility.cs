@@ -4,16 +4,16 @@ using TarihStrateji.Core.Domain.Numerics;
 namespace TarihStrateji.Core.Economy.State
 {
     /// <summary>
-    /// Kurulu tesis (düz veri). Bir şehir sektöründe bina slotu kullanır. Sektörün fiili
-    /// kontrolcüsü sahip değilse (işgal) tesis çalışmaz.
+    /// Kurulu tesis (düz veri). Bir şehirde yapı slotu kullanır. Şehrin fiilî kontrolcüsü
+    /// sahip değilse (işgal) tesis çalışmaz.
     /// </summary>
     public sealed class Facility
     {
-        internal Facility(FacilityId id, FacilityTypeId type, SectorId sector, CountryId owner)
+        internal Facility(FacilityId id, FacilityTypeId type, CityId city, CountryId owner)
         {
             Id = id;
             Type = type;
-            Sector = sector;
+            City = city;
             Owner = owner;
         }
 
@@ -21,7 +21,7 @@ namespace TarihStrateji.Core.Economy.State
 
         public FacilityTypeId Type { get; }
 
-        public SectorId Sector { get; }
+        public CityId City { get; }
 
         public CountryId Owner { get; }
 

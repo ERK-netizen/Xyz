@@ -13,7 +13,6 @@ using TarihStrateji.Core.Economy.State;
 using TarihStrateji.Core.Effects;
 using TarihStrateji.Core.Tests.Support;
 using TarihStrateji.Core.Tests.World;
-using TarihStrateji.Core.World.Cities;
 
 namespace TarihStrateji.Core.Tests.Economy
 {
@@ -40,20 +39,20 @@ namespace TarihStrateji.Core.Tests.Economy
         [Test]
         public void Catalog_RejectsMilitaryGoodsFromNothing_AndBadData()
         {
-            var parameters = new EconomyParameters(new GoodId(1), F("1"), F("0.5"), F("0.5"), F("0.1"), F("0.25"), F("4"));
+            var parameters = new EconomyParameters(new GoodId(1), F("1"), F("0.5"), F("0.5"), F("0.1"), F("0.25"), F("4"), 6);
             var food = new GoodDefinition(new GoodId(1), "mal.gida", GoodCategory.Food, F("2"));
             var rifle = new GoodDefinition(new GoodId(2), "mal.tufek", GoodCategory.MilitaryEquipment, F("20"));
-            SectorKind[] any = { SectorKind.Industrial };
+            const bool any = false;
             var magic = new FacilityTypeDefinition(new FacilityTypeId(1), "tesis.sihir", null, new[] { new GoodAmount(rifle.Id, F("1")) }, 100, 1, F("1"), null, 1, F("0"), any);
             Assert.That(EconomyCatalog.Create(new[] { food, rifle }, new[] { magic }, parameters).ErrorKey, Is.EqualTo(EconomyErrorKeys.YoktanUretim));
 
             var noOutput = new FacilityTypeDefinition(new FacilityTypeId(1), "tesis.bos", null, null, 100, 1, F("1"), null, 1, F("0"), any);
             Assert.That(EconomyCatalog.Create(new[] { food }, new[] { noOutput }, parameters).ErrorKey, Is.EqualTo(EconomyErrorKeys.TanimGecersiz));
             Assert.That(EconomyCatalog.Create(new[] { food, food }, new FacilityTypeDefinition[0], parameters).ErrorKey, Is.EqualTo(EconomyErrorKeys.TanimGecersiz));
-            var badFood = new EconomyParameters(new GoodId(2), F("1"), F("0.5"), F("0.5"), F("0.1"), F("0.25"), F("4"));
+            var badFood = new EconomyParameters(new GoodId(2), F("1"), F("0.5"), F("0.5"), F("0.1"), F("0.25"), F("4"), 6);
             Assert.That(EconomyCatalog.Create(new[] { food, rifle }, new FacilityTypeDefinition[0], badFood).ErrorKey, Is.EqualTo(EconomyErrorKeys.TanimGecersiz));
-            var adminSector = new FacilityTypeDefinition(new FacilityTypeId(1), "tesis.x", null, new[] { new GoodAmount(food.Id, F("1")) }, 100, 1, F("1"), null, 1, F("0"), new[] { SectorKind.Administrative });
-            Assert.That(EconomyCatalog.Create(new[] { food }, new[] { adminSector }, parameters).ErrorKey, Is.EqualTo(EconomyErrorKeys.TanimGecersiz));
+            var noSlot = new FacilityTypeDefinition(new FacilityTypeId(1), "tesis.x", null, new[] { new GoodAmount(food.Id, F("1")) }, 100, 0, F("1"), null, 1, F("0"), any);
+            Assert.That(EconomyCatalog.Create(new[] { food }, new[] { noSlot }, parameters).ErrorKey, Is.EqualTo(EconomyErrorKeys.TanimGecersiz));
             Assert.That(BaselineContent.CreateEconomy().FacilityTypes.Count, Is.EqualTo(9));
         }
 
@@ -104,7 +103,7 @@ namespace TarihStrateji.Core.Tests.Economy
             Workday(s, effects);
             Assert.That(s.A.Stock(BaselineGoods.Food), Is.EqualTo(Fixed64.FromInt(300) + F("90")), "3 × 25 × 1.2");
 
-            s.Map.SetSectorController(s.Port.Sectors[2], TestWorlds.CountryB); // çiftliklerin sektörü işgal
+            s.Port.Controller = TestWorlds.CountryB; // çiftliklerin şehri işgal
             Workday(s, effects);
             Assert.That(s.A.Stock(BaselineGoods.Food), Is.EqualTo(Fixed64.FromInt(300) + F("90")), "işgal altında üretim yok");
             Assert.That(s.Population.Regions[s.West].Employed, Is.EqualTo(0));
@@ -114,36 +113,28 @@ namespace TarihStrateji.Core.Tests.Economy
         public void Construction_PaysUpfront_ProgressesDaily_AndCompletesExactly()
         {
             var s = new EconomyScenario();
-            SectorId res = s.Port.Sectors[2];
-            Assert.That(ConstructionRules.Validate(s.Economy, Catalog, s.Map, TestWorlds.CountryA, BaselineFacilities.Farm, res).ErrorKey,
-                Is.EqualTo(EconomyErrorKeys.SlotYetersiz), "3 çiftlik slotları doldurdu");
-            Assert.That(ConstructionRules.Validate(s.Economy, Catalog, s.Map, TestWorlds.CountryA, BaselineFacilities.Farm, s.Inland.Sectors[2]).ErrorKey,
-                Is.EqualTo(EconomyErrorKeys.SektorBizimDegil));
-            Assert.That(ConstructionRules.Validate(s.Economy, Catalog, s.Map, TestWorlds.CountryA, BaselineFacilities.SteelWorks, s.Port.Sectors[1]).ErrorKey,
-                Is.EqualTo(EconomyErrorKeys.SektorTuruUygunDegil));
-            Assert.That(ConstructionRules.Validate(s.Economy, Catalog, s.Map, TestWorlds.CountryB, BaselineFacilities.ArmsFactory, s.Inland.Sectors[1]).ErrorKey,
-                Is.EqualTo(EconomyErrorKeys.SlotYetersiz));
-
-            SectorId port = s.Port.Sectors[1]; // liman, 2 slot
-            Assert.That(ConstructionRules.Validate(s.Economy, Catalog, s.Map, TestWorlds.CountryA, BaselineFacilities.Shipyard, port).ErrorKey,
-                Is.EqualTo(EconomyErrorKeys.SlotYetersiz), "tersane 3 slot ister");
-
-            s.A.Treasury = Fixed64.FromInt(100);
-            SectorId admin = s.Port.AdministrativeSector;
-            Assert.That(ConstructionRules.Validate(s.Economy, Catalog, s.Map, TestWorlds.CountryA, BaselineFacilities.Farm, admin).ErrorKey,
-                Is.EqualTo(EconomyErrorKeys.SektorTuruUygunDegil));
+            s.Port.DevelopmentLevel = 1; // 6 slot; 3 çiftlik kullanıyor
+            Assert.That(ConstructionRules.Validate(s.Economy, Catalog, s.Map, TestWorlds.CountryA, BaselineFacilities.SteelWorks, s.Port.Id).IsValid, Is.True);
+            Assert.That(ConstructionRules.ValidatePlacement(s.Economy, Catalog, s.Map, TestWorlds.CountryA, BaselineFacilities.Shipyard, s.Port.Id).IsValid, Is.True, "tersane 3 slot: sığar");
+            Assert.That(ConstructionRules.ValidatePlacement(s.Economy, Catalog, s.Map, TestWorlds.CountryA, BaselineFacilities.AircraftFactory, s.Port.Id).IsValid, Is.True);
+            Assert.That(ConstructionRules.Validate(s.Economy, Catalog, s.Map, TestWorlds.CountryA, BaselineFacilities.Farm, s.Inland.Id).ErrorKey,
+                Is.EqualTo(EconomyErrorKeys.SehirBizimDegil));
+            Assert.That(ConstructionRules.Validate(s.Economy, Catalog, s.Map, TestWorlds.CountryB, BaselineFacilities.Shipyard, s.Inland.Id).ErrorKey,
+                Is.EqualTo(EconomyErrorKeys.LimanGerekli), "tersane yalnız liman şehrine");
+            Assert.That(ConstructionRules.Validate(s.Economy, Catalog, s.Map, TestWorlds.CountryA, BaselineFacilities.Farm, new CityId(99)).ErrorKey,
+                Is.EqualTo(EconomyErrorKeys.SehirBulunamadi));
 
             var b = new EconomyScenario();
-            SectorId fortress = b.Inland.Sectors[3];
-            Assert.That(ConstructionRules.Validate(b.Economy, Catalog, b.Map, TestWorlds.CountryB, BaselineFacilities.Farm, fortress).ErrorKey,
-                Is.EqualTo(EconomyErrorKeys.SektorTuruUygunDegil));
-            b.Map.ReleaseBuildingSlots(b.Inland.Sectors[2], 1);
-            b.Economy.Facilities.Remove(b.Economy.Facilities.KeyAt(1)); // doğudaki bir çiftliği kaldır (slot boşalt)
+            b.Inland.DevelopmentLevel = 1; // 6 slot; doğuda 8 slot kullanımda (senaryo kurulumundan)
+            Assert.That(ConstructionRules.Validate(b.Economy, Catalog, b.Map, TestWorlds.CountryB, BaselineFacilities.Farm, b.Inland.Id).ErrorKey,
+                Is.EqualTo(EconomyErrorKeys.SlotYetersiz));
+            b.Inland.DevelopmentLevel = 2; // 12 slot
             Fixed64 before = b.B.Treasury;
-            Result<ConstructionId> order = ConstructionRules.Order(b.Economy, Catalog, b.Map, TestWorlds.CountryB, BaselineFacilities.Farm, b.Inland.Sectors[2]);
+            Result<ConstructionId> order = ConstructionRules.Order(b.Economy, Catalog, b.Map, TestWorlds.CountryB, BaselineFacilities.Farm, b.Inland.Id);
             Assert.That(order.IsSuccess, Is.True, order.ErrorKey);
             Assert.That(b.B.Treasury, Is.EqualTo(before - F("400")));
             Assert.That(b.B.Ledger.ConstructionSpending, Is.EqualTo(F("400")));
+            Assert.That(EconomyGeography.UsedSlots(b.Economy, Catalog, b.Inland.Id), Is.EqualTo(9), "süren inşaat slot sayılır");
             AssertInvariants(b);
 
             var completed = new List<FacilityId>();
@@ -156,6 +147,7 @@ namespace TarihStrateji.Core.Tests.Economy
             ConstructionRules.AdvanceDay(b.Economy, Catalog, b.Map, new EffectEngine(), Day, completed);
             Assert.That(completed.Count, Is.EqualTo(1), "tam 45. gün");
             Assert.That(b.Economy.Facilities[completed[0]].Type, Is.EqualTo(BaselineFacilities.Farm));
+            Assert.That(b.Economy.Facilities[completed[0]].City, Is.EqualTo(b.Inland.Id));
             AssertInvariants(b);
         }
 
@@ -164,22 +156,21 @@ namespace TarihStrateji.Core.Tests.Economy
         {
             var s = new EconomyScenario();
             s.Economy.SeedStock(TestWorlds.CountryB, BaselineGoods.Steel, F("100"));
-            SectorId target = s.Inland.Sectors[1];
-            s.Map.ReleaseBuildingSlots(target, 1);
-            s.Economy.Facilities.Remove(s.Economy.Facilities.KeyAt(6)); // doğu sanayideki çiftlik
+            CityId target = s.Inland.Id;
             ConstructionId id = ConstructionRules.Order(s.Economy, Catalog, s.Map, TestWorlds.CountryB, BaselineFacilities.ConsumerFactory, target).Value;
             var completed = new List<FacilityId>();
             ConstructionRules.AdvanceDay(s.Economy, Catalog, s.Map, new EffectEngine(), Day, completed);
-            s.Map.SetSectorController(target, TestWorlds.CountryA);
+            s.Inland.Controller = TestWorlds.CountryA;
             ConstructionRules.AdvanceDay(s.Economy, Catalog, s.Map, new EffectEngine(), Day, completed);
             Assert.That(s.Economy.Constructions[id].Progress, Is.EqualTo(Fixed64.One), "işgalde ilerleme durur");
 
             Assert.That(ConstructionRules.Cancel(s.Economy, Catalog, s.Map, TestWorlds.CountryA, id).ErrorKey, Is.EqualTo(EconomyErrorKeys.InsaatBizimDegil));
             Fixed64 before = s.B.Treasury;
-            int freeBefore = s.Map.Sectors[target].FreeBuildingSlots;
+            int usedBefore = EconomyGeography.UsedSlots(s.Economy, Catalog, target);
             Assert.That(ConstructionRules.Cancel(s.Economy, Catalog, s.Map, TestWorlds.CountryB, id).IsValid, Is.True);
             Assert.That(s.B.Treasury, Is.EqualTo(before + F("450")));
-            Assert.That(s.Map.Sectors[target].FreeBuildingSlots, Is.EqualTo(freeBefore + 1));
+            Assert.That(EconomyGeography.UsedSlots(s.Economy, Catalog, target), Is.EqualTo(usedBefore - 1));
+            s.Inland.Controller = TestWorlds.CountryB;
             AssertInvariants(s);
         }
 
@@ -334,7 +325,7 @@ namespace TarihStrateji.Core.Tests.Economy
             EconomySnapshotCodec.Write(back.Value, w2);
             Assert.That(w2.ToArray(), Is.EqualTo(w.ToArray()));
 
-            s.Economy.Facilities.Remove(s.Economy.Facilities.KeyAt(0)); // slot bırakılmadan tesis silindi
+            s.Inland.DevelopmentLevel = 1; // 6 slot; doğuda 8 slot kullanımda → kapasite aşıldı
             var violations = new List<string>();
             Assert.That(EconomyInvariants.Check(s.Economy, Catalog, s.Map, violations), Is.GreaterThan(0));
             Assert.That(violations, Has.Some.StartsWith(EconomyErrorKeys.SlotMuhasebesiTutarsiz));

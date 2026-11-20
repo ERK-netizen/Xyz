@@ -3,7 +3,7 @@ using TarihStrateji.Core.Domain.Ids;
 using TarihStrateji.Core.Economy.Definitions;
 using TarihStrateji.Core.Economy.State;
 using TarihStrateji.Core.Population;
-using TarihStrateji.Core.World;
+using TarihStrateji.Core.World.Geography;
 
 namespace TarihStrateji.Core.Economy.Rules
 {
@@ -13,7 +13,7 @@ namespace TarihStrateji.Core.Economy.Rules
     /// </summary>
     public static class WorkforceRules
     {
-        public static void AssignDay(EconomyState economy, PopulationState population, WorldMap map, EconomyCatalog catalog, DemographyParameters demography)
+        public static void AssignDay(EconomyState economy, PopulationState population, GeoWorld world, EconomyCatalog catalog, DemographyParameters demography)
         {
             var remaining = new StableIdMap<RegionId, long>(population.Regions.Count);
             var labor = new StableIdMap<RegionId, long>(population.Regions.Count);
@@ -29,12 +29,12 @@ namespace TarihStrateji.Core.Economy.Rules
             {
                 Facility facility = economy.Facilities.ValueAt(i);
                 facility.Workers = 0L;
-                if (!EconomyGeography.IsOperational(map, facility.Sector, facility.Owner))
+                if (!EconomyGeography.IsOperational(world, facility.City, facility.Owner))
                 {
                     continue;
                 }
 
-                RegionId region = EconomyGeography.RegionOfSector(map, facility.Sector);
+                RegionId region = EconomyGeography.RegionOfCity(world, facility.City);
                 if (!remaining.TryGetValue(region, out long available) || available <= 0L)
                 {
                     continue;

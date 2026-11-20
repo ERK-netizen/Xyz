@@ -4,7 +4,7 @@ using TarihStrateji.Core.Domain.Randomness;
 using TarihStrateji.Core.Domain.Time;
 using TarihStrateji.Core.Effects;
 using TarihStrateji.Core.Simulation.State;
-using TarihStrateji.Core.World;
+using TarihStrateji.Core.World.Geography;
 
 namespace TarihStrateji.Core.Simulation.Phases
 {
@@ -26,7 +26,7 @@ namespace TarihStrateji.Core.Simulation.Phases
 
         public GameDate Today => State.Today;
 
-        public WorldMap World => State.World;
+        public GeoWorld World => State.World;
 
         public EffectEngine Effects => State.Effects;
 

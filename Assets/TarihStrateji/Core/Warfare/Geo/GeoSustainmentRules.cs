@@ -56,7 +56,7 @@ namespace TarihStrateji.Core.Warfare.Geo
 
             for (int i = 0; i < dissolved.Count; i++)
             {
-                notes.Add(CombatRules.UnitDestroyedNote + " @ " + dissolved[i].Id.Value.ToString(CultureInfo.InvariantCulture));
+                notes.Add(WarfareNotes.UnitDestroyed + " @ " + dissolved[i].Id.Value.ToString(CultureInfo.InvariantCulture));
                 GeoCombatRules.Remove(ctx, dissolved[i], true);
             }
         }

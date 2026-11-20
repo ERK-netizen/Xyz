@@ -183,7 +183,7 @@ namespace TarihStrateji.Core.Warfare.Geo
         public static void SetMission(AirWing wing, AirMission mission, TargetRef target)
         {
             wing.Mission = mission;
-            wing.GeoMissionTarget = mission == AirMission.None ? TargetRef.None : target;
+            wing.MissionTarget = mission == AirMission.None ? TargetRef.None : target;
         }
 
         /// <summary>P11: görevdeki kanat teşkilat harcar; üstekiler toparlanır ve takviye alır.</summary>
@@ -249,7 +249,7 @@ namespace TarihStrateji.Core.Warfare.Geo
                 {
                     w.Base = best;
                     SetMission(w, AirMission.None, TargetRef.None);
-                    notes.Add(AirRules.RebasedNote + " @ " + w.Id.Value.ToString(CultureInfo.InvariantCulture));
+                    notes.Add(WarfareNotes.AirRebased + " @ " + w.Id.Value.ToString(CultureInfo.InvariantCulture));
                 }
                 else
                 {
@@ -262,7 +262,7 @@ namespace TarihStrateji.Core.Warfare.Geo
                 AirWingTypeDefinition type = ctx.Catalog.AirWingTypes[lost[i].Type];
                 CasualtyRules.SendHome(ctx.Population, lost[i].HomeRegion, lost[i].Manpower);
                 ctx.Warfare.AirWings.Remove(lost[i].Id);
-                notes.Add(AirRules.LostNote + " @ " + lost[i].Id.Value.ToString(CultureInfo.InvariantCulture));
+                notes.Add(WarfareNotes.AirWingLost + " @ " + lost[i].Id.Value.ToString(CultureInfo.InvariantCulture));
             }
         }
     }

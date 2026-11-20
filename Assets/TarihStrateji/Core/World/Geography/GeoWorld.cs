@@ -74,6 +74,41 @@ namespace TarihStrateji.Core.World.Geography
         /// <summary>Bölgelerin denetim durumu (atlas sırasıyla bölge kimliği).</summary>
         public IReadOnlyList<RegionId> Regions => Atlas.Regions;
 
+        /// <summary>
+        /// Hukukî devir (yalnız barış/antlaşma): bölge ve içindeki şehirlerin sahibi ve kontrolcüsü yeni sahip
+        /// olur, bölge güvenli aşamaya geçer. Bölge yoksa yanlış döner.
+        /// </summary>
+        public bool TransferRegionOwnership(RegionId region, CountryId newOwner)
+        {
+            if (!_control.TryGetValue(region, out RegionControl control) || !newOwner.IsValid)
+            {
+                return false;
+            }
+
+            control.Owner = newOwner;
+            ResetController(control);
+            for (int i = 0; i < _cityOrder.Count; i++)
+            {
+                City city = _cities[_cityOrder[i]];
+                if (city.Region == region)
+                {
+                    city.Owner = newOwner;
+                    city.Controller = newOwner;
+                }
+            }
+
+            return true;
+        }
+
+        /// <summary>Bölgenin kontrolünü sahibine döndürür (barış sonrası işgal iadesi); aşama güvenli olur.</summary>
+        public static void ResetController(RegionControl control)
+        {
+            control.Controller = control.Owner;
+            control.Stage = RegionControlStage.Secured;
+            control.Challenger = CountryId.None;
+            control.DaysHeld = 0;
+        }
+
         public bool IsPort(City city) => Transport.TryGetNode(city.Node, out TransportNode node) && node.Kind == TransportNodeKind.Port;
 
         /// <summary>Kurulum sonrası bütünlük: liman şehrinin deniz yolu bağlantısı olmalı.</summary>

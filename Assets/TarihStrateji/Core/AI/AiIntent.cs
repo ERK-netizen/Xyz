@@ -1,21 +1,21 @@
 using System.Collections.Generic;
 using TarihStrateji.Core.Diplomacy.State;
+using TarihStrateji.Core.Domain.Geography;
 using TarihStrateji.Core.Domain.Ids;
 using TarihStrateji.Core.Domain.Numerics;
-using TarihStrateji.Core.World.Grid;
 
 namespace TarihStrateji.Core.AI
 {
     /// <summary>
     /// YZ kararı (saf veri). Alanlar türe göre anlam taşır: <see cref="Id"/> teknoloji/odak/olay/
-    /// teklif/birlik kimliği, <see cref="Country"/> muhatap ülke, <see cref="Target"/> hücre,
+    /// teklif/birlik kimliği, <see cref="Country"/> muhatap ülke, <see cref="Target"/> emir hedefi (birlik/şehir/nokta),
     /// <see cref="Option"/> olay seçeneği, <see cref="Transfers"/> barış maddeleri.
     /// </summary>
     public readonly struct AiIntent
     {
         private static readonly RegionTransfer[] NoTransfers = new RegionTransfer[0];
 
-        private AiIntent(AiIntentKind kind, ulong id, CountryId country, HexCoord target, int option, RegionTransfer[] transfers, ulong secondary = 0UL, Fixed64 amount = default)
+        private AiIntent(AiIntentKind kind, ulong id, CountryId country, TargetRef target, int option, RegionTransfer[] transfers, ulong secondary = 0UL, Fixed64 amount = default)
         {
             Secondary = secondary;
             Amount = amount;
@@ -33,11 +33,11 @@ namespace TarihStrateji.Core.AI
 
         public CountryId Country { get; }
 
-        public HexCoord Target { get; }
+        public TargetRef Target { get; }
 
         public int Option { get; }
 
-        /// <summary>İkinci kimlik (inşaatta sektör).</summary>
+        /// <summary>İkinci kimlik (inşaatta şehir).</summary>
         public ulong Secondary { get; }
 
         /// <summary>Sayısal değer (vergi oranı).</summary>
@@ -62,14 +62,14 @@ namespace TarihStrateji.Core.AI
 
         public static AiIntent War(CountryId target) => new AiIntent(AiIntentKind.DeclareWar, 0, target, default, 0, null);
 
-        public static AiIntent Recruit(UnitTypeId type, HexCoord at) => new AiIntent(AiIntentKind.Recruit, type.Value, CountryId.None, at, 0, null);
+        public static AiIntent Recruit(UnitTypeId type, CityId at) => new AiIntent(AiIntentKind.Recruit, type.Value, CountryId.None, TargetRef.Entity(TargetKind.City, at.Value), 0, null);
 
-        public static AiIntent Move(LandUnitId unit, HexCoord to) => new AiIntent(AiIntentKind.Move, unit.Value, CountryId.None, to, 0, null);
+        public static AiIntent Move(LandUnitId unit, TargetRef to) => new AiIntent(AiIntentKind.Move, unit.Value, CountryId.None, to, 0, null);
 
         public static AiIntent Tax(Fixed64 rate) => new AiIntent(AiIntentKind.SetTaxRate, 0, CountryId.None, default, 0, null, 0UL, rate);
 
-        public static AiIntent Build(FacilityTypeId type, SectorId sector) => new AiIntent(AiIntentKind.Build, type.Value, CountryId.None, default, 0, null, sector.Value);
+        public static AiIntent Build(FacilityTypeId type, CityId city) => new AiIntent(AiIntentKind.Build, type.Value, CountryId.None, default, 0, null, city.Value);
 
-        public static AiIntent Attack(LandUnitId unit, HexCoord target) => new AiIntent(AiIntentKind.Attack, unit.Value, CountryId.None, target, 0, null);
+        public static AiIntent Attack(LandUnitId unit, TargetRef target) => new AiIntent(AiIntentKind.Attack, unit.Value, CountryId.None, target, 0, null);
     }
 }

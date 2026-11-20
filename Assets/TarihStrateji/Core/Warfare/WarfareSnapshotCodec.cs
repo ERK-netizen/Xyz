@@ -25,31 +25,16 @@ namespace TarihStrateji.Core.Warfare
                 w.WriteId(u.Id);
                 w.WriteId(u.Owner);
                 w.WriteId(u.Type);
-                w.WriteId(u.Hex);
                 w.WriteId(u.HomeRegion);
                 w.WriteInt64(u.Manpower);
                 w.WriteFixed64(u.Equipment);
                 w.WriteFixed64(u.Organization);
                 w.WriteFixed64(u.ActionPoints);
                 w.WriteFixed64(u.Supply);
-                w.WriteFixed64(u.MoveBudget);
-                w.WriteId(u.AttackTarget);
                 w.WriteId(u.LastResolution);
                 w.WriteId(u.Carrier);
-                w.WriteInt32(u.Path.Count);
-                for (int p = 0; p < u.Path.Count; p++)
-                {
-                    w.WriteId(u.Path[p]);
-                }
-
                 WriteGeoRoute(w, u.Node, u.Route, u.RouteProgress);
-                TargetRefCodec.Write(w, u.GeoAttackTarget);
-            }
-
-            w.WriteInt32(state.Besieged.Count);
-            for (int i = 0; i < state.Besieged.Count; i++)
-            {
-                w.WriteId(state.Besieged[i]);
+                TargetRefCodec.Write(w, u.AttackTarget);
             }
 
             w.WriteUInt64(state.FleetIds.NextValue);
@@ -60,18 +45,10 @@ namespace TarihStrateji.Core.Warfare
                 w.WriteId(f.Id);
                 w.WriteId(f.Owner);
                 w.WriteId(f.Type);
-                w.WriteId(f.Hex);
                 w.WriteId(f.HomeRegion);
                 w.WriteInt64(f.Manpower);
                 w.WriteFixed64(f.Equipment);
                 w.WriteFixed64(f.Organization);
-                w.WriteFixed64(f.MoveBudget);
-                w.WriteInt32(f.Path.Count);
-                for (int p = 0; p < f.Path.Count; p++)
-                {
-                    w.WriteId(f.Path[p]);
-                }
-
                 WriteGeoRoute(w, f.Node, f.Route, f.RouteProgress);
             }
 
@@ -89,8 +66,7 @@ namespace TarihStrateji.Core.Warfare
                 w.WriteFixed64(a.Equipment);
                 w.WriteFixed64(a.Organization);
                 w.WriteInt32((int)a.Mission);
-                w.WriteId(a.MissionTarget);
-                TargetRefCodec.Write(w, a.GeoMissionTarget);
+                TargetRefCodec.Write(w, a.MissionTarget);
             }
 
             w.WriteInt32(state.Blockaded.Count);
@@ -109,27 +85,19 @@ namespace TarihStrateji.Core.Warfare
                 int count = r.ReadCount(r.Remaining);
                 for (int i = 0; i < count; i++)
                 {
-                    var u = new LandUnit(new LandUnitId(r.ReadUInt64()), new CountryId(r.ReadUInt64()), new UnitTypeId(r.ReadUInt64()), new HexId(r.ReadUInt64()), new RegionId(r.ReadUInt64()))
+                    var u = new LandUnit(new LandUnitId(r.ReadUInt64()), new CountryId(r.ReadUInt64()), new UnitTypeId(r.ReadUInt64()), TransportNodeId.None, new RegionId(r.ReadUInt64()))
                     {
                         Manpower = r.ReadInt64(),
                         Equipment = r.ReadFixed64(),
                         Organization = r.ReadFixed64(),
                         ActionPoints = r.ReadFixed64(),
                         Supply = r.ReadFixed64(),
-                        MoveBudget = r.ReadFixed64(),
-                        AttackTarget = new HexId(r.ReadUInt64()),
                         LastResolution = new ResolutionId(r.ReadUInt64()),
                         Carrier = new FleetId(r.ReadUInt64()),
                     };
-                    int path = r.ReadCount(r.Remaining);
-                    for (int p = 0; p < path; p++)
-                    {
-                        u.PathList.Add(new HexId(r.ReadUInt64()));
-                    }
-
                     u.Node = ReadGeoRoute(r, u.RouteList, out long unitProgress);
                     u.RouteProgress = unitProgress;
-                    u.GeoAttackTarget = TargetRefCodec.Read(r);
+                    u.AttackTarget = TargetRefCodec.Read(r);
 
                     if (!u.Id.IsValid || u.Id.Value >= state.UnitIds.NextValue)
                     {
@@ -139,29 +107,16 @@ namespace TarihStrateji.Core.Warfare
                     state.Units.Add(u.Id, u);
                 }
 
-                int besieged = r.ReadCount(r.Remaining);
-                for (int i = 0; i < besieged; i++)
-                {
-                    state.BesiegedList.Add(new CityId(r.ReadUInt64()));
-                }
-
                 state.FleetIds = new StableIdAllocator(r.ReadUInt64());
                 int fleets = r.ReadCount(r.Remaining);
                 for (int i = 0; i < fleets; i++)
                 {
-                    var f = new Fleet(new FleetId(r.ReadUInt64()), new CountryId(r.ReadUInt64()), new UnitTypeId(r.ReadUInt64()), new HexId(r.ReadUInt64()), new RegionId(r.ReadUInt64()))
+                    var f = new Fleet(new FleetId(r.ReadUInt64()), new CountryId(r.ReadUInt64()), new UnitTypeId(r.ReadUInt64()), TransportNodeId.None, new RegionId(r.ReadUInt64()))
                     {
                         Manpower = r.ReadInt64(),
                         Equipment = r.ReadFixed64(),
                         Organization = r.ReadFixed64(),
-                        MoveBudget = r.ReadFixed64(),
                     };
-                    int path = r.ReadCount(r.Remaining);
-                    for (int p = 0; p < path; p++)
-                    {
-                        f.PathList.Add(new HexId(r.ReadUInt64()));
-                    }
-
                     f.Node = ReadGeoRoute(r, f.RouteList, out long fleetProgress);
                     f.RouteProgress = fleetProgress;
 
@@ -190,8 +145,7 @@ namespace TarihStrateji.Core.Warfare
                     }
 
                     a.Mission = (AirMission)mission;
-                    a.MissionTarget = new HexId(r.ReadUInt64());
-                    a.GeoMissionTarget = TargetRefCodec.Read(r);
+                    a.MissionTarget = TargetRefCodec.Read(r);
                     state.AirWings.Add(a.Id, a);
                 }
 

@@ -5,19 +5,18 @@ using TarihStrateji.Core.Domain.Ids;
 using TarihStrateji.Core.Domain.Numerics;
 using TarihStrateji.Core.Economy.Definitions;
 using TarihStrateji.Core.Economy.State;
-using TarihStrateji.Core.World;
-using TarihStrateji.Core.World.Cities;
+using TarihStrateji.Core.Economy.Geo;
+using TarihStrateji.Core.World.Geography;
 
 namespace TarihStrateji.Core.Economy
 {
     /// <summary>
     /// Ekonomi değişmezleri (P15): negatif stok yok; tesis/inşaat/ticaret emri referansları
-    /// geçerli; her sektörde (tesis slotları + süren inşaat slotları) == dünyanın kullanılan
-    /// slot sayısı (slot muhasebesi).
+    /// geçerli; her şehirde (tesis slotları + süren inşaat slotları) ≤ gelişim × seviye başına slot.
     /// </summary>
     public static class EconomyInvariants
     {
-        public static int Check(EconomyState economy, EconomyCatalog catalog, WorldMap map, List<string> violations)
+        public static int Check(EconomyState economy, EconomyCatalog catalog, GeoWorld world, List<string> violations)
         {
             int before = violations.Count;
             for (int i = 0; i < economy.Countries.Count; i++)
@@ -37,42 +36,41 @@ namespace TarihStrateji.Core.Economy
                 }
             }
 
-            var slots = new StableIdMap<SectorId, int>();
+            var slots = new StableIdMap<CityId, int>();
             for (int i = 0; i < economy.Facilities.Count; i++)
             {
                 Facility f = economy.Facilities.ValueAt(i);
-                if (!catalog.FacilityTypes.TryGetValue(f.Type, out FacilityTypeDefinition type) || !map.Sectors.ContainsKey(f.Sector)
+                if (!catalog.FacilityTypes.TryGetValue(f.Type, out FacilityTypeDefinition type) || !world.TryGetCity(f.City, out _)
                     || !economy.Countries.ContainsKey(f.Owner))
                 {
                     violations.Add(EconomyErrorKeys.KayitTutarsiz + At(f.Id));
                     continue;
                 }
 
-                slots.TryGetValue(f.Sector, out int used);
-                slots[f.Sector] = used + type.BuildingSlots;
+                slots.TryGetValue(f.City, out int used);
+                slots[f.City] = used + type.BuildingSlots;
             }
 
             for (int i = 0; i < economy.Constructions.Count; i++)
             {
                 ConstructionOrder o = economy.Constructions.ValueAt(i);
-                if (!catalog.FacilityTypes.TryGetValue(o.Type, out FacilityTypeDefinition type) || !map.Sectors.ContainsKey(o.Sector)
+                if (!catalog.FacilityTypes.TryGetValue(o.Type, out FacilityTypeDefinition type) || !world.TryGetCity(o.City, out _)
                     || !economy.Countries.ContainsKey(o.Country) || o.Progress.IsNegative)
                 {
                     violations.Add(EconomyErrorKeys.KayitTutarsiz + At(o.Id));
                     continue;
                 }
 
-                slots.TryGetValue(o.Sector, out int used);
-                slots[o.Sector] = used + type.BuildingSlots;
+                slots.TryGetValue(o.City, out int used);
+                slots[o.City] = used + type.BuildingSlots;
             }
 
-            for (int i = 0; i < map.Sectors.Count; i++)
+            for (int i = 0; i < slots.Count; i++)
             {
-                CitySector sector = map.Sectors.ValueAt(i);
-                slots.TryGetValue(sector.Id, out int expected);
-                if (expected != sector.BuildingSlotsUsed)
+                if (world.TryGetCity(slots.KeyAt(i), out City city)
+                    && slots.ValueAt(i) > CitySlotRules.Capacity(city, catalog.Parameters.BuildingSlotsPerDevelopment))
                 {
-                    violations.Add(EconomyErrorKeys.SlotMuhasebesiTutarsiz + At(sector.Id));
+                    violations.Add(EconomyErrorKeys.SlotMuhasebesiTutarsiz + At(city.Id));
                 }
             }
 

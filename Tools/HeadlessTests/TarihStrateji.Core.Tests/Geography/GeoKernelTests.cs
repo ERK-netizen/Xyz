@@ -81,10 +81,10 @@ namespace TarihStrateji.Core.Tests.Geography
             SimulationKernel kernel = NewKernel(3UL, out SimulationSetup setup);
             byte[] snapshot = kernel.CaptureSnapshot();
 
-            var noTemplate = StandardRules.InstallGeographic(new SimulationSetup(), Content);
+            var noTemplate = StandardRules.Install(new SimulationSetup(), Content);
             Assert.That(SimulationKernel.Restore(noTemplate, snapshot).ErrorKey, Is.EqualTo(GeographyErrorKeys.CografyaSablonuYok));
 
-            var otherMap = StandardRules.InstallGeographic(new SimulationSetup { GeoWorldTemplate = Build }, Content);
+            var otherMap = StandardRules.Install(new SimulationSetup { GeoWorldTemplate = Build }, Content);
             Assert.That(SimulationKernel.Restore(otherMap, snapshot).ErrorKey, Is.EqualTo(GeographyErrorKeys.CografyaUyumsuz), "şehirsiz farklı içerik");
         }
 
@@ -100,7 +100,7 @@ namespace TarihStrateji.Core.Tests.Geography
 
         private static SimulationKernel NewKernel(ulong seed, out SimulationSetup setup)
         {
-            GameState state = GameState.CreateNewGeo(seed, GameMode.Normal, Day1925, Red, WorldWithCities());
+            GameState state = GameState.CreateNew(seed, GameMode.Normal, Day1925, Red, WorldWithCities());
             state.Population.AddRegion(A, BaselineContent.AgePyramid(400_000));
             state.Population.AddRegion(B, BaselineContent.AgePyramid(400_000));
             state.Population.AddRegion(C, BaselineContent.AgePyramid(50_000));
@@ -111,7 +111,7 @@ namespace TarihStrateji.Core.Tests.Geography
             }
 
             Core.Diplomacy.DiplomacyRules.StartWar(state.Diplomacy, Red, Blue, Day1925);
-            setup = StandardRules.InstallGeographic(new SimulationSetup { GeoWorldTemplate = WorldWithCities }, Content);
+            setup = StandardRules.Install(new SimulationSetup { GeoWorldTemplate = WorldWithCities }, Content);
             Result<SimulationKernel> kernel = SimulationKernel.Create(setup, state);
             Assert.That(kernel.IsSuccess, Is.True, kernel.ErrorKey);
             return kernel.Value;

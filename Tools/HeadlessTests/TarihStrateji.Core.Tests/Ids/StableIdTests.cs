@@ -14,7 +14,7 @@ namespace TarihStrateji.Core.Tests.Ids
         {
             Assert.That(CountryId.None.IsValid, Is.False);
             Assert.That(CountryId.None.Value, Is.EqualTo(0UL));
-            Assert.That(default(HexId), Is.EqualTo(HexId.None));
+            Assert.That(default(RegionId), Is.EqualTo(RegionId.None));
             Assert.That(new CityId(1).IsValid, Is.True);
         }
 

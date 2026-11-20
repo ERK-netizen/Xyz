@@ -98,14 +98,21 @@ namespace TarihStrateji.Core.Warfare.Geo
                 unit.RouteProgress = 0L;
             }
 
-            unit.GeoAttackTarget = TargetRef.None;
+            unit.AttackTarget = TargetRef.None;
         }
 
         public static void Stop(LandUnit unit)
         {
             unit.RouteList.Clear();
             unit.RouteProgress = 0L;
-            unit.GeoAttackTarget = TargetRef.None;
+            unit.AttackTarget = TargetRef.None;
+        }
+
+        /// <summary>Barış yerleşimi: birlik emirsiz olarak doğrudan düğüme konur (yol yürünmez).</summary>
+        public static void Redeploy(LandUnit unit, TransportNodeId node)
+        {
+            Stop(unit);
+            unit.Node = node;
         }
 
         /// <summary>Birliğin günlük hareket bütçesi (maliyet birimi).</summary>

@@ -112,7 +112,7 @@ namespace TarihStrateji.Core.Warfare.Geo
 
         public static void SetLanding(LandUnit unit, CityId target)
         {
-            unit.GeoAttackTarget = TargetRef.Entity(TargetKind.City, target.Value);
+            unit.AttackTarget = TargetRef.Entity(TargetKind.City, target.Value);
         }
 
         /// <summary>P13 (deniz muharebesinden sonra): çıkarma emirleri hedef liman düğümüne göre gruplanıp çözülür.</summary>
@@ -122,15 +122,15 @@ namespace TarihStrateji.Core.Warfare.Geo
             for (int i = 0; i < ctx.Warfare.Units.Count; i++)
             {
                 LandUnit unit = ctx.Warfare.Units.ValueAt(i);
-                if (!unit.IsEmbarked || unit.GeoAttackTarget.Kind != TargetKind.City)
+                if (!unit.IsEmbarked || unit.AttackTarget.Kind != TargetKind.City)
                 {
                     continue;
                 }
 
-                var target = new CityId(unit.GeoAttackTarget.EntityId);
+                var target = new CityId(unit.AttackTarget.EntityId);
                 if (!CheckLanding(ctx, unit.Owner, unit.Id, target).IsValid)
                 {
-                    unit.GeoAttackTarget = TargetRef.None;
+                    unit.AttackTarget = TargetRef.None;
                     continue;
                 }
 
@@ -158,7 +158,7 @@ namespace TarihStrateji.Core.Warfare.Geo
                     {
                         units[i].Carrier = FleetId.None;
                         units[i].Node = city.Node;
-                        units[i].GeoAttackTarget = TargetRef.None;
+                        units[i].AttackTarget = TargetRef.None;
                     }
                 }
 
@@ -166,7 +166,7 @@ namespace TarihStrateji.Core.Warfare.Geo
                 {
                     if (!units[i].IsEmbarked)
                     {
-                        notes.Add(AmphibiousRules.LandedNote + " @ " + units[i].Id.Value.ToString(CultureInfo.InvariantCulture));
+                        notes.Add(WarfareNotes.Landed + " @ " + units[i].Id.Value.ToString(CultureInfo.InvariantCulture));
                     }
                 }
             }

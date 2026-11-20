@@ -4,6 +4,7 @@ using TarihStrateji.Core.Content;
 using TarihStrateji.Core.Diplomacy;
 using TarihStrateji.Core.Domain.Ids;
 using TarihStrateji.Core.Simulation.Phases;
+using TarihStrateji.Core.Simulation.Systems.Geo;
 
 namespace TarihStrateji.Core.Simulation.Systems
 {
@@ -32,7 +33,7 @@ namespace TarihStrateji.Core.Simulation.Systems
             CapitulationRules.ApplyDay(context.State.Diplomacy, context.World, _content.Diplomacy, context.Today, capitulated, notes);
             if (capitulated.Count > 0)
             {
-                PeaceSettlement.Relocate(WarfareContexts.From(context.State, _content), context.State.Diplomacy, notes);
+                PeaceSettlement.Relocate(GeoWarfareContexts.From(context.State, _content), context.State.Diplomacy, notes);
             }
 
             for (int i = 0; i < notes.Count; i++)

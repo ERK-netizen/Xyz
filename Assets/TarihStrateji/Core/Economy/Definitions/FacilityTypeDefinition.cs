@@ -1,20 +1,19 @@
 using System.Collections.Generic;
 using TarihStrateji.Core.Domain.Ids;
 using TarihStrateji.Core.Domain.Numerics;
-using TarihStrateji.Core.World.Cities;
 
 namespace TarihStrateji.Core.Economy.Definitions
 {
     /// <summary>
     /// Tesis türü (içerik verisi). Girdi/çıktı miktarları tam kadro ve %100 verimde günlük
-    /// değerlerdir. Bina slotu kullanır; altyapı kullanmaz (CLAUDE.md §2.3).
+    /// değerlerdir. Şehirde yapı slotu kullanır; altyapı kullanmaz (CLAUDE.md §2.3).
+    /// <see cref="RequiresPort"/> tesis yalnız liman şehrine kurulur (tersane).
     /// </summary>
     public sealed class FacilityTypeDefinition
     {
         private readonly GoodAmount[] _inputs;
         private readonly GoodAmount[] _outputs;
         private readonly GoodAmount[] _buildGoods;
-        private readonly SectorKind[] _allowedSectors;
 
         public FacilityTypeDefinition(
             FacilityTypeId id,
@@ -27,7 +26,7 @@ namespace TarihStrateji.Core.Economy.Definitions
             GoodAmount[] buildGoods,
             int buildDays,
             Fixed64 upkeepPerDay,
-            SectorKind[] allowedSectors)
+            bool requiresPort)
         {
             Id = id;
             Key = key;
@@ -39,7 +38,7 @@ namespace TarihStrateji.Core.Economy.Definitions
             _buildGoods = buildGoods ?? new GoodAmount[0];
             BuildDays = buildDays;
             UpkeepPerDay = upkeepPerDay;
-            _allowedSectors = allowedSectors ?? new SectorKind[0];
+            RequiresPort = requiresPort;
         }
 
         public FacilityTypeId Id { get; }
@@ -62,19 +61,6 @@ namespace TarihStrateji.Core.Economy.Definitions
 
         public Fixed64 UpkeepPerDay { get; }
 
-        public IReadOnlyList<SectorKind> AllowedSectors => _allowedSectors;
-
-        public bool AllowsSector(SectorKind kind)
-        {
-            for (int i = 0; i < _allowedSectors.Length; i++)
-            {
-                if (_allowedSectors[i] == kind)
-                {
-                    return true;
-                }
-            }
-
-            return false;
-        }
+        public bool RequiresPort { get; }
     }
 }

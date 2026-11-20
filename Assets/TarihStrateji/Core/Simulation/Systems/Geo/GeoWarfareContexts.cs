@@ -8,6 +8,6 @@ namespace TarihStrateji.Core.Simulation.Systems.Geo
     public static class GeoWarfareContexts
     {
         public static GeoWarfareContext From(GameState state, GameContent content) =>
-            new GeoWarfareContext(state.Geo, state.Warfare, content.Warfare, content.GeoWarfare, state.Population, state.Economy, state.Effects, state.Hostility, state.Today);
+            new GeoWarfareContext(state.World, state.Warfare, content.Warfare, content.GeoWarfare, state.Population, state.Economy, state.Effects, state.Hostility, state.Today);
     }
 }

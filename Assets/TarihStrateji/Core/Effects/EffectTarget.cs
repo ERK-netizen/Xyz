@@ -26,11 +26,7 @@ namespace TarihStrateji.Core.Effects
 
         public static EffectTarget Of(RegionId id) => new EffectTarget(EffectScope.Region, id.Value);
 
-        public static EffectTarget Of(HexId id) => new EffectTarget(EffectScope.Hex, id.Value);
-
         public static EffectTarget Of(CityId id) => new EffectTarget(EffectScope.City, id.Value);
-
-        public static EffectTarget Of(SectorId id) => new EffectTarget(EffectScope.Sector, id.Value);
 
         public static EffectTarget Of(LandUnitId id) => new EffectTarget(EffectScope.LandUnit, id.Value);
 

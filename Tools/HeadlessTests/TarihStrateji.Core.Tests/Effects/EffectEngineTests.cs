@@ -100,7 +100,7 @@ namespace TarihStrateji.Core.Tests.Effects
         {
             var e = new EffectEngine();
             e.Add(Turkey, Industry, EffectOperation.Add, F("1.5"), Day1, 5, "olay.x");
-            e.Add(EffectTarget.Of(new HexId(77)), "savunma", EffectOperation.Percent, F("0.2"), Day1, 0, null);
+            e.Add(EffectTarget.Of(new CityId(77)), "savunma", EffectOperation.Percent, F("0.2"), Day1, 0, null);
             e.Remove(e.Add(Turkey, Industry, EffectOperation.Add, F("9"), Day1, 0, null).Value);
             var w = new CanonicalWriter();
             EffectSnapshotCodec.Write(e, w);

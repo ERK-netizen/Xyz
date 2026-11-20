@@ -9,9 +9,9 @@ namespace TarihStrateji.Core.Economy
         public const string TesisTuruBilinmiyor = "hata.ekonomi.tesisTuruBilinmiyor";
         public const string UlkeEkonomisiYok = "hata.ekonomi.ulkeEkonomisiYok";
         public const string UlkeZatenVar = "hata.ekonomi.ulkeZatenVar";
-        public const string SektorBulunamadi = "hata.ekonomi.sektorBulunamadi";
-        public const string SektorBizimDegil = "hata.ekonomi.sektorSahipVeKontrolBizdeDegil";
-        public const string SektorTuruUygunDegil = "hata.ekonomi.sektorTuruUygunDegil";
+        public const string SehirBulunamadi = "hata.ekonomi.sehirBulunamadi";
+        public const string SehirBizimDegil = "hata.ekonomi.sehirSahipVeKontrolBizdeDegil";
+        public const string LimanGerekli = "hata.ekonomi.limanSehriGerekli";
         public const string SlotYetersiz = "hata.ekonomi.binaSlotuYetersiz";
         public const string HazineYetersiz = "hata.ekonomi.hazineYetersiz";
         public const string StokYetersiz = "hata.ekonomi.stokYetersiz";

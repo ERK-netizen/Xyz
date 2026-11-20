@@ -4,9 +4,7 @@ using TarihStrateji.Core.Diplomacy.State;
 using TarihStrateji.Core.Domain.Ids;
 using TarihStrateji.Core.Domain.Numerics;
 using TarihStrateji.Core.Domain.Time;
-using TarihStrateji.Core.World;
-using TarihStrateji.Core.World.Cities;
-using TarihStrateji.Core.World.Map;
+using TarihStrateji.Core.World.Geography;
 
 namespace TarihStrateji.Core.Diplomacy
 {
@@ -16,8 +14,8 @@ namespace TarihStrateji.Core.Diplomacy
     /// <list type="bullet">
     /// <item>Düşmanlarından biriyle savaşan bir müttefiki varsa hükümet o müttefiğe sürgüne gider;
     /// savaş sürer. Oran eşiğe dönünce sürgün biter; ev sahibi artık uygun değilse ülke teslim olur.</item>
-    /// <item>Yoksa teslim olur: her düşmanla barış yapılır; düşmanın hücrelerinin
-    /// <see cref="DiplomacyParameters.DemandControlShare"/>'dan fazlasını kontrol ettiği bölgeler ona geçer.</item>
+    /// <item>Yoksa teslim olur: her düşmanla barış yapılır; düşmanın fiilî payının (<see cref="DiplomacyRules.ControlShare"/>)
+    /// <see cref="DiplomacyParameters.DemandControlShare"/>'dan büyük olduğu bölgeler ona geçer.</item>
     /// </list>
     /// Kapitülasyon tek taraflı barış değildir: yenilen tarafın direnme imkânı kalmadığında kuralla
     /// uygulanan teslimdir (CLAUDE.md §2.6).
@@ -29,18 +27,17 @@ namespace TarihStrateji.Core.Diplomacy
         public const string ReturnedNote = "bilgi.diplomasi.surgundenDondu";
 
         /// <summary>Sahip olunan şehirlerden fiilen kontrol edilenlerin oranı; şehri yoksa 1.</summary>
-        public static Fixed64 HeldCityShare(WorldMap world, CountryId country)
+        public static Fixed64 HeldCityShare(GeoWorld world, CountryId country)
         {
             int owned = 0;
             int held = 0;
             for (int i = 0; i < world.Cities.Count; i++)
             {
-                City city = world.Cities.ValueAt(i);
-                HexCell cell = world.Cell(city.Hex);
-                if (cell.Owner == country)
+                world.TryGetCity(world.Cities[i], out City city);
+                if (city.Owner == country)
                 {
                     owned++;
-                    if (cell.Controller == country)
+                    if (city.Controller == country)
                     {
                         held++;
                     }
@@ -51,7 +48,7 @@ namespace TarihStrateji.Core.Diplomacy
         }
 
         /// <summary>Günlük denetim; teslim olan ülkeler <paramref name="capitulated"/>'a eklenir.</summary>
-        public static void ApplyDay(DiplomacyState state, WorldMap world, DiplomacyParameters prm, GameDate today, List<CountryId> capitulated, List<string> notes)
+        public static void ApplyDay(DiplomacyState state, GeoWorld world, DiplomacyParameters prm, GameDate today, List<CountryId> capitulated, List<string> notes)
         {
             var belligerents = new List<CountryId>();
             for (int i = 0; i < state.Wars.Count; i++)
@@ -105,7 +102,7 @@ namespace TarihStrateji.Core.Diplomacy
         }
 
         /// <summary>Ülke tüm düşmanlarına teslim olur (düşman kimliği sırasıyla barış).</summary>
-        public static void Capitulate(DiplomacyState state, WorldMap world, DiplomacyParameters prm, CountryId country, GameDate today, List<CountryId> capitulated, List<string> notes)
+        public static void Capitulate(DiplomacyState state, GeoWorld world, DiplomacyParameters prm, CountryId country, GameDate today, List<CountryId> capitulated, List<string> notes)
         {
             var enemies = new List<CountryId>();
             for (int i = 0; i < state.Wars.Count; i++)
@@ -123,10 +120,10 @@ namespace TarihStrateji.Core.Diplomacy
                 transfers.Clear();
                 for (int r = 0; r < world.Regions.Count; r++)
                 {
-                    StrategicRegion region = world.Regions.ValueAt(r);
-                    if (!region.IsSea && region.Owner == country && DiplomacyRules.ControlShare(world, region, enemies[e]) > prm.DemandControlShare)
+                    world.TryGetControl(world.Regions[r], out RegionControl region);
+                    if (region.Owner == country && DiplomacyRules.ControlShare(world, region.Region, enemies[e]) > prm.DemandControlShare)
                     {
-                        transfers.Add(new RegionTransfer(region.Id, enemies[e]));
+                        transfers.Add(new RegionTransfer(region.Region, enemies[e]));
                     }
                 }
 

@@ -4,7 +4,7 @@ using TarihStrateji.Core.Domain.Commands;
 using TarihStrateji.Core.Domain.Ids;
 using TarihStrateji.Core.Simulation.Commands.Diplomacy;
 using TarihStrateji.Core.Simulation.Commands.Economy;
-using TarihStrateji.Core.Simulation.Commands.Military;
+using TarihStrateji.Core.Simulation.Commands.Geo;
 using TarihStrateji.Core.Simulation.Commands.Statecraft;
 
 namespace TarihStrateji.Core.Simulation.Systems
@@ -35,15 +35,15 @@ namespace TarihStrateji.Core.Simulation.Systems
                 case AiIntentKind.DeclareWar:
                     return new DeclareWarCommand(country, intent.Country, new RegionId[0]);
                 case AiIntentKind.Recruit:
-                    return new RecruitUnitCommand(country, new UnitTypeId(intent.Id), intent.Target);
+                    return new GeoRecruitUnitCommand(country, new UnitTypeId(intent.Id), new CityId(intent.Target.EntityId));
                 case AiIntentKind.Move:
-                    return new MoveUnitCommand(country, new LandUnitId(intent.Id), intent.Target);
+                    return new GeoMoveUnitCommand(country, new LandUnitId(intent.Id), intent.Target);
                 case AiIntentKind.Build:
-                    return new BuildFacilityCommand(country, new FacilityTypeId(intent.Id), new SectorId(intent.Secondary));
+                    return new BuildFacilityCommand(country, new FacilityTypeId(intent.Id), new CityId(intent.Secondary));
                 case AiIntentKind.SetTaxRate:
                     return new SetTaxRateCommand(country, intent.Amount);
                 case AiIntentKind.Attack:
-                    return new OrderAttackCommand(country, new LandUnitId(intent.Id), intent.Target);
+                    return new GeoOrderAttackCommand(country, new LandUnitId(intent.Id), intent.Target);
                 default:
                     return null;
             }

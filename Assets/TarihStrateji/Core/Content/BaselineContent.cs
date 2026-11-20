@@ -7,8 +7,6 @@ using TarihStrateji.Core.Effects;
 using TarihStrateji.Core.Population;
 using TarihStrateji.Core.Research.Definitions;
 using TarihStrateji.Core.Domain.Time;
-using TarihStrateji.Core.World.Cities;
-using TarihStrateji.Core.World.Pathfinding;
 
 namespace TarihStrateji.Core.Content
 {
@@ -31,9 +29,9 @@ namespace TarihStrateji.Core.Content
         {
             TechCatalog technology = CreateTechnology();
             EconomyCatalog economy = CreateEconomy();
-            return new GameContent(economy, CreateDemography(), TerrainMovementTable.CreateBaseline(), technology,
+            return new GameContent(economy, CreateDemography(), technology,
                 BaselineStatecraftContent.CreatePolitics(), BaselineStatecraftContent.CreateCharacters(technology.Eras.Count),
-                BaselineMilitaryContent.CreateWarfare(economy), BaselineMilitaryContent.CreateLogistics(),
+                BaselineMilitaryContent.CreateWarfare(economy),
                 BaselineDiplomacyContent.CreateDiplomacy(), BaselineDiplomacyContent.CreateIntelligence(), BaselineDiplomacyContent.CreateNarrative(), BaselineAiContent.Create());
         }
 
@@ -84,23 +82,22 @@ namespace TarihStrateji.Core.Content
                 new GoodDefinition(BaselineGoods.Aircraft, "mal.ucak", GoodCategory.Aircraft, F("900")),
             };
 
-            SectorKind[] rural = { SectorKind.Residential, SectorKind.Industrial };
-            SectorKind[] industrial = { SectorKind.Industrial };
-            SectorKind[] port = { SectorKind.Port };
+            const bool AnyCity = false;
+            const bool PortCity = true;
             var facilities = new[]
             {
-                Facility(BaselineFacilities.Farm, "tesis.ciftlik", NoGoods(), A(BaselineGoods.Food, "25"), 5000, 1, "400", NoGoods(), 45, "3", rural),
-                Facility(BaselineFacilities.CoalMine, "tesis.komurMadeni", NoGoods(), A(BaselineGoods.Coal, "20"), 4000, 1, "600", NoGoods(), 60, "4", rural),
-                Facility(BaselineFacilities.IronMine, "tesis.demirMadeni", NoGoods(), A(BaselineGoods.Iron, "15"), 4000, 1, "700", NoGoods(), 60, "4", rural),
-                Facility(BaselineFacilities.SteelWorks, "tesis.celikhane", A(BaselineGoods.Coal, "10", BaselineGoods.Iron, "10"), A(BaselineGoods.Steel, "6"), 3000, 2, "2500", NoGoods(), 120, "12", industrial),
-                Facility(BaselineFacilities.ConsumerFactory, "tesis.tuketimFabrikasi", A(BaselineGoods.Steel, "1", BaselineGoods.Coal, "2"), A(BaselineGoods.ConsumerGoods, "8"), 2500, 1, "900", A(BaselineGoods.Steel, "5"), 75, "5", rural),
-                Facility(BaselineFacilities.ArmsFactory, "tesis.silahFabrikasi", A(BaselineGoods.Steel, "3"), A(BaselineGoods.InfantryEquipment, "1"), 3000, 2, "3000", A(BaselineGoods.Steel, "20"), 150, "15", industrial),
-                Facility(BaselineFacilities.ArtilleryFactory, "tesis.topFabrikasi", A(BaselineGoods.Steel, "4", BaselineGoods.Coal, "1"), A(BaselineGoods.Artillery, "0.3"), 3000, 2, "3500", A(BaselineGoods.Steel, "30"), 180, "18", industrial),
-                Facility(BaselineFacilities.Shipyard, "tesis.tersane", A(BaselineGoods.Steel, "25", BaselineGoods.Coal, "5"), A(BaselineGoods.Ship, "0.004"), 6000, 3, "12000", A(BaselineGoods.Steel, "100"), 365, "40", port),
-                Facility(BaselineFacilities.AircraftFactory, "tesis.ucakFabrikasi", A(BaselineGoods.Steel, "3", BaselineGoods.Coal, "1"), A(BaselineGoods.Aircraft, "0.02"), 3500, 2, "6000", A(BaselineGoods.Steel, "40"), 240, "25", industrial),
+                Facility(BaselineFacilities.Farm, "tesis.ciftlik", NoGoods(), A(BaselineGoods.Food, "25"), 5000, 1, "400", NoGoods(), 45, "3", AnyCity),
+                Facility(BaselineFacilities.CoalMine, "tesis.komurMadeni", NoGoods(), A(BaselineGoods.Coal, "20"), 4000, 1, "600", NoGoods(), 60, "4", AnyCity),
+                Facility(BaselineFacilities.IronMine, "tesis.demirMadeni", NoGoods(), A(BaselineGoods.Iron, "15"), 4000, 1, "700", NoGoods(), 60, "4", AnyCity),
+                Facility(BaselineFacilities.SteelWorks, "tesis.celikhane", A(BaselineGoods.Coal, "10", BaselineGoods.Iron, "10"), A(BaselineGoods.Steel, "6"), 3000, 2, "2500", NoGoods(), 120, "12", AnyCity),
+                Facility(BaselineFacilities.ConsumerFactory, "tesis.tuketimFabrikasi", A(BaselineGoods.Steel, "1", BaselineGoods.Coal, "2"), A(BaselineGoods.ConsumerGoods, "8"), 2500, 1, "900", A(BaselineGoods.Steel, "5"), 75, "5", AnyCity),
+                Facility(BaselineFacilities.ArmsFactory, "tesis.silahFabrikasi", A(BaselineGoods.Steel, "3"), A(BaselineGoods.InfantryEquipment, "1"), 3000, 2, "3000", A(BaselineGoods.Steel, "20"), 150, "15", AnyCity),
+                Facility(BaselineFacilities.ArtilleryFactory, "tesis.topFabrikasi", A(BaselineGoods.Steel, "4", BaselineGoods.Coal, "1"), A(BaselineGoods.Artillery, "0.3"), 3000, 2, "3500", A(BaselineGoods.Steel, "30"), 180, "18", AnyCity),
+                Facility(BaselineFacilities.Shipyard, "tesis.tersane", A(BaselineGoods.Steel, "25", BaselineGoods.Coal, "5"), A(BaselineGoods.Ship, "0.004"), 6000, 3, "12000", A(BaselineGoods.Steel, "100"), 365, "40", PortCity),
+                Facility(BaselineFacilities.AircraftFactory, "tesis.ucakFabrikasi", A(BaselineGoods.Steel, "3", BaselineGoods.Coal, "1"), A(BaselineGoods.Aircraft, "0.02"), 3500, 2, "6000", A(BaselineGoods.Steel, "40"), 240, "25", AnyCity),
             };
 
-            var parameters = new EconomyParameters(BaselineGoods.Food, F("1"), F("0.5"), F("0.5"), F("0.1"), F("0.25"), F("4"));
+            var parameters = new EconomyParameters(BaselineGoods.Food, F("1"), F("0.5"), F("0.5"), F("0.1"), F("0.25"), F("4"), 6);
             Result<EconomyCatalog> catalog = EconomyCatalog.Create(goods, facilities, parameters);
             if (!catalog.IsSuccess)
             {
@@ -163,9 +160,9 @@ namespace TarihStrateji.Core.Content
 
         private static FacilityTypeDefinition Facility(
             FacilityTypeId id, string key, GoodAmount[] inputs, GoodAmount[] outputs, long workers, int slots,
-            string money, GoodAmount[] buildGoods, int days, string upkeep, SectorKind[] sectors)
+            string money, GoodAmount[] buildGoods, int days, string upkeep, bool requiresPort)
         {
-            return new FacilityTypeDefinition(id, key, inputs, outputs, workers, slots, F(money), buildGoods, days, F(upkeep), sectors);
+            return new FacilityTypeDefinition(id, key, inputs, outputs, workers, slots, F(money), buildGoods, days, F(upkeep), requiresPort);
         }
 
         private static GoodAmount[] NoGoods() => new GoodAmount[0];

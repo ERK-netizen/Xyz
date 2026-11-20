@@ -14,9 +14,7 @@ using TarihStrateji.Core.Simulation.Commands;
 using TarihStrateji.Core.Simulation.Phases;
 using TarihStrateji.Core.Simulation.State;
 using TarihStrateji.Core.Tests.World;
-using TarihStrateji.Core.World;
-using TarihStrateji.Core.World.Grid;
-using TarihStrateji.Core.World.Map;
+using TarihStrateji.Core.World.Geography;
 
 namespace TarihStrateji.Core.Tests.Simulation
 {
@@ -27,8 +25,8 @@ namespace TarihStrateji.Core.Tests.Simulation
 
         public static SimulationSetup Setup(params ISimulationSystem[] systems)
         {
-            var setup = new SimulationSetup();
-            setup.Commands.Register(new SetHexControllerHandler());
+            var setup = new SimulationSetup { GeoWorldTemplate = () => TestWorlds.Coastal() };
+            setup.Commands.Register(new SetRegionControllerHandler());
             setup.Commands.Register(new TacticalStrikeHandler());
             foreach (ISimulationSystem s in systems)
             {
@@ -40,8 +38,7 @@ namespace TarihStrateji.Core.Tests.Simulation
 
         public static GameState NewState(ulong seed = 1923, GameMode mode = GameMode.Normal)
         {
-            WorldMap map = TestWorlds.Coastal(out _, out _);
-            return GameState.CreateNew(seed, mode, Start, mode == GameMode.Observer ? CountryId.None : TestWorlds.CountryA, map);
+            return GameState.CreateNew(seed, mode, Start, mode == GameMode.Observer ? CountryId.None : TestWorlds.CountryA, TestWorlds.Coastal());
         }
 
         public static SimulationKernel Kernel(SimulationSetup setup, GameState state)
@@ -63,18 +60,18 @@ namespace TarihStrateji.Core.Tests.Simulation
         }
     }
 
-    /// <summary>Günlük (P1) emir: şehirsiz kara hücresinin kontrolcüsünü değiştirir.</summary>
-    public sealed class SetHexControllerCommand : GameCommand
+    /// <summary>Günlük (P1) emir: bölgenin fiilî kontrolcüsünü değiştirir (sahip değişmez).</summary>
+    public sealed class SetRegionControllerCommand : GameCommand
     {
-        public const string KindKey = "emir.test.hucreKontrol";
+        public const string KindKey = "emir.test.bolgeKontrol";
 
-        public SetHexControllerCommand(CountryId issuer, HexCoord hex, CountryId controller) : base(issuer)
+        public SetRegionControllerCommand(CountryId issuer, RegionId region, CountryId controller) : base(issuer)
         {
-            Hex = hex;
+            Region = region;
             Controller = controller;
         }
 
-        public HexCoord Hex { get; }
+        public RegionId Region { get; }
 
         public CountryId Controller { get; }
 
@@ -83,58 +80,52 @@ namespace TarihStrateji.Core.Tests.Simulation
         public override string Kind => KindKey;
     }
 
-    public sealed class SetHexControllerHandler : CommandHandler<SetHexControllerCommand>
+    public sealed class SetRegionControllerHandler : CommandHandler<SetRegionControllerCommand>
     {
         public static int Applied;
 
-        public override string Kind => SetHexControllerCommand.KindKey;
+        public override string Kind => SetRegionControllerCommand.KindKey;
 
-        protected override ValidationResult ValidateTyped(GameState state, SetHexControllerCommand command)
+        protected override ValidationResult ValidateTyped(GameState state, SetRegionControllerCommand command)
         {
-            if (!state.World.Grid.Contains(command.Hex))
+            if (!state.World.TryGetControl(command.Region, out RegionControl control))
             {
                 return ValidationResult.Fail("hata.test.disarida");
             }
 
-            HexCell cell = state.World.Cell(command.Hex);
-            if (cell.IsWater || cell.City.IsValid)
-            {
-                return ValidationResult.Fail("hata.test.uygunDegil");
-            }
-
-            return cell.Controller == command.Controller ? ValidationResult.Fail("hata.test.zatenOyle") : ValidationResult.Ok;
+            return control.Controller == command.Controller ? ValidationResult.Fail("hata.test.zatenOyle") : ValidationResult.Ok;
         }
 
-        protected override void ApplyTyped(CommandContext context, SetHexControllerCommand command)
+        protected override void ApplyTyped(CommandContext context, SetRegionControllerCommand command)
         {
             Applied++;
-            context.State.World.SetHexController(command.Hex, command.Controller);
+            context.State.World.TryGetControl(command.Region, out RegionControl control);
+            control.Controller = command.Controller;
         }
 
-        protected override void WriteTyped(SetHexControllerCommand command, CanonicalWriter writer)
+        protected override void WriteTyped(SetRegionControllerCommand command, CanonicalWriter writer)
         {
-            writer.WriteInt32(command.Hex.Column);
-            writer.WriteInt32(command.Hex.Row);
+            writer.WriteId(command.Region);
             writer.WriteId(command.Controller);
         }
 
-        protected override SetHexControllerCommand ReadTyped(CountryId issuer, CanonicalReader reader)
+        protected override SetRegionControllerCommand ReadTyped(CountryId issuer, CanonicalReader reader)
         {
-            return new SetHexControllerCommand(issuer, new HexCoord(reader.ReadInt32(), reader.ReadInt32()), new CountryId(reader.ReadUInt64()));
+            return new SetRegionControllerCommand(issuer, new RegionId(reader.ReadUInt64()), new CountryId(reader.ReadUInt64()));
         }
     }
 
-    /// <summary>Anında çözülen taktik emir: %60 olasılıkla sektörü ele geçirir.</summary>
+    /// <summary>Anında çözülen taktik emir: %60 olasılıkla şehrin fiilî kontrolünü ele geçirir.</summary>
     public sealed class TacticalStrikeCommand : GameCommand
     {
         public const string KindKey = "emir.test.taktikSaldiri";
 
-        public TacticalStrikeCommand(CountryId issuer, SectorId sector) : base(issuer)
+        public TacticalStrikeCommand(CountryId issuer, CityId city) : base(issuer)
         {
-            Sector = sector;
+            City = city;
         }
 
-        public SectorId Sector { get; }
+        public CityId City { get; }
 
         public override CommandAuthority Authority => CommandAuthority.Player;
 
@@ -152,12 +143,12 @@ namespace TarihStrateji.Core.Tests.Simulation
 
         protected override ValidationResult ValidateTyped(GameState state, TacticalStrikeCommand command)
         {
-            if (!state.World.Sectors.TryGetValue(command.Sector, out var sector))
+            if (!state.World.TryGetCity(command.City, out City city))
             {
-                return ValidationResult.Fail("hata.test.sektorYok");
+                return ValidationResult.Fail("hata.test.sehirYok");
             }
 
-            return sector.Controller == command.Issuer ? ValidationResult.Fail("hata.test.zatenBizde") : ValidationResult.Ok;
+            return city.Controller == command.Issuer ? ValidationResult.Fail("hata.test.zatenBizde") : ValidationResult.Ok;
         }
 
         protected override void ApplyTyped(CommandContext context, TacticalStrikeCommand command)
@@ -166,19 +157,20 @@ namespace TarihStrateji.Core.Tests.Simulation
             Resolutions.Add(context.Resolution);
             if (context.Rng.Chance(Fixed64.Parse("0.6")))
             {
-                context.State.World.SetSectorController(command.Sector, command.Issuer);
+                context.State.World.TryGetCity(command.City, out City city);
+                city.Controller = command.Issuer;
             }
         }
 
-        protected override void WriteTyped(TacticalStrikeCommand command, CanonicalWriter writer) => writer.WriteId(command.Sector);
+        protected override void WriteTyped(TacticalStrikeCommand command, CanonicalWriter writer) => writer.WriteId(command.City);
 
         protected override TacticalStrikeCommand ReadTyped(CountryId issuer, CanonicalReader reader) =>
-            new TacticalStrikeCommand(issuer, new SectorId(reader.ReadUInt64()));
+            new TacticalStrikeCommand(issuer, new CityId(reader.ReadUInt64()));
     }
 
     /// <summary>
-    /// P12: PRNG ile her gün birkaç şehirsiz kara hücresinin kontrolcüsünü değiştirir ve süreli
-    /// etkiler ekler. Dünya, etki ve PRNG yollarını birlikte determinizm testine sokar.
+    /// P12: PRNG ile her gün bölge kontrolcülerini değiştirir ve süreli etkiler ekler. Dünya, etki ve
+    /// PRNG yollarını birlikte determinizm testine sokar.
     /// </summary>
     public sealed class RandomTurmoilSystem : ISimulationSystem
     {
@@ -189,14 +181,11 @@ namespace TarihStrateji.Core.Tests.Simulation
         public void Execute(SimulationContext context)
         {
             RngStream rng = context.Rng(RngSubsystem.Movement, 1, 0);
-            WorldMap map = context.World;
+            GeoWorld world = context.World;
             for (int i = 0; i < 3; i++)
             {
-                HexCell cell = map.CellAt(rng.NextInt(map.CellCount));
-                if (!cell.IsWater && !cell.City.IsValid)
-                {
-                    map.SetHexController(cell.Coord, new CountryId((ulong)rng.NextInt(1, 4)));
-                }
+                world.TryGetControl(world.Regions[rng.NextInt(world.Regions.Count)], out RegionControl control);
+                control.Controller = new CountryId((ulong)rng.NextInt(1, 4));
             }
 
             if (rng.Chance(Fixed64.Parse("0.4")))

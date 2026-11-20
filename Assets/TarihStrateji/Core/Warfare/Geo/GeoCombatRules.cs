@@ -11,7 +11,6 @@ using TarihStrateji.Core.Warfare.Definitions;
 using TarihStrateji.Core.Warfare.Rules;
 using TarihStrateji.Core.Warfare.State;
 using TarihStrateji.Core.World.Geography;
-using TarihStrateji.Core.World.Map;
 
 namespace TarihStrateji.Core.Warfare.Geo
 {
@@ -109,7 +108,7 @@ namespace TarihStrateji.Core.Warfare.Geo
         public static void SetAttack(LandUnit unit, TargetRef target)
         {
             GeoMovementRules.Stop(unit);
-            unit.GeoAttackTarget = target;
+            unit.AttackTarget = target;
         }
 
         /// <summary>Anında saldırı: AP harcar, çözüm kimliği yazar, tek başına çözülür.</summary>
@@ -132,14 +131,14 @@ namespace TarihStrateji.Core.Warfare.Geo
             for (int i = 0; i < ctx.Warfare.Units.Count; i++)
             {
                 LandUnit unit = ctx.Warfare.Units.ValueAt(i);
-                if (!unit.GeoAttackTarget.IsValid || (unit.LastResolution.IsValid && resolvedToday.Contains(unit.LastResolution)))
+                if (!unit.AttackTarget.IsValid || (unit.LastResolution.IsValid && resolvedToday.Contains(unit.LastResolution)))
                 {
                     continue;
                 }
 
-                if (!CheckAttack(ctx, unit.Owner, unit.Id, unit.GeoAttackTarget, out TransportNodeId node).IsValid)
+                if (!CheckAttack(ctx, unit.Owner, unit.Id, unit.AttackTarget, out TransportNodeId node).IsValid)
                 {
-                    unit.GeoAttackTarget = TargetRef.None;
+                    unit.AttackTarget = TargetRef.None;
                     continue;
                 }
 
@@ -207,7 +206,7 @@ namespace TarihStrateji.Core.Warfare.Geo
             City city = GeoUnitQueries.CityAt(ctx, node);
             for (int i = 0; i < attackers.Count; i++)
             {
-                attackers[i].GeoAttackTarget = TargetRef.None;
+                attackers[i].AttackTarget = TargetRef.None;
             }
 
             if (defenders.Count > 0)
@@ -245,7 +244,7 @@ namespace TarihStrateji.Core.Warfare.Geo
                 attackerWins &= d.Organization < type.MaxOrganization * prm.RetreatOrganization || d.Strength(type) < prm.DestroyedBelowStrength;
             }
 
-            notes.Add(CombatRules.BattleNote + " @ " + lead.Id.Value.ToString(CultureInfo.InvariantCulture) + ":" + (attackerWins ? "zafer" : "puskurtuldu"));
+            notes.Add(WarfareNotes.Battle + " @ " + lead.Id.Value.ToString(CultureInfo.InvariantCulture) + ":" + (attackerWins ? "zafer" : "puskurtuldu"));
             if (!attackerWins)
             {
                 return;
@@ -279,14 +278,14 @@ namespace TarihStrateji.Core.Warfare.Geo
 
             if (!rng.Chance(outcome.Ratio))
             {
-                notes.Add(CombatRules.BattleNote + " @ " + lead.Id.Value.ToString(CultureInfo.InvariantCulture) + ":garnizonDirendi");
+                notes.Add(WarfareNotes.Battle + " @ " + lead.Id.Value.ToString(CultureInfo.InvariantCulture) + ":garnizonDirendi");
                 return;
             }
 
             city.Controller = lead.Owner;
             city.Siege = SiegeState.None;
             Advance(attackers, node);
-            notes.Add(CombatRules.CityCapturedNote + " @ " + city.Id.Value.ToString(CultureInfo.InvariantCulture));
+            notes.Add(WarfareNotes.CityCaptured + " @ " + city.Id.Value.ToString(CultureInfo.InvariantCulture));
         }
 
         private static Fixed64 Fortification(City city, CountryId defender) =>
@@ -358,7 +357,7 @@ namespace TarihStrateji.Core.Warfare.Geo
             CasualtyRules.RecordDeaths(ctx.Population, unit.HomeRegion, unit.Manpower);
             unit.Manpower = 0L;
             Remove(ctx, unit, false);
-            notes.Add(CombatRules.UnitDestroyedNote + " @ " + unit.Id.Value.ToString(CultureInfo.InvariantCulture));
+            notes.Add(WarfareNotes.UnitDestroyed + " @ " + unit.Id.Value.ToString(CultureInfo.InvariantCulture));
         }
 
         /// <summary>Birliği kaldırır: kalan asker eve döner; istenirse ekipman envantere iade edilir.</summary>

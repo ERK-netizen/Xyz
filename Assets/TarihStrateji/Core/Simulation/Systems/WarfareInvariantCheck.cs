@@ -4,10 +4,11 @@ using TarihStrateji.Core.Content;
 using TarihStrateji.Core.Simulation.Phases;
 using TarihStrateji.Core.Simulation.State;
 using TarihStrateji.Core.Warfare;
+using TarihStrateji.Core.Simulation.Systems.Geo;
 
 namespace TarihStrateji.Core.Simulation.Systems
 {
-    /// <summary>P15: kara birliği değişmezleri.</summary>
+    /// <summary>P15: savaş değişmezleri (birlik, filo, kanat konumları ve değerleri).</summary>
     public sealed class WarfareInvariantCheck : IInvariantCheck
     {
         private readonly GameContent _content;
@@ -21,7 +22,7 @@ namespace TarihStrateji.Core.Simulation.Systems
 
         public int Check(GameState state, List<string> violations)
         {
-            return WarfareInvariants.Check(WarfareContexts.From(state, _content), violations);
+            return WarfareInvariants.Check(GeoWarfareContexts.From(state, _content), violations);
         }
     }
 }

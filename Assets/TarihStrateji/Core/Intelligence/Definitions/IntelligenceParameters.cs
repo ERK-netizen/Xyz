@@ -4,16 +4,17 @@ using TarihStrateji.Core.Domain.Numerics;
 namespace TarihStrateji.Core.Intelligence.Definitions
 {
     /// <summary>
-    /// Savaş sisi ayarları (veri). Görüş yarıçapları hücre (altıgen adımı) cinsindendir.
+    /// Savaş sisi ayarları (veri). Görüş yarıçapları ve <see cref="ExactRange"/> metredir; görüş
+    /// ulaşım grafında (kara + deniz kenarları) yol uzunluğuyla yayılır.
     /// <see cref="ExactRange"/> içindeki temasın gücü kesin, ötesindeki
     /// <see cref="EstimateStep"/>'e yuvarlanmış tahmindir. Temas raporu
     /// <see cref="ContactMemoryDays"/> gün görülmezse unutulur.
     /// </summary>
     public sealed class IntelligenceParameters
     {
-        public IntelligenceParameters(int landUnitSight, int fleetSight, int citySight, int airReconSight, int exactRange, Fixed64 estimateStep, int contactMemoryDays)
+        public IntelligenceParameters(long landUnitSight, long fleetSight, long citySight, long airReconSight, long exactRange, Fixed64 estimateStep, int contactMemoryDays)
         {
-            if (landUnitSight < 0 || fleetSight < 0 || citySight < 0 || airReconSight < 0 || exactRange < 0 || !estimateStep.IsPositive
+            if (landUnitSight < 0L || fleetSight < 0L || citySight < 0L || airReconSight < 0L || exactRange < 0L || !estimateStep.IsPositive
                 || estimateStep > Fixed64.One || contactMemoryDays < 1)
             {
                 throw new ArgumentException(IntelligenceErrorKeys.TanimGecersiz);
@@ -28,15 +29,15 @@ namespace TarihStrateji.Core.Intelligence.Definitions
             ContactMemoryDays = contactMemoryDays;
         }
 
-        public int LandUnitSight { get; }
+        public long LandUnitSight { get; }
 
-        public int FleetSight { get; }
+        public long FleetSight { get; }
 
-        public int CitySight { get; }
+        public long CitySight { get; }
 
-        public int AirReconSight { get; }
+        public long AirReconSight { get; }
 
-        public int ExactRange { get; }
+        public long ExactRange { get; }
 
         public Fixed64 EstimateStep { get; }
 

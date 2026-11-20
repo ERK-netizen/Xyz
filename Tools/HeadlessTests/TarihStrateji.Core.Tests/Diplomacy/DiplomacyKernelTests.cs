@@ -13,7 +13,7 @@ using TarihStrateji.Core.Effects;
 using TarihStrateji.Core.Effects.Events;
 using TarihStrateji.Core.Simulation;
 using TarihStrateji.Core.Simulation.Commands.Diplomacy;
-using TarihStrateji.Core.Tests.Military;
+using TarihStrateji.Core.Tests.Scenario;
 using TarihStrateji.Core.Tests.Simulation;
 using TarihStrateji.Core.Tests.World;
 using TarihStrateji.Core.Warfare.State;
@@ -22,7 +22,7 @@ namespace TarihStrateji.Core.Tests.Diplomacy
 {
     /// <summary>
     /// Çekirdek üzerinden: A (oyuncu) odak seçer, B'ye barış teklif eder (B yanıtlamaz, teklif düşer),
-    /// C ile ittifak teklifi bekler; B'nin teklifini (A'nın işgal ettiği hücre B'ye döner) kabul eder,
+    /// C ile ittifak teklifi bekler; B'nin teklifini (A'nın işgal ettiği bölge B'ye döner) kabul eder,
     /// birlikleri kendi topraklarına çekilir; savaş yorgunluğu olayına yanıt verir.
     /// </summary>
     [TestFixture]
@@ -31,13 +31,13 @@ namespace TarihStrateji.Core.Tests.Diplomacy
         private static readonly CountryId A = TestWorlds.CountryA;
         private static readonly CountryId B = TestWorlds.CountryB;
 
-        private static SimulationSetup Setup() => StandardRules.Install(new SimulationSetup { HashIntervalDays = 1 }, FrontScenario.Content);
+        private static SimulationSetup Setup() => AegeanWar.Setup();
 
-        private static (SimulationKernel Kernel, FrontScenario Scenario, LandUnit Raider) NewKernel()
+        private static (SimulationKernel Kernel, AegeanWar Scenario, LandUnit Raider) NewKernel()
         {
-            var s = new FrontScenario(seed: 4242);
-            LandUnit raider = s.Place(A, BaselineUnits.InfantryDivision, 111, 2);
-            s.State.World.SetHexController(new Core.World.Grid.HexCoord(111, 2), A);
+            var s = new AegeanWar(seed: 4242);
+            LandUnit raider = s.Place(A, "sehir.ege.edirne", AegeanWar.Drama);
+            s.SetController(AegeanWar.SelanikRegion, A);
             return (TestSimulation.Kernel(Setup(), s.State), s, raider);
         }
 
@@ -55,7 +55,7 @@ namespace TarihStrateji.Core.Tests.Diplomacy
                 if (d == 40)
                 {
                     // B barış önerir; A (oyuncu) kabul edecek. Yapay zekâ Adım 9'da; burada B'nin teklifi kural API'siyle kurulur.
-                    DiplomacyRules.Propose(k.State.Diplomacy, FrontScenario.Content.Diplomacy, ProposalKind.Peace, B, A, new RegionTransfer[0], k.State.Today);
+                    DiplomacyRules.Propose(k.State.Diplomacy, AegeanWar.Content.Diplomacy, ProposalKind.Peace, B, A, new RegionTransfer[0], k.State.Today);
                 }
 
                 if (d == 41)
@@ -84,7 +84,7 @@ namespace TarihStrateji.Core.Tests.Diplomacy
         [Test]
         public void PlayerDiplomacy_FocusAndEvents_ThroughTheKernel()
         {
-            (SimulationKernel k, FrontScenario s, LandUnit raider) = NewKernel();
+            (SimulationKernel k, AegeanWar s, LandUnit raider) = NewKernel();
             Assert.That(k.Submit(new DeclareWarCommand(A, B, new RegionId[0])).Validation.ErrorKey, Is.EqualTo(DiplomacyErrorKeys.ZatenSavasta));
             Assert.That(k.Submit(new RespondProposalCommand(B, new ProposalId(1), true)).Accepted, Is.False, "oyuncu başka ülke adına yanıt veremez");
 
@@ -94,9 +94,11 @@ namespace TarihStrateji.Core.Tests.Diplomacy
 
             Run(k, 31, 60);
             Assert.That(k.State.Diplomacy.AtWar(A, B), Is.False, "iki taraflı onayla barış");
-            Assert.That(k.State.World.Cell(new Core.World.Grid.HexCoord(111, 2)).Controller, Is.EqualTo(B), "işgal sahibine döndü");
-            Assert.That(k.State.World.Cell(raider.Hex).Owner, Is.EqualTo(A), "birlik kendi şehrine çekildi");
-            Assert.That(k.State.World.Cell(raider.Hex).City.IsValid, Is.True);
+            Assert.That(s.ControllerOf(AegeanWar.SelanikRegion), Is.EqualTo(B), "işgal sahibine döndü");
+            Assert.That(k.State.World.Transport.TryGetNode(raider.Node, out Core.World.Geography.TransportNode at), Is.True);
+            Assert.That(at.Kind == Core.World.Geography.TransportNodeKind.City || at.Kind == Core.World.Geography.TransportNodeKind.Port, Is.True, "birlik kendi şehrine çekildi");
+            k.State.World.TryGetControl(at.Region, out Core.World.Geography.RegionControl home);
+            Assert.That(home.Owner, Is.EqualTo(A));
             Assert.That(k.State.Narrative.Countries[A].CompletedFocuses.ContainsKey(BaselineNarrative.Industrialization), Is.True);
             Assert.That(k.State.Effects.Evaluate(EffectTarget.Of(A), EconomyStatKeys.ProductionEfficiency, Fixed64.One, k.State.Today) >= Fixed64.Parse("1.05"), Is.True);
         }
@@ -104,16 +106,16 @@ namespace TarihStrateji.Core.Tests.Diplomacy
         [Test]
         public void EventChoice_ThroughTheKernel_AndUnansweredEventsDefault()
         {
-            GameContent c = FrontScenario.Content;
+            GameContent c = AegeanWar.Content;
             var levy = new EventDefinition(new EventId(50), "olay.test.savasVergisi", CountryId.None, new[] { new Condition(ConditionKind.AtWar, 0, Fixed64.Zero) }, 1, true, 5,
                 new[]
                 {
                     new EventOption("secenek.ode", new[] { new EffectGrant(EconomyStatKeys.TaxEfficiency, EffectOperation.Percent, Fixed64.Parse("-0.1")) }, 30, Fixed64.FromInt(-1000)),
                     new EventOption("secenek.borc", null, 0, Fixed64.FromInt(3000)),
                 });
-            var content = new GameContent(c.Economy, c.Demography, c.Movement, c.Technology, c.Politics, c.Characters, c.Warfare, c.Logistics,
+            var content = new GameContent(c.Economy, c.Demography, c.Technology, c.Politics, c.Characters, c.Warfare,
                 c.Diplomacy, c.Intelligence, NarrativeCatalog.Create(new[] { levy }, new FocusDefinition[0]).Value, c.Ai);
-            var s = new FrontScenario();
+            var s = new AegeanWar();
             SimulationKernel k = TestSimulation.Kernel(StandardRules.Install(new SimulationSetup(), content), s.State);
             TestSimulation.AdvanceOk(k, 1);
             Assert.That(k.State.Narrative.Countries[A].Pending.Count, Is.EqualTo(1), "1 günlük ortalama: ilk gün tetiklenir");

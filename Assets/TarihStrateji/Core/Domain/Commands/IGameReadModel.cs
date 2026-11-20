@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using TarihStrateji.Core.Domain.Geography;
 using TarihStrateji.Core.Domain.Ids;
 using TarihStrateji.Core.Domain.Time;
 using TarihStrateji.Core.Domain.Views;
@@ -7,9 +8,9 @@ using TarihStrateji.Core.Domain.Views;
 namespace TarihStrateji.Core.Domain.Commands
 {
     /// <summary>
-    /// Sunum katmanının dünyayı okuduğu salt-okunur görünüm (CLAUDE.md §2.1). Alan
-    /// ayrıntıları (harita, ekonomi, ordu…) sonraki adımlarda bu arayüzü genişleten
-    /// salt-okunur görünümlerle eklenir; hiçbiri değiştirilebilir durum nesnesi döndürmez.
+    /// Sunum katmanının dünyayı okuduğu salt-okunur görünüm (CLAUDE.md §2.1, ADR-011). Harita
+    /// altıgensizdir: ülke alanları bölge çokgenlerinin sahibe göre birleşimi, şehirler tekil
+    /// noktalardır. Hiçbir üye değiştirilebilir durum nesnesi döndürmez.
     /// </summary>
     public interface IGameReadModel
     {
@@ -26,15 +27,14 @@ namespace TarihStrateji.Core.Domain.Commands
         /// <summary>Durum değiştiğinde (emir kabulü, gün sonu) yeni sürümle tetiklenir.</summary>
         event Action<long> StateChanged;
 
-        /// <summary>Harita genişliği (sütun); hücre dizini = satır × genişlik + sütun.</summary>
-        int MapWidth { get; }
+        /// <summary>Tüm bölgeler (kimlik sırasıyla) sahip/kontrolcü ile <paramref name="into"/>'ya eklenir.</summary>
+        void GetRegions(List<RegionView> into);
 
-        int MapHeight { get; }
+        /// <summary>Bölgenin değişmez geometrisi (halkalar); bölge yoksa hiçbir şey eklenmez.</summary>
+        void GetRegionRings(RegionId region, List<RegionRingView> into);
 
-        CellView GetCell(int cellIndex);
-
-        /// <summary>Oyuncunun bu hücreyi şu an görüp görmediği (savaş sisi; Gözlemci her şeyi görür).</summary>
-        bool IsCellVisible(int cellIndex);
+        /// <summary>Noktayı içeren bölge (dokunma seçimi); yoksa <see cref="RegionId.None"/>.</summary>
+        RegionId FindRegion(GeoPoint point);
 
         /// <summary>Tüm şehirler (kimlik sırasıyla) <paramref name="into"/>'ya eklenir.</summary>
         void GetCities(List<CityView> into);

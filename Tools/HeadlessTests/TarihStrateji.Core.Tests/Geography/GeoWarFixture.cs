@@ -69,7 +69,7 @@ namespace TarihStrateji.Core.Tests.Geography
         public GameDate Today { get; set; }
 
         public static GeoWarfareParameters Parameters { get; } =
-            new GeoWarfareParameters(LandCosts(), SeaCosts(), Fixed64.FromInt(20), new RegionControlParameters(3, 5), 4, Fixed64.FromInt(3_000));
+            new GeoWarfareParameters(LandCosts(), SeaCosts(), Fixed64.FromInt(20), new RegionControlParameters(3, 5), Fixed64.FromInt(3_000));
 
         public GeoWarfareContext Ctx => new GeoWarfareContext(World, Warfare, Content.Warfare, Parameters, Population, Economy, Effects, Hostility, Today);
 

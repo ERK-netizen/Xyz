@@ -54,7 +54,7 @@ namespace TarihStrateji.Core.Tests.Geography
                 Assert.That(red.Node, Is.EqualTo(S));
                 Assert.That(red.Route, Is.Empty, "temas");
                 GeoNavalRules.ResolveBattles(f.Ctx, Seed, notes);
-                Assert.That(notes, Has.Some.StartsWith(NavalCombatRules.BattleNote));
+                Assert.That(notes, Has.Some.StartsWith(WarfareNotes.NavalBattle));
                 return red.Organization.Raw + "|" + blue.Organization.Raw;
             }
 
@@ -146,7 +146,7 @@ namespace TarihStrateji.Core.Tests.Geography
             }
 
             GeoAmphibiousRules.ResolveLandings(f.Ctx, Seed, notes);
-            Assert.That(notes, Has.Some.StartsWith(CombatRules.BattleNote).Or.Some.StartsWith(CombatRules.CityCapturedNote), "garnizona çıkarma muharebesi");
+            Assert.That(notes, Has.Some.StartsWith(WarfareNotes.Battle).Or.Some.StartsWith(WarfareNotes.CityCaptured), "garnizona çıkarma muharebesi");
             Assert.That(cp.Owner, Is.EqualTo(Red), "sahiplik değişmez");
         }
 
@@ -206,7 +206,7 @@ namespace TarihStrateji.Core.Tests.Geography
             Assert.That(CitySlotRules.CheckBuild(a1, Red, 18, 2, 4).IsValid, Is.True);
             Assert.That(CitySlotRules.CheckBuild(a1, Red, 19, 2, 4).ErrorKey, Is.EqualTo(TarihStrateji.Core.Economy.EconomyErrorKeys.SlotYetersiz));
             a1.Controller = Blue;
-            Assert.That(CitySlotRules.CheckBuild(a1, Red, 0, 1, 4).ErrorKey, Is.EqualTo(TarihStrateji.Core.Economy.EconomyErrorKeys.SektorBizimDegil), "işgalde inşaat yok");
+            Assert.That(CitySlotRules.CheckBuild(a1, Red, 0, 1, 4).ErrorKey, Is.EqualTo(TarihStrateji.Core.Economy.EconomyErrorKeys.SehirBizimDegil), "işgalde inşaat yok");
         }
 
         private static Fleet Build(GeoWarFixture f, CountryId country, UnitTypeId type, CityId port)

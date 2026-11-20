@@ -5,19 +5,17 @@ using TarihStrateji.Core.Diplomacy.Definitions;
 using TarihStrateji.Core.Economy.Definitions;
 using TarihStrateji.Core.Effects.Events;
 using TarihStrateji.Core.Intelligence.Definitions;
-using TarihStrateji.Core.Logistics;
 using TarihStrateji.Core.Politics.Definitions;
 using TarihStrateji.Core.Population;
 using TarihStrateji.Core.Research.Definitions;
 using TarihStrateji.Core.Warfare.Definitions;
-using TarihStrateji.Core.World.Pathfinding;
-
 using TarihStrateji.Core.Warfare.Geo;
 
 namespace TarihStrateji.Core.Content
 {
     /// <summary>
-    /// Oyunun tüm tanım verisi (DEF): ekonomi, demografi, hareket, teknoloji, siyaset, karakterler, kara harbi, ikmal.
+    /// Oyunun tüm tanım verisi (DEF): ekonomi, demografi, teknoloji, siyaset, karakterler, savaş
+    /// (coğrafi hareket/ikmal dahil), diplomasi, istihbarat, anlatı ve YZ.
     /// Durum değildir; kayda girmez.
     /// </summary>
     public sealed class GameContent
@@ -25,12 +23,10 @@ namespace TarihStrateji.Core.Content
         public GameContent(
             EconomyCatalog economy,
             DemographyParameters demography,
-            TerrainMovementTable movement,
             TechCatalog technology,
             PoliticsCatalog politics,
             CharacterCatalog characters,
             WarfareCatalog warfare,
-            LogisticsParameters logistics,
             DiplomacyParameters diplomacy,
             IntelligenceParameters intelligence,
             NarrativeCatalog narrative,
@@ -39,12 +35,10 @@ namespace TarihStrateji.Core.Content
         {
             Economy = economy ?? throw new ArgumentNullException(nameof(economy));
             Demography = demography ?? throw new ArgumentNullException(nameof(demography));
-            Movement = movement ?? throw new ArgumentNullException(nameof(movement));
             Technology = technology ?? throw new ArgumentNullException(nameof(technology));
             Politics = politics ?? throw new ArgumentNullException(nameof(politics));
             Characters = characters ?? throw new ArgumentNullException(nameof(characters));
             Warfare = warfare ?? throw new ArgumentNullException(nameof(warfare));
-            Logistics = logistics ?? throw new ArgumentNullException(nameof(logistics));
             Diplomacy = diplomacy ?? throw new ArgumentNullException(nameof(diplomacy));
             Intelligence = intelligence ?? throw new ArgumentNullException(nameof(intelligence));
             Narrative = narrative ?? throw new ArgumentNullException(nameof(narrative));
@@ -59,8 +53,6 @@ namespace TarihStrateji.Core.Content
 
         public DemographyParameters Demography { get; }
 
-        public TerrainMovementTable Movement { get; }
-
         public TechCatalog Technology { get; }
 
         public PoliticsCatalog Politics { get; }
@@ -68,8 +60,6 @@ namespace TarihStrateji.Core.Content
         public CharacterCatalog Characters { get; }
 
         public WarfareCatalog Warfare { get; }
-
-        public LogisticsParameters Logistics { get; }
 
         public DiplomacyParameters Diplomacy { get; }
 

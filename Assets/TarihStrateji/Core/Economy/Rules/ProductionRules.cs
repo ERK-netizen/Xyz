@@ -3,7 +3,7 @@ using TarihStrateji.Core.Domain.Time;
 using TarihStrateji.Core.Economy.Definitions;
 using TarihStrateji.Core.Economy.State;
 using TarihStrateji.Core.Effects;
-using TarihStrateji.Core.World;
+using TarihStrateji.Core.World.Geography;
 
 namespace TarihStrateji.Core.Economy.Rules
 {
@@ -15,7 +15,7 @@ namespace TarihStrateji.Core.Economy.Rules
     /// </summary>
     public static class ProductionRules
     {
-        public static void RunDay(EconomyState economy, EconomyCatalog catalog, WorldMap map, EffectEngine effects, GameDate today)
+        public static void RunDay(EconomyState economy, EconomyCatalog catalog, GeoWorld world, EffectEngine effects, GameDate today)
         {
             for (int i = 0; i < economy.Countries.Count; i++)
             {
@@ -28,7 +28,7 @@ namespace TarihStrateji.Core.Economy.Rules
             {
                 Facility facility = economy.Facilities.ValueAt(i);
                 facility.OutputScale = Fixed64.Zero;
-                if (facility.Workers <= 0L || !EconomyGeography.IsOperational(map, facility.Sector, facility.Owner)
+                if (facility.Workers <= 0L || !EconomyGeography.IsOperational(world, facility.City, facility.Owner)
                     || !economy.Countries.TryGetValue(facility.Owner, out CountryEconomy country))
                 {
                     continue;

@@ -32,11 +32,11 @@ namespace TarihStrateji.Core.Content
             capitulationThreshold: F("0.25"));
 
         public static IntelligenceParameters CreateIntelligence() => new IntelligenceParameters(
-            landUnitSight: 2,
-            fleetSight: 2,
-            citySight: 2,
-            airReconSight: 1,
-            exactRange: 1,
+            landUnitSight: 250_000L,
+            fleetSight: 250_000L,
+            citySight: 150_000L,
+            airReconSight: 100_000L,
+            exactRange: 60_000L,
             estimateStep: F("0.25"),
             contactMemoryDays: 30);
 

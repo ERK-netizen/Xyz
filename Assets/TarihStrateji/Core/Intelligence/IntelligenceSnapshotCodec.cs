@@ -29,7 +29,7 @@ namespace TarihStrateji.Core.Intelligence
                     w.WriteByte((byte)r.Kind);
                     w.WriteUInt64(r.EntityId);
                     w.WriteId(r.Owner);
-                    w.WriteId(r.LastHex);
+                    w.WriteId(r.LastNode);
                     w.WriteFixed64(r.EstimatedStrength);
                     w.WriteBool(r.IsExact);
                     w.WriteDate(r.SeenOn);
@@ -64,7 +64,7 @@ namespace TarihStrateji.Core.Intelligence
 
                         var report = new ContactReport((SightingKind)kind, r.ReadUInt64(), new CountryId(r.ReadUInt64()))
                         {
-                            LastHex = new HexId(r.ReadUInt64()),
+                            LastNode = new TransportNodeId(r.ReadUInt64()),
                             EstimatedStrength = r.ReadFixed64(),
                             IsExact = r.ReadBool(),
                             SeenOn = r.ReadDate(),

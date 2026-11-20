@@ -1,39 +1,39 @@
 using System.Collections.Generic;
 using TarihStrateji.Core.Domain.Ids;
-using TarihStrateji.Core.World;
-using TarihStrateji.Core.World.Grid;
-using TarihStrateji.Core.World.Map;
+using TarihStrateji.Core.World.Geography;
 
 namespace TarihStrateji.Core.Simulation.Systems
 {
     /// <summary>
-    /// Kara sınırı komşulukları (siyasi haritadan, fiili kontrole göre): kontrol ettikleri kara
-    /// hücreleri bitişik olan ülke çiftleri. Tek geçişte O(hücre) hesaplanır; sıralı ve tekrarsızdır.
+    /// Kara sınırı komşulukları (siyasi haritadan, fiilî kontrole göre): kara geçişine açık sınırla
+    /// (<see cref="BorderGraph"/>) bitişik bölgelerin kontrolcüsü farklı olan ülke çiftleri. Bölge
+    /// kimliği sırasıyla tek geçişte hesaplanır; sonuç sıralı ve tekrarsızdır.
     /// </summary>
     public static class BorderIndex
     {
-        public static void Compute(WorldMap map, List<ulong> pairs)
+        public static void Compute(GeoWorld world, List<ulong> pairs)
         {
             pairs.Clear();
-            for (int i = 0; i < map.CellCount; i++)
+            for (int i = 0; i < world.Regions.Count; i++)
             {
-                HexCell cell = map.CellAt(i);
-                if (cell.IsWater || !cell.Controller.IsValid || cell.Controller.Value > 0xFFFFFFFFUL)
+                world.TryGetControl(world.Regions[i], out RegionControl region);
+                if (!region.Controller.IsValid || region.Controller.Value > 0xFFFFFFFFUL)
                 {
                     continue;
                 }
 
-                // Her bitişiklik iki kez görülür; yalnız doğu yarısı (E, NE, NW) yeter.
-                for (int d = 0; d < 3; d++)
+                IReadOnlyList<BorderLink> links = world.Borders.Neighbors(region.Region);
+                for (int l = 0; l < links.Count; l++)
                 {
-                    if (!map.TryGetNeighborCell(cell, (HexDirection)d, out HexCell n) || n.IsWater || !n.Controller.IsValid
-                        || n.Controller == cell.Controller || n.Controller.Value > 0xFFFFFFFFUL)
+                    if (!links[l].LandPassable || links[l].Neighbor < region.Region
+                        || !world.TryGetControl(links[l].Neighbor, out RegionControl other) || !other.Controller.IsValid
+                        || other.Controller == region.Controller || other.Controller.Value > 0xFFFFFFFFUL)
                     {
                         continue;
                     }
 
-                    ulong a = cell.Controller.Value;
-                    ulong b = n.Controller.Value;
+                    ulong a = region.Controller.Value;
+                    ulong b = other.Controller.Value;
                     ulong key = a < b ? (a << 32) | b : (b << 32) | a;
                     int at = pairs.BinarySearch(key);
                     if (at < 0)

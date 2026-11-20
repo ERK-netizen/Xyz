@@ -1,43 +1,44 @@
 using System.Collections.Generic;
+using TarihStrateji.Core.Domain.Ids;
 using TarihStrateji.Core.Domain.Numerics;
 using TarihStrateji.Core.Domain.Time;
 using TarihStrateji.Core.Intelligence.Definitions;
 using TarihStrateji.Core.Intelligence.State;
-using TarihStrateji.Core.World;
-using TarihStrateji.Core.World.Grid;
+using TarihStrateji.Core.World.Geography;
 
 namespace TarihStrateji.Core.Intelligence
 {
     /// <summary>
-    /// <see cref="ObservedWorld"/> güncellemesi (P14). Görünür hücreler, sensörlerden altıgen
-    /// adımıyla yarıçap kadar yayılarak bulunur. Görünür hücredeki yabancı varlıklar temas
-    /// raporu olur: en yakın sensöre <see cref="IntelligenceParameters.ExactRange"/> içindeyse güç
-    /// kesin, değilse <see cref="IntelligenceParameters.EstimateStep"/>'e yuvarlanır. Son konumu
-    /// bugün görünen ama orada görülmeyen temas silinir (gittiği görülür); bellek süresini aşan
-    /// temas unutulur. Ülke kendi varlıklarını rapor etmez (zaten bilir).
+    /// <see cref="ObservedWorld"/> güncellemesi (P14). Görünür düğümler, sensörlerden ulaşım grafının
+    /// kenarları boyunca (kara ve deniz) yol uzunluğu yarıçapı aşmayacak kadar yayılarak bulunur
+    /// (kenar açılış tarihi görüşü etkilemez). Görünür düğümdeki yabancı varlıklar temas raporu olur:
+    /// en yakın sensöre yol uzunluğu <see cref="IntelligenceParameters.ExactRange"/> içindeyse güç
+    /// kesin, değilse <see cref="IntelligenceParameters.EstimateStep"/>'e yuvarlanır. Son konumu bugün
+    /// görünen ama orada görülmeyen temas silinir; bellek süresini aşan temas unutulur. Ülke kendi
+    /// varlıklarını rapor etmez.
     /// </summary>
     public static class IntelligenceRules
     {
         public static void Update(
-            WorldMap world,
+            GeoWorld world,
             IntelligenceParameters prm,
             ObservedWorld view,
             IReadOnlyList<Sensor> sensors,
             IReadOnlyList<Sighting> sightings,
-            GameDate today,
-            int[] scratch)
+            GameDate today)
         {
-            ComputeVisible(world, sensors, view.VisibleList, scratch);
+            var nearest = new Dictionary<TransportNodeId, long>();
+            ComputeVisible(world, sensors, view.VisibleList, nearest);
             var seenToday = new List<ulong>();
             for (int i = 0; i < sightings.Count; i++)
             {
                 Sighting s = sightings[i];
-                if (s.Owner == view.Country || !world.Grid.TryFromId(s.Hex, out HexCoord at) || !view.IsVisible(world.Grid.IndexOf(at)))
+                if (s.Owner == view.Country || !view.IsVisible(s.Node))
                 {
                     continue;
                 }
 
-                bool exact = NearestSensorSteps(world, sensors, at) <= prm.ExactRange;
+                bool exact = nearest.TryGetValue(s.Node, out long distance) && distance <= prm.ExactRange;
                 ulong key = ((ulong)s.Kind << 56) | s.EntityId;
                 int index = view.IndexOf(key);
                 ContactReport report;
@@ -51,7 +52,7 @@ namespace TarihStrateji.Core.Intelligence
                     view.ContactList.Insert(~index, report);
                 }
 
-                report.LastHex = s.Hex;
+                report.LastNode = s.Node;
                 report.EstimatedStrength = exact ? s.Strength : Estimate(s.Strength, prm.EstimateStep);
                 report.IsExact = exact;
                 report.SeenOn = today;
@@ -63,7 +64,7 @@ namespace TarihStrateji.Core.Intelligence
             {
                 ContactReport c = view.ContactList[i];
                 bool stale = today.DayNumber - c.SeenOn.DayNumber >= prm.ContactMemoryDays;
-                bool vanished = seenToday.BinarySearch(c.SortKey) < 0 && world.Grid.TryFromId(c.LastHex, out HexCoord last) && view.IsVisible(world.Grid.IndexOf(last));
+                bool vanished = seenToday.BinarySearch(c.SortKey) < 0 && view.IsVisible(c.LastNode);
                 if (stale || vanished)
                 {
                     view.ContactList.RemoveAt(i);
@@ -83,92 +84,84 @@ namespace TarihStrateji.Core.Intelligence
             return Fixed64.Clamp(steps * step, step, Fixed64.One);
         }
 
-        /// <summary>Sensör yarıçapları içindeki hücre dizinleri (artan, tekrarsız).</summary>
-        public static void ComputeVisible(WorldMap world, IReadOnlyList<Sensor> sensors, List<int> into, int[] scratch)
+        /// <summary>
+        /// Sensör yarıçapları içindeki düğümler (artan, tekrarsız). Her düğüm için kalan en büyük menzil ve
+        /// en yakın sensöre yol uzunluğu sabit noktaya kadar gevşetilir; sonuç işlem sırasından bağımsızdır.
+        /// <paramref name="nearest"/> görünür düğümlerin en yakın sensör uzaklığını alır.
+        /// </summary>
+        public static void ComputeVisible(GeoWorld world, IReadOnlyList<Sensor> sensors, List<TransportNodeId> into, Dictionary<TransportNodeId, long> nearest)
         {
             into.Clear();
-            HexGrid grid = world.Grid;
-            var frontier = new List<int>();
-            var next = new List<int>();
-
-            // scratch: hücre başına "bu hücreye ulaşan en büyük kalan yarıçap + 1" (0 = hiç).
+            nearest.Clear();
+            var remaining = new Dictionary<TransportNodeId, long>();
+            var queue = new Queue<TransportNodeId>();
             for (int s = 0; s < sensors.Count; s++)
             {
                 Sensor sensor = sensors[s];
-                if (!grid.Contains(sensor.Center) || sensor.Radius < 0)
+                if (sensor.RadiusMeters < 0L || !world.Transport.TryGetNode(sensor.Center, out _))
                 {
                     continue;
                 }
 
-                int start = grid.IndexOf(sensor.Center);
-                if (scratch[start] >= sensor.Radius + 1)
+                bool known = remaining.TryGetValue(sensor.Center, out long r);
+                if (!known)
                 {
-                    continue;
+                    into.Add(sensor.Center);
                 }
 
-                if (scratch[start] == 0)
+                if (!known || r < sensor.RadiusMeters)
                 {
-                    into.Add(start);
+                    remaining[sensor.Center] = sensor.RadiusMeters;
+                    queue.Enqueue(sensor.Center);
                 }
 
-                scratch[start] = sensor.Radius + 1;
-                frontier.Clear();
-                frontier.Add(start);
-                for (int ring = sensor.Radius; ring > 0 && frontier.Count > 0; ring--)
-                {
-                    next.Clear();
-                    for (int f = 0; f < frontier.Count; f++)
-                    {
-                        HexCoord c = grid.FromIndex(frontier[f]);
-                        for (int d = 0; d < HexDirections.Count; d++)
-                        {
-                            if (!grid.TryGetNeighbor(c, (HexDirection)d, out HexCoord n))
-                            {
-                                continue;
-                            }
-
-                            int ni = grid.IndexOf(n);
-                            if (scratch[ni] >= ring)
-                            {
-                                continue;
-                            }
-
-                            if (scratch[ni] == 0)
-                            {
-                                into.Add(ni);
-                            }
-
-                            scratch[ni] = ring;
-                            next.Add(ni);
-                        }
-                    }
-
-                    frontier.Clear();
-                    frontier.AddRange(next);
-                }
+                nearest[sensor.Center] = 0L;
             }
 
-            for (int i = 0; i < into.Count; i++)
+            while (queue.Count > 0)
             {
-                scratch[into[i]] = 0;
+                TransportNodeId at = queue.Dequeue();
+                long left = remaining[at];
+                long dist = nearest.TryGetValue(at, out long d) ? d : long.MaxValue;
+                IReadOnlyList<TransportEdge> edges = world.Transport.EdgesOf(at);
+                for (int e = 0; e < edges.Count; e++)
+                {
+                    TransportEdge edge = edges[e];
+                    long nextLeft = left - edge.LengthMeters;
+                    if (nextLeft < 0L)
+                    {
+                        continue;
+                    }
+
+                    TransportNodeId other = edge.Other(at);
+                    bool improved = false;
+                    bool seen = remaining.TryGetValue(other, out long known);
+                    if (!seen)
+                    {
+                        into.Add(other);
+                    }
+
+                    if (!seen || known < nextLeft)
+                    {
+                        remaining[other] = nextLeft;
+                        improved = true;
+                    }
+
+                    long nextDist = dist == long.MaxValue ? long.MaxValue : dist + edge.LengthMeters;
+                    if (!nearest.TryGetValue(other, out long knownDist) || knownDist > nextDist)
+                    {
+                        nearest[other] = nextDist;
+                        improved = true;
+                    }
+
+                    if (improved)
+                    {
+                        queue.Enqueue(other);
+                    }
+                }
             }
 
             into.Sort();
-        }
-
-        private static int NearestSensorSteps(WorldMap world, IReadOnlyList<Sensor> sensors, HexCoord at)
-        {
-            int best = int.MaxValue;
-            for (int i = 0; i < sensors.Count; i++)
-            {
-                int d = world.Grid.StepDistance(sensors[i].Center, at);
-                if (d < best)
-                {
-                    best = d;
-                }
-            }
-
-            return best;
         }
     }
 }

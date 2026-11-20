@@ -6,8 +6,8 @@ using TarihStrateji.Core.Warfare.Definitions;
 namespace TarihStrateji.Core.Warfare.State
 {
     /// <summary>
-    /// Hava kanadı: bir şehirde üslenir, görev hedefi üssten menzil içindeki bir hücredir. Kural
-    /// mantığı <c>AirRules</c>, <c>AirCombatRules</c> ve <c>JointSupportRules</c>'tadır.
+    /// Hava kanadı: bir şehirde üslenir, görev hedefi üssten menzil içindeki bir hedeftir. Kural
+    /// mantığı <c>GeoAirRules</c> ve <c>GeoJointSupportRules</c>'tadır.
     /// </summary>
     public sealed class AirWing
     {
@@ -38,10 +38,8 @@ namespace TarihStrateji.Core.Warfare.State
 
         public AirMission Mission { get; internal set; }
 
-        public HexId MissionTarget { get; internal set; }
-
         /// <summary>Coğrafi görev hedefi (birlik, şehir, filo veya nokta; ADR-011).</summary>
-        public TargetRef GeoMissionTarget { get; internal set; }
+        public TargetRef MissionTarget { get; internal set; }
 
         public Fixed64 Strength(AirWingTypeDefinition type)
         {

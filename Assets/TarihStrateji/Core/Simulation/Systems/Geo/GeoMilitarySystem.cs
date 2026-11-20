@@ -27,11 +27,6 @@ namespace TarihStrateji.Core.Simulation.Systems.Geo
 
         public void Execute(SimulationContext context)
         {
-            if (!context.State.IsGeographic)
-            {
-                return;
-            }
-
             Notes.Clear();
             Run(context, GeoWarfareContexts.From(context.State, Content));
             for (int i = 0; i < Notes.Count; i++)

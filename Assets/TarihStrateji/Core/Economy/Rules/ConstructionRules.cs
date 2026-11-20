@@ -7,21 +7,21 @@ using TarihStrateji.Core.Domain.Time;
 using TarihStrateji.Core.Economy.Definitions;
 using TarihStrateji.Core.Economy.State;
 using TarihStrateji.Core.Effects;
-using TarihStrateji.Core.World;
-using TarihStrateji.Core.World.Cities;
+using TarihStrateji.Core.Economy.Geo;
+using TarihStrateji.Core.World.Geography;
 
 namespace TarihStrateji.Core.Economy.Rules
 {
     /// <summary>
-    /// İnşaat kuyruğu (P9). Sipariş anında bedel (para + mal) ödenir ve bina slotları ayrılır;
-    /// her gün sektör hâlâ sahibin elindeyse ilerleme = inşaat hızı (etkiler, taban 1 gün).
-    /// Sektör işgaldeyse ilerleme durur. Tamamlanınca tesis oluşur; slotlar tesise geçer.
+    /// İnşaat kuyruğu (P9). Sipariş anında bedel (para + mal) ödenir ve şehir slotları ayrılır
+    /// (süren inşaat slot sayılır); her gün şehir hâlâ sahibin elinde ve kontrolündeyse ilerleme =
+    /// inşaat hızı (etkiler, taban 1 gün). İşgalde ilerleme durur. Tamamlanınca tesis oluşur.
     /// </summary>
     public static class ConstructionRules
     {
-        public static ValidationResult Validate(EconomyState economy, EconomyCatalog catalog, WorldMap map, CountryId country, FacilityTypeId typeId, SectorId sectorId)
+        public static ValidationResult Validate(EconomyState economy, EconomyCatalog catalog, GeoWorld world, CountryId country, FacilityTypeId typeId, CityId cityId)
         {
-            ValidationResult placement = ValidatePlacement(economy, catalog, map, country, typeId, sectorId);
+            ValidationResult placement = ValidatePlacement(economy, catalog, world, country, typeId, cityId);
             if (!placement.IsValid)
             {
                 return placement;
@@ -45,9 +45,9 @@ namespace TarihStrateji.Core.Economy.Rules
             return ValidationResult.Ok;
         }
 
-        public static Result<ConstructionId> Order(EconomyState economy, EconomyCatalog catalog, WorldMap map, CountryId country, FacilityTypeId typeId, SectorId sectorId)
+        public static Result<ConstructionId> Order(EconomyState economy, EconomyCatalog catalog, GeoWorld world, CountryId country, FacilityTypeId typeId, CityId cityId)
         {
-            ValidationResult check = Validate(economy, catalog, map, country, typeId, sectorId);
+            ValidationResult check = Validate(economy, catalog, world, country, typeId, cityId);
             if (!check.IsValid)
             {
                 return Result<ConstructionId>.Failure(check.ErrorKey);
@@ -62,32 +62,30 @@ namespace TarihStrateji.Core.Economy.Rules
                 ce.RemoveStock(type.BuildGoods[i].Good, type.BuildGoods[i].Amount);
             }
 
-            map.UseBuildingSlots(sectorId, type.BuildingSlots);
             var id = new ConstructionId(economy.ConstructionIds.Allocate());
-            economy.Constructions.Add(id, new ConstructionOrder(id, country, typeId, sectorId));
+            economy.Constructions.Add(id, new ConstructionOrder(id, country, typeId, cityId));
             return Result<ConstructionId>.Success(id);
         }
 
         /// <summary>
         /// Senaryo kurulumu: bedelsiz, hazır tesis yerleştirir. İnşaatla aynı yer kurallarından
-        /// (sahip/kontrol, sektör türü, slot) geçer ve slotları ayırır; hazine ve stok aranmaz.
+        /// (sahip/kontrol, liman, slot) geçer ve slotları ayırır; hazine ve stok aranmaz.
         /// </summary>
-        public static Result<FacilityId> PlaceExisting(EconomyState economy, EconomyCatalog catalog, WorldMap map, CountryId country, FacilityTypeId typeId, SectorId sectorId)
+        public static Result<FacilityId> PlaceExisting(EconomyState economy, EconomyCatalog catalog, GeoWorld world, CountryId country, FacilityTypeId typeId, CityId cityId)
         {
-            ValidationResult placement = ValidatePlacement(economy, catalog, map, country, typeId, sectorId);
+            ValidationResult placement = ValidatePlacement(economy, catalog, world, country, typeId, cityId);
             if (!placement.IsValid)
             {
                 return Result<FacilityId>.Failure(placement.ErrorKey);
             }
 
-            map.UseBuildingSlots(sectorId, catalog.FacilityTypes[typeId].BuildingSlots);
             var id = new FacilityId(economy.FacilityIds.Allocate());
-            economy.Facilities.Add(id, new Facility(id, typeId, sectorId, country));
+            economy.Facilities.Add(id, new Facility(id, typeId, cityId, country));
             return Result<FacilityId>.Success(id);
         }
 
-        /// <summary>Yer kuralları: ülke, tür, sektör var; sahip ve kontrol bizde; sektör türü uygun; slot yeterli.</summary>
-        public static ValidationResult ValidatePlacement(EconomyState economy, EconomyCatalog catalog, WorldMap map, CountryId country, FacilityTypeId typeId, SectorId sectorId)
+        /// <summary>Yer kuralları: ülke, tür, şehir var; sahip ve kontrol bizde; liman gerekiyorsa liman; slot yeterli.</summary>
+        public static ValidationResult ValidatePlacement(EconomyState economy, EconomyCatalog catalog, GeoWorld world, CountryId country, FacilityTypeId typeId, CityId cityId)
         {
             if (!economy.Countries.ContainsKey(country))
             {
@@ -99,22 +97,18 @@ namespace TarihStrateji.Core.Economy.Rules
                 return ValidationResult.Fail(EconomyErrorKeys.TesisTuruBilinmiyor);
             }
 
-            if (!map.Sectors.TryGetValue(sectorId, out CitySector sector))
+            if (!world.TryGetCity(cityId, out City city))
             {
-                return ValidationResult.Fail(EconomyErrorKeys.SektorBulunamadi);
+                return ValidationResult.Fail(EconomyErrorKeys.SehirBulunamadi);
             }
 
-            if (sector.Owner != country || sector.Controller != country)
+            if (type.RequiresPort && !world.IsPort(city))
             {
-                return ValidationResult.Fail(EconomyErrorKeys.SektorBizimDegil);
+                return ValidationResult.Fail(EconomyErrorKeys.LimanGerekli);
             }
 
-            if (!type.AllowsSector(sector.Kind))
-            {
-                return ValidationResult.Fail(EconomyErrorKeys.SektorTuruUygunDegil);
-            }
-
-            return sector.FreeBuildingSlots < type.BuildingSlots ? ValidationResult.Fail(EconomyErrorKeys.SlotYetersiz) : ValidationResult.Ok;
+            return CitySlotRules.CheckBuild(city, country, EconomyGeography.UsedSlots(economy, catalog, cityId), type.BuildingSlots,
+                catalog.Parameters.BuildingSlotsPerDevelopment);
         }
 
         public static ValidationResult CheckCancel(EconomyState economy, CountryId country, ConstructionId id)
@@ -127,8 +121,8 @@ namespace TarihStrateji.Core.Economy.Rules
             return order.Country != country ? ValidationResult.Fail(EconomyErrorKeys.InsaatBizimDegil) : ValidationResult.Ok;
         }
 
-        /// <summary>İptal: slotlar bırakılır, paranın iade oranı kadarı geri ödenir, mallar iade edilmez.</summary>
-        public static ValidationResult Cancel(EconomyState economy, EconomyCatalog catalog, WorldMap map, CountryId country, ConstructionId id)
+        /// <summary>İptal: slotlar boşalır, paranın iade oranı kadarı geri ödenir, mallar iade edilmez.</summary>
+        public static ValidationResult Cancel(EconomyState economy, EconomyCatalog catalog, GeoWorld world, CountryId country, ConstructionId id)
         {
             ValidationResult check = CheckCancel(economy, country, id);
             if (!check.IsValid)
@@ -138,7 +132,6 @@ namespace TarihStrateji.Core.Economy.Rules
 
             ConstructionOrder order = economy.Constructions[id];
             FacilityTypeDefinition type = catalog.FacilityTypes[order.Type];
-            map.ReleaseBuildingSlots(order.Sector, type.BuildingSlots);
             Fixed64 refund = type.BuildMoney * catalog.Parameters.ConstructionRefundRatio;
             CountryEconomy ce = economy.Countries[country];
             ce.Treasury += refund;
@@ -148,7 +141,7 @@ namespace TarihStrateji.Core.Economy.Rules
         }
 
         /// <summary>Günlük ilerleme; tamamlanan tesislerin kimlikleri artan sırayla eklenir.</summary>
-        public static void AdvanceDay(EconomyState economy, EconomyCatalog catalog, WorldMap map, EffectEngine effects, GameDate today, List<FacilityId> completed)
+        public static void AdvanceDay(EconomyState economy, EconomyCatalog catalog, GeoWorld world, EffectEngine effects, GameDate today, List<FacilityId> completed)
         {
             var finished = new List<ConstructionId>();
             var targets = new EffectTarget[2];
@@ -156,7 +149,7 @@ namespace TarihStrateji.Core.Economy.Rules
             for (int i = 0; i < economy.Constructions.Count; i++)
             {
                 ConstructionOrder order = economy.Constructions.ValueAt(i);
-                if (!map.Sectors.TryGetValue(order.Sector, out CitySector sector) || sector.Controller != order.Country || sector.Owner != order.Country)
+                if (!world.TryGetCity(order.City, out City city) || !CitySlotRules.IsOperational(city, order.Country))
                 {
                     continue;
                 }
@@ -175,7 +168,7 @@ namespace TarihStrateji.Core.Economy.Rules
                 ConstructionOrder order = economy.Constructions[finished[i]];
                 economy.Constructions.Remove(order.Id);
                 var facilityId = new FacilityId(economy.FacilityIds.Allocate());
-                economy.Facilities.Add(facilityId, new Facility(facilityId, order.Type, order.Sector, order.Country));
+                economy.Facilities.Add(facilityId, new Facility(facilityId, order.Type, order.City, order.Country));
                 completed.Add(facilityId);
             }
         }

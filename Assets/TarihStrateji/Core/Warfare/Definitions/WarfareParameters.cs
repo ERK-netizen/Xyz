@@ -1,6 +1,6 @@
 using System;
 using TarihStrateji.Core.Domain.Numerics;
-using TarihStrateji.Core.World.Map;
+using TarihStrateji.Core.World.Geography;
 
 namespace TarihStrateji.Core.Warfare.Definitions
 {

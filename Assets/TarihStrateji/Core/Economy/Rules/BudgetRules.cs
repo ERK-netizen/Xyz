@@ -6,8 +6,7 @@ using TarihStrateji.Core.Economy.Definitions;
 using TarihStrateji.Core.Economy.State;
 using TarihStrateji.Core.Effects;
 using TarihStrateji.Core.Population;
-using TarihStrateji.Core.World;
-using TarihStrateji.Core.World.Map;
+using TarihStrateji.Core.World.Geography;
 
 namespace TarihStrateji.Core.Economy.Rules
 {
@@ -22,7 +21,7 @@ namespace TarihStrateji.Core.Economy.Rules
     /// </summary>
     public static class BudgetRules
     {
-        public static void SettleDay(EconomyState economy, EconomyCatalog catalog, PopulationState population, WorldMap map, EffectEngine effects, GameDate today)
+        public static void SettleDay(EconomyState economy, EconomyCatalog catalog, PopulationState population, GeoWorld world, EffectEngine effects, GameDate today)
         {
             var targets = new EffectTarget[2];
             targets[0] = EffectTarget.Global;
@@ -39,7 +38,7 @@ namespace TarihStrateji.Core.Economy.Rules
             for (int i = 0; i < economy.Facilities.Count; i++)
             {
                 Facility facility = economy.Facilities.ValueAt(i);
-                if (!EconomyGeography.IsOperational(map, facility.Sector, facility.Owner)
+                if (!EconomyGeography.IsOperational(world, facility.City, facility.Owner)
                     || !economy.Countries.TryGetValue(facility.Owner, out CountryEconomy owner))
                 {
                     continue;
@@ -54,7 +53,7 @@ namespace TarihStrateji.Core.Economy.Rules
             for (int i = 0; i < population.Regions.Count; i++)
             {
                 RegionPopulation p = population.Regions.ValueAt(i);
-                if (!map.Regions.TryGetValue(p.Region, out StrategicRegion region) || !region.Controller.IsValid)
+                if (!world.TryGetControl(p.Region, out RegionControl region) || !region.Controller.IsValid)
                 {
                     continue;
                 }

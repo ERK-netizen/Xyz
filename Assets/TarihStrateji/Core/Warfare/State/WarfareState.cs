@@ -19,8 +19,6 @@ namespace TarihStrateji.Core.Warfare.State
 
         public StableIdAllocator AirWingIds { get; internal set; } = new StableIdAllocator();
 
-        internal List<CityId> BesiegedList { get; } = new List<CityId>();
-
         internal List<CityId> BlockadedList { get; } = new List<CityId>();
 
         /// <summary>Ablukadaki liman şehirleri (P14'te güncellenir), artan kimlik sırasında.</summary>
@@ -28,9 +26,5 @@ namespace TarihStrateji.Core.Warfare.State
 
         public bool IsBlockaded(CityId city) => BlockadedList.BinarySearch(city) >= 0;
 
-        /// <summary>Kuşatma altındaki şehirler (P14'te güncellenir), artan kimlik sırasında.</summary>
-        public IReadOnlyList<CityId> Besieged => BesiegedList;
-
-        public bool IsBesieged(CityId city) => BesiegedList.BinarySearch(city) >= 0;
     }
 }

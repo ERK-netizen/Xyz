@@ -53,7 +53,7 @@ namespace TarihStrateji.Core.Economy
                 Facility f = s.Facilities.ValueAt(i);
                 w.WriteId(f.Id);
                 w.WriteId(f.Type);
-                w.WriteId(f.Sector);
+                w.WriteId(f.City);
                 w.WriteId(f.Owner);
                 w.WriteInt64(f.Workers);
                 w.WriteFixed64(f.OutputScale);
@@ -66,7 +66,7 @@ namespace TarihStrateji.Core.Economy
                 w.WriteId(o.Id);
                 w.WriteId(o.Country);
                 w.WriteId(o.Type);
-                w.WriteId(o.Sector);
+                w.WriteId(o.City);
                 w.WriteFixed64(o.Progress);
             }
 
@@ -145,7 +145,7 @@ namespace TarihStrateji.Core.Economy
             int facilities = r.ReadCount(r.Remaining);
             for (int i = 0; i < facilities; i++)
             {
-                var f = new Facility(new FacilityId(r.ReadUInt64()), new FacilityTypeId(r.ReadUInt64()), new SectorId(r.ReadUInt64()), new CountryId(r.ReadUInt64()))
+                var f = new Facility(new FacilityId(r.ReadUInt64()), new FacilityTypeId(r.ReadUInt64()), new CityId(r.ReadUInt64()), new CountryId(r.ReadUInt64()))
                 {
                     Workers = r.ReadInt64(),
                     OutputScale = r.ReadFixed64(),
@@ -161,7 +161,7 @@ namespace TarihStrateji.Core.Economy
             int constructions = r.ReadCount(r.Remaining);
             for (int i = 0; i < constructions; i++)
             {
-                var o = new ConstructionOrder(new ConstructionId(r.ReadUInt64()), new CountryId(r.ReadUInt64()), new FacilityTypeId(r.ReadUInt64()), new SectorId(r.ReadUInt64()))
+                var o = new ConstructionOrder(new ConstructionId(r.ReadUInt64()), new CountryId(r.ReadUInt64()), new FacilityTypeId(r.ReadUInt64()), new CityId(r.ReadUInt64()))
                 {
                     Progress = r.ReadFixed64(),
                 };

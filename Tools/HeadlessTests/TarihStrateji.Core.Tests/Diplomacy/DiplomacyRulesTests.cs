@@ -4,14 +4,15 @@ using TarihStrateji.Core.Diplomacy;
 using TarihStrateji.Core.Diplomacy.Definitions;
 using TarihStrateji.Core.Diplomacy.State;
 using TarihStrateji.Core.Domain;
+using TarihStrateji.Core.Domain.Commands;
 using TarihStrateji.Core.Domain.Ids;
 using TarihStrateji.Core.Domain.Serialization;
 using TarihStrateji.Core.Domain.Time;
-using TarihStrateji.Core.Tests.Military;
 using TarihStrateji.Core.Tests.World;
-using TarihStrateji.Core.World;
-using TarihStrateji.Core.World.Cities;
-using TarihStrateji.Core.World.Map;
+
+using TarihStrateji.Core.Content;
+using TarihStrateji.Core.Simulation.State;
+using TarihStrateji.Core.World.Geography;
 
 namespace TarihStrateji.Core.Tests.Diplomacy
 {
@@ -21,35 +22,61 @@ namespace TarihStrateji.Core.Tests.Diplomacy
         private static readonly CountryId A = TestWorlds.CountryA;
         private static readonly CountryId B = TestWorlds.CountryB;
         private static readonly CountryId C = TestWorlds.CountryC;
-        private static readonly DiplomacyParameters Prm = FrontScenario.Content.Diplomacy;
+        private static readonly DiplomacyParameters Prm = BaselineDiplomacyContent.CreateDiplomacy();
         private static readonly RegionId[] NoGoals = new RegionId[0];
         private static readonly RegionTransfer[] NoTransfers = new RegionTransfer[0];
 
         /// <summary>A–B savaşı olmayan, temiz diplomatik başlangıç.</summary>
-        private static FrontScenario Peaceful()
+        private static WarWorld Peaceful()
         {
-            var s = new FrontScenario();
+            var s = new WarWorld();
             DiplomacyRules.ConcludePeace(s.State.Diplomacy, s.State.World, new DiplomacyParameters(30, 1825, 3650, 0, Prm.DemandControlShare, Prm.CapitulationThreshold), A, B, NoTransfers, s.State.Today);
             Assert.That(s.State.Diplomacy.AtWar(A, B), Is.False);
             return s;
         }
 
-        private static void OccupyRegion(WorldMap world, RegionId region, CountryId by)
+        /// <summary>Kıyı test dünyası üzerinde A–B savaşı (A batı + liman şehri, B doğu + iç şehir).</summary>
+        private sealed class WarWorld
         {
-            StrategicRegion r = world.Regions[region];
-            foreach (HexId hex in r.Hexes)
+            public WarWorld()
             {
-                HexCell cell = world.Cell(hex);
-                if (cell.City.IsValid)
+                State = GameState.CreateNew(1, GameMode.Normal, GameDate.FromYmd(1925, 1, 1), A, TestWorlds.Coastal());
+                DiplomacyRules.DeclareWar(State.Diplomacy, A, B, NoGoals, State.Today);
+            }
+
+            public GameState State { get; }
+
+            public RegionId West => TestWorlds.West;
+
+            public RegionId East => TestWorlds.East;
+
+            public City Inland
+            {
+                get
                 {
-                    foreach (SectorId sector in world.Cities[cell.City].Sectors)
-                    {
-                        world.SetSectorController(sector, by);
-                    }
+                    State.World.TryGetCity(TestWorlds.InlandCity, out City city);
+                    return city;
                 }
-                else
+            }
+
+            public RegionControl Control(RegionId region)
+            {
+                State.World.TryGetControl(region, out RegionControl control);
+                return control;
+            }
+        }
+
+        private static void OccupyRegion(GeoWorld world, RegionId region, CountryId by)
+        {
+            world.TryGetControl(region, out RegionControl control);
+            control.Controller = by;
+            control.Stage = by == control.Owner ? RegionControlStage.Secured : RegionControlStage.Occupied;
+            for (int i = 0; i < world.Cities.Count; i++)
+            {
+                world.TryGetCity(world.Cities[i], out City city);
+                if (city.Region == region)
                 {
-                    world.SetHexController(cell.Coord, by);
+                    city.Controller = by;
                 }
             }
         }
@@ -57,7 +84,7 @@ namespace TarihStrateji.Core.Tests.Diplomacy
         [Test]
         public void DeclareWar_Validations_AndDefensiveAlliesJoin()
         {
-            FrontScenario s = Peaceful();
+            WarWorld s = Peaceful();
             DiplomacyState d = s.State.Diplomacy;
             GameDate today = s.State.Today;
             Assert.That(DiplomacyRules.CheckDeclareWar(d, s.State.World, A, A, NoGoals, today).ErrorKey, Is.EqualTo(DiplomacyErrorKeys.UlkeGecersiz));
@@ -81,7 +108,7 @@ namespace TarihStrateji.Core.Tests.Diplomacy
         [Test]
         public void NonAggressionPact_BlocksWar_UntilItExpires()
         {
-            FrontScenario s = Peaceful();
+            WarWorld s = Peaceful();
             DiplomacyState d = s.State.Diplomacy;
             GameDate today = s.State.Today;
             ProposalId id = DiplomacyRules.Propose(d, Prm, ProposalKind.NonAggression, A, B, NoTransfers, today);
@@ -102,7 +129,7 @@ namespace TarihStrateji.Core.Tests.Diplomacy
         [Test]
         public void Peace_IsBilateral_DemandsNeedOccupation_AndUnansweredOffersLapse()
         {
-            var s = new FrontScenario();
+            var s = new WarWorld();
             DiplomacyState d = s.State.Diplomacy;
             GameDate today = s.State.Today;
             var demand = new[] { new RegionTransfer(s.East, A) };
@@ -123,30 +150,31 @@ namespace TarihStrateji.Core.Tests.Diplomacy
             Assert.That(DiplomacyRules.Respond(d, s.State.World, Prm, id, true, today), Is.True);
 
             Assert.That(d.AtWar(A, B), Is.False);
-            Assert.That(s.State.World.Regions[s.East].Owner, Is.EqualTo(A));
-            Assert.That(s.Cell(114, 4).Owner, Is.EqualTo(A));
-            Assert.That(s.Cell(114, 4).Controller, Is.EqualTo(A));
+            Assert.That(s.Control(s.East).Owner, Is.EqualTo(A));
+            Assert.That(s.Inland.Owner, Is.EqualTo(A));
+            Assert.That(s.Inland.Controller, Is.EqualTo(A));
             Assert.That(DiplomacyRules.CheckDeclareWar(d, s.State.World, B, A, NoGoals, today).ErrorKey, Is.EqualTo(DiplomacyErrorKeys.Ateskes));
         }
 
         [Test]
         public void Peace_RestoresMutualOccupationToOwners()
         {
-            var s = new FrontScenario();
-            s.State.World.SetHexController(new Core.World.Grid.HexCoord(110, 4), A);
-            s.State.World.SetHexController(new Core.World.Grid.HexCoord(105, 4), B);
-            SectorId fortress = s.CityB.Sectors[1];
-            s.State.World.SetSectorController(fortress, A);
+            var s = new WarWorld();
+            OccupyRegion(s.State.World, s.West, B);
+            s.Control(s.East).Controller = A;
+            s.Control(s.East).Stage = RegionControlStage.Occupied;
+            s.Inland.Controller = A;
             DiplomacyRules.ConcludePeace(s.State.Diplomacy, s.State.World, Prm, A, B, NoTransfers, s.State.Today);
-            Assert.That(s.Cell(110, 4).Controller, Is.EqualTo(B));
-            Assert.That(s.Cell(105, 4).Controller, Is.EqualTo(A));
-            Assert.That(s.State.World.Sectors[fortress].Controller, Is.EqualTo(B));
+            Assert.That(s.Control(s.East).Controller, Is.EqualTo(B));
+            Assert.That(s.Control(s.East).Stage, Is.EqualTo(RegionControlStage.Secured));
+            Assert.That(s.Control(s.West).Controller, Is.EqualTo(A));
+            Assert.That(s.Inland.Controller, Is.EqualTo(B));
         }
 
         [Test]
         public void LosingAllCities_Capitulates_AndOccupiedRegionsChangeHands()
         {
-            var s = new FrontScenario();
+            var s = new WarWorld();
             OccupyRegion(s.State.World, s.East, A);
             Assert.That(CapitulationRules.HeldCityShare(s.State.World, B), Is.EqualTo(Domain.Numerics.Fixed64.Zero));
             var capitulated = new List<CountryId>();
@@ -154,7 +182,7 @@ namespace TarihStrateji.Core.Tests.Diplomacy
             CapitulationRules.ApplyDay(s.State.Diplomacy, s.State.World, Prm, s.State.Today, capitulated, notes);
             Assert.That(capitulated, Is.EqualTo(new[] { B }));
             Assert.That(s.State.Diplomacy.AtWar(A, B), Is.False);
-            Assert.That(s.State.World.Regions[s.East].Owner, Is.EqualTo(A));
+            Assert.That(s.Control(s.East).Owner, Is.EqualTo(A));
             Assert.That(notes, Has.Some.StartsWith(CapitulationRules.CapitulatedNote));
             Assert.That(CapitulationRules.HeldCityShare(s.State.World, A), Is.EqualTo(Domain.Numerics.Fixed64.One));
         }
@@ -162,7 +190,7 @@ namespace TarihStrateji.Core.Tests.Diplomacy
         [Test]
         public void BeatenCountryWithAFightingAlly_GoesIntoExile_AndReturnsOrSurrenders()
         {
-            var s = new FrontScenario();
+            var s = new WarWorld();
             DiplomacyState d = s.State.Diplomacy;
             GameDate today = s.State.Today;
             DiplomacyRules.Propose(d, Prm, ProposalKind.Alliance, B, C, NoTransfers, today);
@@ -193,7 +221,7 @@ namespace TarihStrateji.Core.Tests.Diplomacy
         [Test]
         public void Snapshot_RoundTrips_AndInvariantsHold()
         {
-            FrontScenario s = Peaceful();
+            WarWorld s = Peaceful();
             DiplomacyState d = s.State.Diplomacy;
             DiplomacyRules.Propose(d, Prm, ProposalKind.Alliance, B, C, NoTransfers, s.State.Today);
             DiplomacyRules.Respond(d, s.State.World, Prm, new ProposalId(1), true, s.State.Today);

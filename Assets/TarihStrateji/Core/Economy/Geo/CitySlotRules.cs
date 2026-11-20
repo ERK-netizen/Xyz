@@ -19,7 +19,7 @@ namespace TarihStrateji.Core.Economy.Geo
         {
             if (!IsOperational(city, country))
             {
-                return ValidationResult.Fail(EconomyErrorKeys.SektorBizimDegil);
+                return ValidationResult.Fail(EconomyErrorKeys.SehirBizimDegil);
             }
 
             if (requiredSlots < 0 || usedSlots < 0 || usedSlots + requiredSlots > Capacity(city, slotsPerLevel))

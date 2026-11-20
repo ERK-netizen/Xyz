@@ -29,7 +29,7 @@ namespace TarihStrateji.Core.Warfare.Geo
             {
                 AirWing w = ctx.Warfare.AirWings.ValueAt(i);
                 if (w.Owner == side && (w.Mission == AirMission.GroundSupport || w.Mission == AirMission.NavalStrike)
-                    && GeoAirRules.TargetNode(ctx, w.GeoMissionTarget) == node)
+                    && GeoAirRules.TargetNode(ctx, w.MissionTarget) == node)
                 {
                     AirWingTypeDefinition type = ctx.Catalog.AirWingTypes[w.Type];
                     strike += CombatResolver.AirWingPower(w, type, type.GroundAttack);
@@ -72,7 +72,7 @@ namespace TarihStrateji.Core.Warfare.Geo
             for (int i = 0; i < ctx.Warfare.AirWings.Count; i++)
             {
                 AirWing w = ctx.Warfare.AirWings.ValueAt(i);
-                if (w.Mission == AirMission.None || GeoAirRules.TargetNode(ctx, w.GeoMissionTarget) != node)
+                if (w.Mission == AirMission.None || GeoAirRules.TargetNode(ctx, w.MissionTarget) != node)
                 {
                     continue;
                 }

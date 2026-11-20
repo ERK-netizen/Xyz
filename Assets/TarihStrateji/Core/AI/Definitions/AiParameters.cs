@@ -35,8 +35,8 @@ namespace TarihStrateji.Core.AI.Definitions
             Fixed64 garrisonEstimatePerCity,
             Fixed64 attackPowerRatio,
             Fixed64 attackMinOrganization,
-            int defendRadius,
-            int advanceSearchRadius,
+            long defendRadius,
+            long advanceSearchRadius,
             int unitsPerAdvanceTarget,
             int peaceAfterWarDays,
             int stalemateDays,
@@ -65,7 +65,7 @@ namespace TarihStrateji.Core.AI.Definitions
             }
 
             if (decisionIntervalDays < 1 || !declareWarPowerRatio.IsPositive || minimumWarPower.IsNegative || garrisonEstimatePerCity.IsNegative
-                || !attackPowerRatio.IsPositive || defendRadius < 0 || advanceSearchRadius < 1 || unitsPerAdvanceTarget < 1
+                || !attackPowerRatio.IsPositive || defendRadius < 0L || advanceSearchRadius < 1L || unitsPerAdvanceTarget < 1
                 || peaceAfterWarDays < 0 || stalemateDays < peaceAfterWarDays || recruitPerCity.IsNegative || recruitThreatMargin.IsNegative
                 || !recruitUnitType.IsValid || constructionReserve.IsNegative || maxConcurrentConstructions < 0 || buildPriority == null
                 || treasuryLow.IsNegative || treasuryHigh <= treasuryLow || minTaxRate > maxTaxRate)
@@ -120,9 +120,11 @@ namespace TarihStrateji.Core.AI.Definitions
 
         public Fixed64 AttackMinOrganization { get; }
 
-        public int DefendRadius { get; }
+        /// <summary>Şehre bu kuş uçuşu mesafede (metre) düşman görülürse savunulur.</summary>
+        public long DefendRadius { get; }
 
-        public int AdvanceSearchRadius { get; }
+        /// <summary>İlerleme hedefi aranan kuş uçuşu yarıçap (metre).</summary>
+        public long AdvanceSearchRadius { get; }
 
         public int UnitsPerAdvanceTarget { get; }
 

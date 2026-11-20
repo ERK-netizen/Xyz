@@ -74,5 +74,37 @@ namespace TarihStrateji.Core.Warfare.Geo
 
             return unit.Owner == country ? ValidationResult.Ok : ValidationResult.Fail(WarfareErrorKeys.BirlikBizimDegil);
         }
+
+        /// <summary>Terhis: birlik gemide değil, bir düğümde durur ve düğümün bölgesi ülkenin fiilî kontrolündedir.</summary>
+        public static ValidationResult CheckDisband(GeoWarfareContext ctx, CountryId country, LandUnitId unitId)
+        {
+            ValidationResult owned = CheckOwned(ctx, country, unitId, out LandUnit unit);
+            if (!owned.IsValid)
+            {
+                return owned;
+            }
+
+            if (unit.IsEmbarked)
+            {
+                return ValidationResult.Fail(WarfareErrorKeys.BirlikGemide);
+            }
+
+            return unit.RouteProgress == 0L && ctx.World.Transport.TryGetNode(unit.Node, out TransportNode node)
+                && ctx.World.TryGetControl(node.Region, out RegionControl control) && control.Controller == country
+                ? ValidationResult.Ok
+                : ValidationResult.Fail(WarfareErrorKeys.TerhisYeriGecersiz);
+        }
+
+        /// <summary>Birliği terhis eder: asker eve döner, ekipman envantere iade edilir.</summary>
+        public static ValidationResult Disband(GeoWarfareContext ctx, CountryId country, LandUnitId unitId)
+        {
+            ValidationResult check = CheckDisband(ctx, country, unitId);
+            if (check.IsValid)
+            {
+                GeoCombatRules.Remove(ctx, ctx.Warfare.Units[unitId], true);
+            }
+
+            return check;
+        }
     }
 }

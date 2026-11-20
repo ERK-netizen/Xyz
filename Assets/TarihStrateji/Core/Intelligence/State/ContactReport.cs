@@ -20,7 +20,7 @@ namespace TarihStrateji.Core.Intelligence.State
 
         public CountryId Owner { get; }
 
-        public HexId LastHex { get; internal set; }
+        public TransportNodeId LastNode { get; internal set; }
 
         public Fixed64 EstimatedStrength { get; internal set; }
 

@@ -8,8 +8,7 @@ using TarihStrateji.Core.Intelligence.State;
 using TarihStrateji.Core.Warfare.Definitions;
 using TarihStrateji.Core.Warfare.State;
 using TarihStrateji.Core.World;
-using TarihStrateji.Core.World.Cities;
-using TarihStrateji.Core.World.Map;
+using TarihStrateji.Core.World.Geography;
 
 namespace TarihStrateji.Core.AI.Layers
 {
@@ -48,13 +47,13 @@ namespace TarihStrateji.Core.AI.Layers
 
             int owned = 0;
             int held = 0;
-            for (int i = 0; i < perception.Map.Cities.Count; i++)
+            for (int i = 0; i < perception.World.Cities.Count; i++)
             {
-                HexCell cell = perception.Map.Cell(perception.Map.Cities.ValueAt(i).Hex);
-                if (cell.Owner == perception.Country)
+                perception.World.TryGetCity(perception.World.Cities[i], out City city);
+                if (city.Owner == perception.Country)
                 {
                     owned++;
-                    if (cell.Controller == perception.Country)
+                    if (city.Controller == perception.Country)
                     {
                         held++;
                     }
@@ -91,9 +90,10 @@ namespace TarihStrateji.Core.AI.Layers
             }
 
             int cities = 0;
-            for (int i = 0; i < _p.Map.Cities.Count; i++)
+            for (int i = 0; i < _p.World.Cities.Count; i++)
             {
-                if (_p.Map.Cell(_p.Map.Cities.ValueAt(i).Hex).Owner == country)
+                _p.World.TryGetCity(_p.World.Cities[i], out City city);
+                if (city.Owner == country)
                 {
                     cities++;
                 }

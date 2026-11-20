@@ -2,14 +2,14 @@ using System.Collections.Generic;
 using System.Globalization;
 using TarihStrateji.Core.Diplomacy.State;
 using TarihStrateji.Core.Domain.Time;
-using TarihStrateji.Core.World;
+using TarihStrateji.Core.World.Geography;
 
 namespace TarihStrateji.Core.Diplomacy
 {
     /// <summary>Günlük diplomasi değişmezleri (P15).</summary>
     public static class DiplomacyInvariants
     {
-        public static int Check(DiplomacyState state, WorldMap world, GameDate today, List<string> violations)
+        public static int Check(DiplomacyState state, GeoWorld world, GameDate today, List<string> violations)
         {
             int before = violations.Count;
             for (int i = 0; i < state.Wars.Count; i++)
@@ -37,7 +37,7 @@ namespace TarihStrateji.Core.Diplomacy
 
                 for (int g = 0; g < w.Goals.Count; g++)
                 {
-                    if (!world.Regions.ContainsKey(w.Goals[g]))
+                    if (!world.TryGetControl(w.Goals[g], out _))
                     {
                         violations.Add(DiplomacyErrorKeys.DurumTutarsiz + at);
                     }

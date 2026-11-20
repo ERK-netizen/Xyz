@@ -2,17 +2,17 @@ using TarihStrateji.Core.Domain.Ids;
 
 namespace TarihStrateji.Core.AI.Perception
 {
-    /// <summary>Kurallarca geçerli bir inşaat seçeneği: tesis türü ve kendi sektörü.</summary>
+    /// <summary>Kurallarca geçerli bir inşaat seçeneği: tesis türü ve kendi şehri.</summary>
     public readonly struct AiBuildOption
     {
-        public AiBuildOption(FacilityTypeId facilityType, SectorId sector)
+        public AiBuildOption(FacilityTypeId facilityType, CityId city)
         {
             FacilityType = facilityType;
-            Sector = sector;
+            City = city;
         }
 
         public FacilityTypeId FacilityType { get; }
 
-        public SectorId Sector { get; }
+        public CityId City { get; }
     }
 }

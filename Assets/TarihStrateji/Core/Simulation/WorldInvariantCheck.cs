@@ -1,7 +1,6 @@
 using System.Collections.Generic;
 using TarihStrateji.Core.Simulation.Phases;
 using TarihStrateji.Core.Simulation.State;
-using TarihStrateji.Core.World;
 using TarihStrateji.Core.World.Geography;
 
 namespace TarihStrateji.Core.Simulation
@@ -13,7 +12,7 @@ namespace TarihStrateji.Core.Simulation
 
         public int Check(GameState state, List<string> violations)
         {
-            return state.IsGeographic ? GeoWorldInvariants.Check(state.Geo, violations) : WorldInvariants.Check(state.World, violations);
+            return GeoWorldInvariants.Check(state.World, violations);
         }
     }
 }

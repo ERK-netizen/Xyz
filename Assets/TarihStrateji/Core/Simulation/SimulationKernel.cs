@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using TarihStrateji.Core.Domain;
 using TarihStrateji.Core.Domain.Commands;
+using TarihStrateji.Core.Domain.Geography;
 using TarihStrateji.Core.Domain.Ids;
 using TarihStrateji.Core.Domain.Randomness;
 using TarihStrateji.Core.Domain.Serialization;
@@ -81,13 +82,11 @@ namespace TarihStrateji.Core.Simulation
 
         public long StateVersion => _state.StateVersion;
 
-        public int MapWidth => _state.World.Grid.Width;
+        public void GetRegions(List<RegionView> into) => ReadModelProjection.Regions(_state, into);
 
-        public int MapHeight => _state.World.Grid.Height;
+        public void GetRegionRings(RegionId region, List<RegionRingView> into) => ReadModelProjection.RegionRings(_state, region, into);
 
-        public CellView GetCell(int cellIndex) => ReadModelProjection.Cell(_state, cellIndex);
-
-        public bool IsCellVisible(int cellIndex) => ReadModelProjection.IsVisible(_state, cellIndex);
+        public RegionId FindRegion(GeoPoint point) => _state.World.Atlas.FindRegion(point);
 
         public void GetCities(List<CityView> into) => ReadModelProjection.Cities(_state, into);
 

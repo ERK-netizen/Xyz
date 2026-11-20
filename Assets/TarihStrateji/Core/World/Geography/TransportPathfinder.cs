@@ -1,7 +1,6 @@
 using System.Collections.Generic;
 using TarihStrateji.Core.Domain;
 using TarihStrateji.Core.Domain.Ids;
-using TarihStrateji.Core.World.Pathfinding;
 
 namespace TarihStrateji.Core.World.Geography
 {

@@ -12,8 +12,7 @@ using TarihStrateji.Core.World.Geography;
 namespace TarihStrateji.Core.Simulation.Commands.Geo
 {
     /// <summary>
-    /// Coğrafi askerî emir işleyicilerinin tabanı (ADR-011): savaş bağlamı ve rota bulucu kurar; altıgen
-    /// senaryoda emir reddedilir. <see cref="TargetRef"/> kanonik olarak yazılır (tür, kimlik, enlem, boylam).
+    /// Coğrafi askerî emir işleyicilerinin tabanı (ADR-011): savaş bağlamı ve rota bulucu kurar. <see cref="TargetRef"/> kanonik olarak yazılır (tür, kimlik, enlem, boylam).
     /// </summary>
     public abstract class GeoMilitaryHandler<TCommand> : CommandHandler<TCommand>
         where TCommand : GameCommand
@@ -27,10 +26,9 @@ namespace TarihStrateji.Core.Simulation.Commands.Geo
 
         protected GeoWarfareContext War(GameState state) => GeoWarfareContexts.From(state, Content);
 
-        protected static TransportPathfinder Finder(GameState state) => new TransportPathfinder(state.Geo.Transport);
+        protected static TransportPathfinder Finder(GameState state) => new TransportPathfinder(state.World.Transport);
 
-        protected sealed override ValidationResult ValidateTyped(GameState state, TCommand command) =>
-            state.IsGeographic ? ValidateGeo(state, command) : ValidationResult.Fail(WarfareErrorKeys.DurumTutarsiz);
+        protected sealed override ValidationResult ValidateTyped(GameState state, TCommand command) => ValidateGeo(state, command);
 
         protected abstract ValidationResult ValidateGeo(GameState state, TCommand command);
 

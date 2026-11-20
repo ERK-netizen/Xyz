@@ -56,7 +56,7 @@ namespace TarihStrateji.Core.AI.Layers
 
             if (p.BuildOptions.Count > 0 && p.Treasury >= prm.ConstructionReserve && p.ConstructionsInProgress < prm.MaxConcurrentConstructions)
             {
-                intents.Add(AiIntent.Build(p.BuildOptions[0].FacilityType, p.BuildOptions[0].Sector));
+                intents.Add(AiIntent.Build(p.BuildOptions[0].FacilityType, p.BuildOptions[0].City));
             }
         }
     }

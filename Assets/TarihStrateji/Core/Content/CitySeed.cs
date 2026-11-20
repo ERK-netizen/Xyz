@@ -2,32 +2,31 @@ using TarihStrateji.Core.Domain.Ids;
 
 namespace TarihStrateji.Core.Content
 {
-    /// <summary>Senaryo şehri: anahtar, pencere içi sütun/satır, ülke, kademe (sektör sayısı), liman ve suya bakan yön.</summary>
+    /// <summary>Senaryo şehri: anahtar, konum (yüzde bir derece), ülke, kademe (nüfus/gelişim) ve liman.</summary>
     public readonly struct CitySeed
     {
-        public CitySeed(string key, int column, int row, CountryId country, int tier, bool isPort, int facing)
+        public CitySeed(string key, int latitude, int longitude, CountryId country, int tier, bool isPort)
         {
             Key = key;
-            Column = column;
-            Row = row;
+            Latitude = latitude;
+            Longitude = longitude;
             Country = country;
             Tier = tier;
             IsPort = isPort;
-            Facing = facing;
         }
 
         public string Key { get; }
 
-        public int Column { get; }
+        /// <summary>Enlem, yüzde bir derece (4101 = 41,01° K).</summary>
+        public int Latitude { get; }
 
-        public int Row { get; }
+        /// <summary>Boylam, yüzde bir derece (2897 = 28,97° D).</summary>
+        public int Longitude { get; }
 
         public CountryId Country { get; }
 
         public int Tier { get; }
 
         public bool IsPort { get; }
-
-        public int Facing { get; }
     }
 }

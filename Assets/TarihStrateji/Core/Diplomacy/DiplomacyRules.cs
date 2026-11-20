@@ -5,9 +5,7 @@ using TarihStrateji.Core.Domain.Commands;
 using TarihStrateji.Core.Domain.Ids;
 using TarihStrateji.Core.Domain.Numerics;
 using TarihStrateji.Core.Domain.Time;
-using TarihStrateji.Core.World;
-using TarihStrateji.Core.World.Cities;
-using TarihStrateji.Core.World.Map;
+using TarihStrateji.Core.World.Geography;
 
 namespace TarihStrateji.Core.Diplomacy
 {
@@ -18,7 +16,7 @@ namespace TarihStrateji.Core.Diplomacy
     /// </summary>
     public static class DiplomacyRules
     {
-        public static ValidationResult CheckDeclareWar(DiplomacyState state, WorldMap world, CountryId attacker, CountryId defender, IReadOnlyList<RegionId> goals, GameDate today)
+        public static ValidationResult CheckDeclareWar(DiplomacyState state, GeoWorld world, CountryId attacker, CountryId defender, IReadOnlyList<RegionId> goals, GameDate today)
         {
             if (!ValidPair(attacker, defender))
             {
@@ -52,7 +50,7 @@ namespace TarihStrateji.Core.Diplomacy
 
             for (int i = 0; i < goals.Count; i++)
             {
-                if (!world.Regions.TryGetValue(goals[i], out StrategicRegion region) || region.IsSea || region.Owner != defender || IndexOf(goals, goals[i]) != i)
+                if (!world.TryGetControl(goals[i], out RegionControl region) || region.Owner != defender || IndexOf(goals, goals[i]) != i)
                 {
                     return ValidationResult.Fail(DiplomacyErrorKeys.SavasHedefiGecersiz);
                 }
@@ -110,7 +108,7 @@ namespace TarihStrateji.Core.Diplomacy
 
         // ------------------------------------------------------------------ teklifler
 
-        public static ValidationResult CheckPropose(DiplomacyState state, WorldMap world, DiplomacyParameters prm, ProposalKind kind, CountryId from, CountryId to, IReadOnlyList<RegionTransfer> transfers, GameDate today)
+        public static ValidationResult CheckPropose(DiplomacyState state, GeoWorld world, DiplomacyParameters prm, ProposalKind kind, CountryId from, CountryId to, IReadOnlyList<RegionTransfer> transfers, GameDate today)
         {
             if (!ValidPair(from, to))
             {
@@ -130,7 +128,7 @@ namespace TarihStrateji.Core.Diplomacy
         }
 
         /// <summary>Teklif koşulları (teklif anında ve kabul anında yeniden denetlenir).</summary>
-        public static ValidationResult CheckTerms(DiplomacyState state, WorldMap world, DiplomacyParameters prm, ProposalKind kind, CountryId from, CountryId to, IReadOnlyList<RegionTransfer> transfers, GameDate today)
+        public static ValidationResult CheckTerms(DiplomacyState state, GeoWorld world, DiplomacyParameters prm, ProposalKind kind, CountryId from, CountryId to, IReadOnlyList<RegionTransfer> transfers, GameDate today)
         {
             switch (kind)
             {
@@ -162,16 +160,16 @@ namespace TarihStrateji.Core.Diplomacy
 
         /// <summary>
         /// Barış maddeleri: her bölge iki taraftan birine ait ve yeni sahibi diğer taraf olmalı; bir
-        /// bölge en fazla bir kez geçer. Bir tarafın kendine istediği bölgenin hücrelerinin
-        /// <see cref="DiplomacyParameters.DemandControlShare"/>'dan fazlasını o taraf kontrol etmelidir
+        /// bölge en fazla bir kez geçer. Bir tarafın kendine istediği bölgede <see cref="ControlShare"/>
+        /// <see cref="DiplomacyParameters.DemandControlShare"/>'dan büyük olmalıdır
         /// (işgalle desteklenmeyen talep yok); bir taraf kendi bölgesini serbestçe devredebilir.
         /// </summary>
-        public static ValidationResult CheckTransfers(WorldMap world, DiplomacyParameters prm, CountryId from, CountryId to, IReadOnlyList<RegionTransfer> transfers)
+        public static ValidationResult CheckTransfers(GeoWorld world, DiplomacyParameters prm, CountryId from, CountryId to, IReadOnlyList<RegionTransfer> transfers)
         {
             for (int i = 0; i < transfers.Count; i++)
             {
                 RegionTransfer t = transfers[i];
-                if (!world.Regions.TryGetValue(t.Region, out StrategicRegion region) || region.IsSea || (t.NewOwner != from && t.NewOwner != to))
+                if (!world.TryGetControl(t.Region, out RegionControl region) || (t.NewOwner != from && t.NewOwner != to))
                 {
                     return ValidationResult.Fail(DiplomacyErrorKeys.DevirGecersiz);
                 }
@@ -190,7 +188,7 @@ namespace TarihStrateji.Core.Diplomacy
                     }
                 }
 
-                if (ControlShare(world, region, t.NewOwner) <= prm.DemandControlShare && t.NewOwner == from)
+                if (ControlShare(world, region.Region, t.NewOwner) <= prm.DemandControlShare && t.NewOwner == from)
                 {
                     return ValidationResult.Fail(DiplomacyErrorKeys.IsgalYetersiz);
                 }
@@ -211,7 +209,7 @@ namespace TarihStrateji.Core.Diplomacy
             return p.Id;
         }
 
-        public static ValidationResult CheckRespond(DiplomacyState state, WorldMap world, DiplomacyParameters prm, CountryId country, ProposalId id, bool accept, GameDate today)
+        public static ValidationResult CheckRespond(DiplomacyState state, GeoWorld world, DiplomacyParameters prm, CountryId country, ProposalId id, bool accept, GameDate today)
         {
             if (!state.Proposals.TryGetValue(id, out Proposal p))
             {
@@ -235,7 +233,7 @@ namespace TarihStrateji.Core.Diplomacy
         /// Yanıt. Kabul edilen antlaşma imzalanır; kabul edilen barış <see cref="ConcludePeace"/> ile
         /// uygulanır. Barış uygulandıysa <c>true</c> döner (Simulation birlikleri yerleştirir).
         /// </summary>
-        public static bool Respond(DiplomacyState state, WorldMap world, DiplomacyParameters prm, ProposalId id, bool accept, GameDate today)
+        public static bool Respond(DiplomacyState state, GeoWorld world, DiplomacyParameters prm, ProposalId id, bool accept, GameDate today)
         {
             Proposal p = state.Proposals[id];
             if (!accept)
@@ -261,10 +259,10 @@ namespace TarihStrateji.Core.Diplomacy
 
         /// <summary>
         /// Barışı uygular: çift savaşı biter, bölgeler devredilir, iki taraf arasındaki işgaller
-        /// sahibine döner (hücre ve sektör), ateşkes antlaşması imzalanır, ilgili bekleyen barış
+        /// sahibine döner (bölge ve şehir), ateşkes antlaşması imzalanır, ilgili bekleyen barış
         /// teklifleri düşer.
         /// </summary>
-        public static void ConcludePeace(DiplomacyState state, WorldMap world, DiplomacyParameters prm, CountryId a, CountryId b, IReadOnlyList<RegionTransfer> transfers, GameDate today)
+        public static void ConcludePeace(DiplomacyState state, GeoWorld world, DiplomacyParameters prm, CountryId a, CountryId b, IReadOnlyList<RegionTransfer> transfers, GameDate today)
         {
             if (state.TryGetWar(a, b, out War war))
             {
@@ -293,26 +291,24 @@ namespace TarihStrateji.Core.Diplomacy
             }
         }
 
-        /// <summary>İki taraf arasında karşılıklı işgal edilen hücre ve sektörlerin kontrolü sahibine döner.</summary>
-        public static void RestoreControl(WorldMap world, CountryId a, CountryId b)
+        /// <summary>İki taraf arasında karşılıklı işgal edilen bölge ve şehirlerin kontrolü sahibine döner.</summary>
+        public static void RestoreControl(GeoWorld world, CountryId a, CountryId b)
         {
-            for (int i = 0; i < world.CellCount; i++)
+            for (int i = 0; i < world.Regions.Count; i++)
             {
-                HexCell cell = world.CellAt(i);
-                if (cell.City.IsValid || !Crossed(cell.Owner, cell.Controller, a, b))
+                if (world.TryGetControl(world.Regions[i], out RegionControl control)
+                    && Crossed(control.Owner, control.Controller, a, b))
                 {
-                    continue;
+                    GeoWorld.ResetController(control);
                 }
-
-                world.SetHexController(cell.Coord, cell.Owner);
             }
 
-            for (int i = 0; i < world.Sectors.Count; i++)
+            for (int i = 0; i < world.Cities.Count; i++)
             {
-                CitySector s = world.Sectors.ValueAt(i);
-                if (Crossed(s.Owner, s.Controller, a, b))
+                world.TryGetCity(world.Cities[i], out City city);
+                if (Crossed(city.Owner, city.Controller, a, b))
                 {
-                    world.SetSectorController(s.Id, s.Owner);
+                    city.Controller = city.Owner;
                 }
             }
         }
@@ -345,24 +341,33 @@ namespace TarihStrateji.Core.Diplomacy
             }
         }
 
-        /// <summary>Bölge hücrelerinden <paramref name="country"/>'nin kontrol ettiklerinin oranı.</summary>
-        public static Fixed64 ControlShare(WorldMap world, StrategicRegion region, CountryId country)
+        /// <summary>
+        /// Bölgede <paramref name="country"/>'nin fiilî payı: bölge kontrolü ve bölgedeki her şehrin kontrolü
+        /// birer pay sayılır (held / (1 + şehir sayısı)). Bölge yoksa 0.
+        /// </summary>
+        public static Fixed64 ControlShare(GeoWorld world, RegionId region, CountryId country)
         {
-            if (region.Hexes.Count == 0)
+            if (!world.TryGetControl(region, out RegionControl control))
             {
                 return Fixed64.Zero;
             }
 
-            int held = 0;
-            for (int i = 0; i < region.Hexes.Count; i++)
+            int total = 1;
+            int held = control.Controller == country ? 1 : 0;
+            for (int i = 0; i < world.Cities.Count; i++)
             {
-                if (world.Cell(region.Hexes[i]).Controller == country)
+                world.TryGetCity(world.Cities[i], out City city);
+                if (city.Region == region)
                 {
-                    held++;
+                    total++;
+                    if (city.Controller == country)
+                    {
+                        held++;
+                    }
                 }
             }
 
-            return Fixed64.FromRatio(held, region.Hexes.Count);
+            return Fixed64.FromRatio(held, total);
         }
 
         internal static void Sign(DiplomacyState state, TreatyKind kind, CountryId a, CountryId b, GameDate today, int days)

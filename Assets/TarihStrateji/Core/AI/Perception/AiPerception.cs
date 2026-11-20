@@ -8,8 +8,7 @@ using TarihStrateji.Core.Domain.Time;
 using TarihStrateji.Core.Intelligence.State;
 using TarihStrateji.Core.Warfare.Definitions;
 using TarihStrateji.Core.Warfare.State;
-using TarihStrateji.Core.World;
-using TarihStrateji.Core.World.Grid;
+using TarihStrateji.Core.World.Geography;
 
 namespace TarihStrateji.Core.AI.Perception
 {
@@ -25,7 +24,7 @@ namespace TarihStrateji.Core.AI.Perception
         public AiPerception(
             CountryId country,
             GameDate today,
-            WorldMap map,
+            GeoWorld world,
             DiplomacyState diplomacy,
             DiplomacyParameters diplomacyParameters,
             ObservedWorld observed,
@@ -33,7 +32,7 @@ namespace TarihStrateji.Core.AI.Perception
         {
             Country = country;
             Today = today;
-            Map = map ?? throw new ArgumentNullException(nameof(map));
+            World = world ?? throw new ArgumentNullException(nameof(world));
             Diplomacy = diplomacy ?? throw new ArgumentNullException(nameof(diplomacy));
             DiplomacyParameters = diplomacyParameters ?? throw new ArgumentNullException(nameof(diplomacyParameters));
             Observed = observed ?? throw new ArgumentNullException(nameof(observed));
@@ -44,8 +43,8 @@ namespace TarihStrateji.Core.AI.Perception
 
         public GameDate Today { get; }
 
-        /// <summary>Coğrafya ve siyasi harita (sahiplik/kontrol kamuya açıktır).</summary>
-        public WorldMap Map { get; }
+        /// <summary>Coğrafya, ulaşım grafı ve siyasi harita (bölge/şehir sahipliği ve kontrolü kamuya açıktır).</summary>
+        public GeoWorld World { get; }
 
         /// <summary>Savaşlar, antlaşmalar, teklifler (kamuya açık diplomasi).</summary>
         public DiplomacyState Diplomacy { get; }
@@ -87,16 +86,11 @@ namespace TarihStrateji.Core.AI.Perception
         /// <summary>Geçerli inşaat seçenekleri, tercih sırasıyla (Simulation kurallarla süzmüştür).</summary>
         public List<AiBuildOption> BuildOptions { get; } = new List<AiBuildOption>();
 
-        /// <summary>Toplama yapılabilecek kendi şehir hücreleri (YZ'nin toplama türü için geçerli).</summary>
-        public List<HexCoord> RecruitSites { get; } = new List<HexCoord>();
+        /// <summary>Toplama yapılabilecek kendi şehirleri (YZ'nin toplama türü için geçerli), kimlik sırasıyla.</summary>
+        public List<CityId> RecruitSites { get; } = new List<CityId>();
 
         /// <summary>Kara sınırı paylaşılan ülkeler (siyasi haritadan), kimlik sırasıyla.</summary>
         public List<CountryId> Neighbors { get; } = new List<CountryId>();
 
-        /// <summary>
-        /// Hücre başına yeniden kullanılan çalışma dizisi (arama işaretleri; her kullanımdan sonra
-        /// temizlenir). Simulation ülkeler arasında paylaşır; günlük tahsisi önler.
-        /// </summary>
-        public bool[] Scratch { get; set; }
     }
 }

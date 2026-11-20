@@ -9,8 +9,8 @@ namespace TarihStrateji.Core.Diplomacy.Definitions
     /// <item><see cref="ProposalLifetimeDays"/>: yanıtsız teklif bu sürede düşer.</item>
     /// <item><see cref="NonAggressionDays"/>, <see cref="AllianceDays"/>: antlaşma süreleri.</item>
     /// <item><see cref="TruceDays"/>: barıştan sonra aynı ülkeye savaş açılamayan süre.</item>
-    /// <item><see cref="DemandControlShare"/>: barışta bir bölge talep etmek için o bölgenin bu
-    /// oranından fazla hücresini fiilen kontrol etmek gerekir.</item>
+    /// <item><see cref="DemandControlShare"/>: barışta bir bölge talep etmek için o bölgedeki fiilî payın
+    /// (bölge kontrolü + şehirleri) bu orandan büyük olması gerekir.</item>
     /// <item><see cref="CapitulationThreshold"/>: savaştaki ülkenin sahip olduğu şehirlerden
     /// kontrolünde kalanların oranı bunun altına inerse teslim olur (müttefik savaşıyorsa sürgün).</item>
     /// </list>

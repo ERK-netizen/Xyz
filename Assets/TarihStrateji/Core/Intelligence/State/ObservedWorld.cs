@@ -5,7 +5,7 @@ namespace TarihStrateji.Core.Intelligence.State
 {
     /// <summary>
     /// Bir ülkenin savaş sisi altındaki dünya görüşü (CLAUDE.md §2.6: YZ yalnız bunu okur).
-    /// <see cref="VisibleCells"/> her gün P14'te yeniden hesaplanır (geçicidir, kayda yazılmaz);
+    /// <see cref="VisibleNodes"/> her gün P14'te yeniden hesaplanır (geçicidir, kayda yazılmaz);
     /// <see cref="Contacts"/> kalıcıdır ve (tür, kimlik) sırasındadır.
     /// </summary>
     public sealed class ObservedWorld
@@ -17,16 +17,16 @@ namespace TarihStrateji.Core.Intelligence.State
 
         public CountryId Country { get; }
 
-        internal List<int> VisibleList { get; } = new List<int>();
+        internal List<TransportNodeId> VisibleList { get; } = new List<TransportNodeId>();
 
-        /// <summary>Bugün görünen hücre dizinleri (artan sırada).</summary>
-        public IReadOnlyList<int> VisibleCells => VisibleList;
+        /// <summary>Bugün görünen ulaşım düğümleri (artan sırada).</summary>
+        public IReadOnlyList<TransportNodeId> VisibleNodes => VisibleList;
 
         internal List<ContactReport> ContactList { get; } = new List<ContactReport>();
 
         public IReadOnlyList<ContactReport> Contacts => ContactList;
 
-        public bool IsVisible(int cellIndex) => VisibleList.BinarySearch(cellIndex) >= 0;
+        public bool IsVisible(TransportNodeId node) => VisibleList.BinarySearch(node) >= 0;
 
         public bool TryGetContact(SightingKind kind, ulong entityId, out ContactReport report)
         {

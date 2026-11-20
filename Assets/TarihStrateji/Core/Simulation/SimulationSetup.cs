@@ -18,7 +18,7 @@ namespace TarihStrateji.Core.Simulation
         public SimulationSetup()
         {
             Commands = new CommandRegistry();
-            Commands.Register(new SandboxSetInfrastructureHandler());
+            Commands.Register(new SandboxSetCityDevelopmentHandler());
         }
 
         public CommandRegistry Commands { get; }
@@ -40,7 +40,7 @@ namespace TarihStrateji.Core.Simulation
 
         /// <summary>
         /// Coğrafi kayıt yüklerken değişmez dünyayı (çokgenler, şehirler, ulaşım grafı) aynı içerikten kuran
-        /// üretici (ADR-011, §16.4). Altıgen senaryolarda gerekmez.
+        /// üretici (ADR-011, §16.4); kayıtta yalnız geometrinin parmak izi vardır.
         /// </summary>
         public System.Func<World.Geography.GeoWorld> GeoWorldTemplate { get; set; }
 

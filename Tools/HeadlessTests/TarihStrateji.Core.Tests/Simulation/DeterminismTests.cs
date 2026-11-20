@@ -6,7 +6,7 @@ using TarihStrateji.Core.Domain.Ids;
 using TarihStrateji.Core.Simulation;
 using TarihStrateji.Core.Tests.Support;
 using TarihStrateji.Core.Tests.World;
-using TarihStrateji.Core.World.Grid;
+using TarihStrateji.Core.World.Geography;
 
 namespace TarihStrateji.Core.Tests.Simulation
 {
@@ -22,13 +22,14 @@ namespace TarihStrateji.Core.Tests.Simulation
         {
             if (day % 7 == 0)
             {
-                k.Submit(new SetHexControllerCommand(TestWorlds.CountryA, new HexCoord(2 + (day % 4), 4 + (day % 2)), TestWorlds.CountryA));
+                RegionId region = day % 2 == 0 ? TestWorlds.West : TestWorlds.East;
+                k.State.World.TryGetControl(region, out RegionControl control);
+                k.Submit(new SetRegionControllerCommand(TestWorlds.CountryA, region, control.Controller == TestWorlds.CountryA ? TestWorlds.CountryC : TestWorlds.CountryA));
             }
 
             if (day % 11 == 0)
             {
-                SectorId sector = k.State.World.Cities.ValueAt(1).Sectors[day % 4];
-                k.Submit(new TacticalStrikeCommand(TestWorlds.CountryA, sector));
+                k.Submit(new TacticalStrikeCommand(TestWorlds.CountryA, TestWorlds.InlandCity));
             }
         }
 
@@ -94,11 +95,11 @@ namespace TarihStrateji.Core.Tests.Simulation
         public void PendingOrdersAndLedger_SurviveTheSnapshot()
         {
             SimulationKernel k = NewKernel(9);
-            k.Submit(new SetHexControllerCommand(TestWorlds.CountryA, new HexCoord(3, 4), TestWorlds.CountryC));
-            k.Submit(new TacticalStrikeCommand(TestWorlds.CountryA, k.State.World.Cities.ValueAt(1).Sectors[2]));
+            k.Submit(new SetRegionControllerCommand(TestWorlds.CountryA, TestWorlds.West, TestWorlds.CountryC));
+            k.Submit(new TacticalStrikeCommand(TestWorlds.CountryA, TestWorlds.InlandCity));
             SimulationKernel copy = SimulationKernel.Restore(TestSimulation.Setup(new RandomTurmoilSystem()), k.CaptureSnapshot()).Value;
             Assert.That(copy.State.Journal.Pending.Count, Is.EqualTo(1));
-            Assert.That(copy.State.Journal.Pending[0].Command, Is.TypeOf<SetHexControllerCommand>());
+            Assert.That(copy.State.Journal.Pending[0].Command, Is.TypeOf<SetRegionControllerCommand>());
             Assert.That(copy.State.Ledger.Count, Is.EqualTo(1));
             Assert.That(copy.StateVersion, Is.EqualTo(k.StateVersion));
         }

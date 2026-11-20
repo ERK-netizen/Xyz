@@ -15,6 +15,8 @@ using TarihStrateji.Core.Simulation.Systems;
 using TarihStrateji.Core.Tests.Economy;
 using TarihStrateji.Core.Tests.Support;
 using TarihStrateji.Core.Tests.World;
+using TarihStrateji.Core.World.Geography;
+using TarihStrateji.Core.Economy.Rules;
 
 namespace TarihStrateji.Core.Tests.Simulation
 {
@@ -24,7 +26,7 @@ namespace TarihStrateji.Core.Tests.Simulation
     {
         private static readonly GameContent Content = EconomyScenario.Content;
 
-        private static SimulationSetup Setup() => StandardRules.Install(new SimulationSetup(), EconomyScenario.Content);
+        private static SimulationSetup Setup() => StandardRules.Install(new SimulationSetup { GeoWorldTemplate = () => TestWorlds.Coastal() }, EconomyScenario.Content);
 
         private static SimulationKernel NewKernel(CountryId player, ulong seed = 1920)
         {
@@ -60,7 +62,14 @@ namespace TarihStrateji.Core.Tests.Simulation
         public void BuildCommand_PaysAtP1_AndFactoryAppearsAfterBuildDays()
         {
             SimulationKernel k = NewKernel(TestWorlds.CountryB);
-            var cmd = new BuildFacilityCommand(TestWorlds.CountryB, BaselineFacilities.ConsumerFactory, k.State.World.Cities.ValueAt(1).Sectors[1]);
+            k.State.World.TryGetCity(TestWorlds.InlandCity, out City inland);
+            inland.DevelopmentLevel = 2; // 12 slot; 8 kullanımda
+            for (int i = 0; i < 3; i++)
+            {
+                Assert.That(ConstructionRules.PlaceExisting(k.State.Economy, EconomyScenario.Content.Economy, k.State.World, TestWorlds.CountryB, BaselineFacilities.Farm, inland.Id).IsSuccess, Is.True);
+            }
+
+            var cmd = new BuildFacilityCommand(TestWorlds.CountryB, BaselineFacilities.ConsumerFactory, inland.Id);
             Assert.That(k.Submit(cmd).Accepted, Is.True);
             Assert.That(k.Submit(cmd).Accepted, Is.True, "ikincisi de gönderildiği an geçerli");
 
@@ -78,15 +87,15 @@ namespace TarihStrateji.Core.Tests.Simulation
 
             Assert.That(notes, Has.Some.StartsWith(ConstructionSystem.CompletedNote));
             Assert.That(k.State.Economy.Constructions.Count, Is.EqualTo(0));
-            Assert.That(k.State.Economy.Facilities.Count, Is.EqualTo(11));
+            Assert.That(k.State.Economy.Facilities.Count, Is.EqualTo(14));
         }
 
         [Test]
         public void Commands_AreValidatedAgainstOwnershipAndLimits()
         {
             SimulationKernel k = NewKernel(TestWorlds.CountryA);
-            SectorId bSector = k.State.World.Cities.ValueAt(1).Sectors[1];
-            Assert.That(k.Validate(new BuildFacilityCommand(TestWorlds.CountryA, BaselineFacilities.Farm, bSector)).ErrorKey, Is.EqualTo(EconomyErrorKeys.SektorBizimDegil));
+            CityId bSector = TestWorlds.InlandCity;
+            Assert.That(k.Validate(new BuildFacilityCommand(TestWorlds.CountryA, BaselineFacilities.Farm, bSector)).ErrorKey, Is.EqualTo(EconomyErrorKeys.SehirBizimDegil));
             Assert.That(k.Validate(new BuildFacilityCommand(TestWorlds.CountryA, new FacilityTypeId(99), bSector)).ErrorKey, Is.EqualTo(EconomyErrorKeys.TesisTuruBilinmiyor));
             Assert.That(k.Validate(new SetTaxRateCommand(TestWorlds.CountryA, Fixed64.Parse("0.9"))).ErrorKey, Is.EqualTo(EconomyErrorKeys.VergiOraniGecersiz));
             Assert.That(k.Validate(new PlaceTradeOrderCommand(TestWorlds.CountryA, new GoodId(99), TradeSide.Buy, Fixed64.One, Fixed64.One)).ErrorKey, Is.EqualTo(EconomyErrorKeys.MalBilinmiyor));
@@ -110,11 +119,12 @@ namespace TarihStrateji.Core.Tests.Simulation
             SimulationKernel starved = NewKernel(TestWorlds.CountryA);
             CountryEconomy a = Country(starved, TestWorlds.CountryA);
             a.RemoveStock(BaselineGoods.Food, a.Stock(BaselineGoods.Food));
-            starved.State.World.SetSectorController(starved.State.World.Cities.ValueAt(0).Sectors[2], TestWorlds.CountryB); // çiftlikler işgalde
+            starved.State.World.TryGetCity(TestWorlds.PortCity, out City port);
+            port.Controller = TestWorlds.CountryB; // çiftlikler işgalde
             TestSimulation.AdvanceOk(fed, 120);
             TestSimulation.AdvanceOk(starved, 120);
             Assert.That(Country(starved, TestWorlds.CountryA).FoodShortage, Is.EqualTo(Fixed64.One));
-            RegionId west = starved.State.World.Regions.ValueAt(0).Id;
+            RegionId west = TestWorlds.West;
             long fedWest = fed.State.Population.Regions[west].Total;
             long starvedWest = starved.State.Population.Regions[west].Total;
             Assert.That(starvedWest, Is.LessThan(fedWest - 500), $"tok {fedWest}, aç {starvedWest}");
