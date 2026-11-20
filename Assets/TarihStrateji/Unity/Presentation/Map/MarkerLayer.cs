@@ -9,14 +9,14 @@ namespace TarihStrateji.Unity.Presentation.Map
 {
     /// <summary>
     /// Şehir, birlik ve seçim işaretleri: tek dinamik ağ (tek çizim çağrısı). Şehir kare (gelişim
-    /// seviyesiyle büyür, kuşatmada kırmızı çerçeve), kara birliği eşkenar dörtgen, filo üçgen, hava kanadı
+    /// seviyesiyle büyür, kuşatmada kırmızı çerçeve, limanda içinde çapa), kara birliği eşkenar dörtgen, filo üçgen, hava kanadı
     /// ters üçgen; çerçeve rengi kendi (beyaz) / savaştaki düşman (kırmızı) / diğer (gri). Yalnız oyuncunun
     /// gördükleri çizilir (okuma modeli savaş sisini uygular). Konumlar gerçek koordinattır
     /// (<see cref="MapProjection"/>); işaret boyu ekranda sabit kalacak şekilde kamera yakınlığıyla ölçeklenir.
     /// </summary>
     public sealed class MarkerLayer : MonoBehaviour
     {
-        private const int MaxUnitsDrawnPerPlace = 4;
+        public const int MaxUnitsDrawnPerPlace = 4;
         private const float ReferenceOrthographicSize = 6f;
         private static readonly Vector2[] UnitSlots = { new Vector2(-0.42f, -0.42f), new Vector2(0.42f, -0.42f), new Vector2(-0.42f, 0.42f), new Vector2(0.42f, 0.42f) };
         private static readonly Color32 TargetColor = new Color32(255, 140, 0, 255);
@@ -37,6 +37,9 @@ namespace TarihStrateji.Unity.Presentation.Map
         private float _builtScale = -1f;
 
         public List<UnitView> VisibleUnits => _units;
+
+        /// <summary>İşaretlerin en son kurulduğu okuma modeli sürümü (yazı katmanı buna göre tazelenir).</summary>
+        public long BuiltVersion => _builtVersion;
 
         public List<CityView> Cities => _cities;
 
@@ -111,6 +114,10 @@ namespace TarihStrateji.Unity.Presentation.Map
                 float half = (0.16f + (0.03f * city.DevelopmentLevel)) * k * 4f;
                 AddSquare(at, half + (0.08f * k * 4f), city.IsBesieged ? MapPalette.EnemyOutline : MapPalette.Outline);
                 AddSquare(at, half, MapPalette.Country(city.Controller));
+                if (city.IsPort)
+                {
+                    AddPortIcon(at, half);
+                }
             }
 
             for (int i = 0; i < _units.Count; i++)
@@ -201,6 +208,23 @@ namespace TarihStrateji.Unity.Presentation.Map
                     AddTriangle(at + new Vector2(0f, size), at + new Vector2(0f, -size), at + new Vector2(-size, 0f), color);
                     break;
             }
+        }
+
+        /// <summary>Liman simgesi: kare içinde deniz renkli zemin üzerinde beyaz çapa (dikey gövde + alt kol + üst halka).</summary>
+        private void AddPortIcon(Vector2 at, float half)
+        {
+            float s = half * 0.62f;
+            AddSquare(at, s, MapPalette.Background);
+            float w = s * 0.18f;
+            AddRect(at.x - w, at.y - (s * 0.7f), at.x + w, at.y + (s * 0.55f), MapPalette.Outline);
+            AddRect(at.x - (s * 0.62f), at.y - (s * 0.7f), at.x + (s * 0.62f), at.y - (s * 0.7f) + (w * 2f), MapPalette.Outline);
+            AddRect(at.x - (s * 0.35f), at.y + (s * 0.45f), at.x + (s * 0.35f), at.y + (s * 0.45f) + (w * 2f), MapPalette.Outline);
+        }
+
+        private void AddRect(float left, float bottom, float right, float top, Color32 color)
+        {
+            AddTriangle(new Vector2(left, top), new Vector2(right, top), new Vector2(right, bottom), color);
+            AddTriangle(new Vector2(left, top), new Vector2(right, bottom), new Vector2(left, bottom), color);
         }
 
         private void AddSquare(Vector2 at, float half, Color32 color)

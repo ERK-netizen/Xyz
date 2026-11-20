@@ -66,6 +66,9 @@ namespace TarihStrateji.Unity.Presentation.UI
         private Rect _appliedSafeArea;
         private Vector2 _appliedPanelSize;
 
+        /// <summary>Harita yazıları (şehir adları, yığın rozetleri) için arayüzün arkasındaki tam ekran katman.</summary>
+        public VisualElement MapOverlay { get; private set; }
+
         public void Initialize(IGameSession session, SelectionModel selection, Localizer text)
         {
             _session = session;
@@ -127,6 +130,16 @@ namespace TarihStrateji.Unity.Presentation.UI
         private void Build(VisualElement documentRoot)
         {
             documentRoot.pickingMode = PickingMode.Ignore;
+
+            // Harita yazıları katmanı: panellerin arkasında, tam ekran, dokunmayı haritaya geçirir.
+            MapOverlay = new VisualElement { name = "haritaYazilari", pickingMode = PickingMode.Ignore };
+            MapOverlay.style.position = Position.Absolute;
+            MapOverlay.style.left = 0;
+            MapOverlay.style.top = 0;
+            MapOverlay.style.right = 0;
+            MapOverlay.style.bottom = 0;
+            documentRoot.Add(MapOverlay);
+
             _root = new VisualElement { name = "kok", pickingMode = PickingMode.Ignore };
             _root.style.flexGrow = 1;
             _root.style.flexDirection = FlexDirection.Column;

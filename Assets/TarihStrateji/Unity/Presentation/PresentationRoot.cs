@@ -11,7 +11,7 @@ namespace TarihStrateji.Unity.Presentation
     /// <summary>
     /// Sunum katmanının kökü: sahne yüklendikten sonra oturumu (<see cref="IGameSession"/>, Bootstrap
     /// uygular) arayüz üzerinden bulur ve harita kamerasını, ülke haritasını (bölge çokgenleri, yalnız ülke
-    /// sınırları), şehir/birlik işaretlerini, dokunmatik denetimi ve dikey arayüzü kurar. Sunum derlemesi yalnız Domain sözleşmelerine
+    /// sınırları), şehir/birlik işaretlerini, şehir adı ve yığın sayısı yazılarını, dokunmatik denetimi ve dikey arayüzü kurar. Sunum derlemesi yalnız Domain sözleşmelerine
     /// başvurur (CLAUDE.md §2.2); oyun kuralı yazmaz.
     /// </summary>
     public sealed class PresentationRoot : MonoBehaviour
@@ -79,6 +79,10 @@ namespace TarihStrateji.Unity.Presentation
             hudHost.transform.SetParent(transform, false);
             HudController hud = hudHost.AddComponent<HudController>();
             hud.Initialize(session, selection, text);
+
+            var labels = new GameObject("HaritaYazilari");
+            labels.transform.SetParent(transform, false);
+            labels.AddComponent<MapLabelLayer>().Initialize(model, markerLayer, countries, mapCamera, text, hud.MapOverlay);
 
             MapCameraController controller = mapCamera.gameObject.AddComponent<MapCameraController>();
             controller.Initialize(mapCamera, countries.Bounds);
