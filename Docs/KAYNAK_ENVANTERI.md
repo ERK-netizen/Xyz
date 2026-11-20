@@ -62,3 +62,29 @@ Sofya, Belgrad, Çetine, Dıraç (Durres), Bükreş, Roma. Viyana, Petersburg, L
 - Kara yolları Delaunay üçgenlemesinden (denizi geçmeyen, komşu bölgeler arası); 1914 demiryolları elle
   listelenmiş çiftlerdir. Boğaz geçişleri ve dar deniz geçitleri elle tanımlıdır; açık deniz 0,75° ızgaradır.
 - Nüfus: ülke toplamı (1914 tahmini, bin kişi) × 1/5 ölçek, bölgelere kademe² × √alan ağırlığıyla dağıtılır.
+
+## 1939 senaryosu (`Assets/TarihStrateji/Unity/Bootstrap/Resources/Senaryolar/1939_mvp.bytes`)
+
+Kaynak, lisans ve kapsam 1914 ile aynıdır (CShapes 2.0, CC BY-NC-SA 4.0, aynı SHA-256; 12,0°–46,5° D, 29,5°–48,0° K);
+seçim tarihi 01.09.1939. Yapılandırma `Tools/ContentCompiler/data/1939_mvp.json`; ad anahtarları `ulke.1939.*`,
+`sehir.1939.*`. Şehir listesi 1914'ünkidir, her şehrin sahibi 01.09.1939 CShapes sınırından bulunur; Amman, Tiran,
+Antakya ve İskenderun eklendi; başkent kademeleri yükseltildi (Ankara, Belgrad, Sofya, Atina, Bükreş, Bağdat, Şam,
+Beyrut, Kahire, Budapeşte). 14 ülke, 133 bölge/şehir. Nüfuslar kapsam içindeki tahmini 1939 nüfusudur (bin kişi, 1/5 ölçekle oyuna girer).
+
+| Senaryo ülkesi | CShapes kayıtları (01.09.1939) |
+|---|---|
+| Türkiye Cumhuriyeti | Turkey (Ottoman Empire) — Hatay dahil (Haziran 1939) |
+| Yunanistan, Bulgaristan, Yugoslavya, Romanya, Macaristan, Mısır, Irak, İran | Greece, Bulgaria, Yugoslavia, Rumania, Hungary, Egypt, Iraq, Iran (Persia) |
+| Alman Reich | Austria, Germany (Prussia) |
+| İtalya Krallığı | Italy/Sardinia, Libya, Albania |
+| Sovyetler Birliği | Russia (Soviet Union) |
+| Birleşik Krallık | Cyprus, Malta, Palestine, Jordan |
+| Fransa (Levant mandası) | Syria, Lebanon |
+
+Kapsamdaki Polonya, Çekoslovakya ve Suudi Arabistan kırıntıları senaryoya alınmaz (sahipsiz kara).
+
+| Düzeltme | Gerekçe |
+|---|---|
+| Onikiadalar Yunanistan'dan İtalya'ya | 1912'den beri İtalyan, 1923 Lozan ile İtalya'ya bırakıldı; CShapes Yunanistan'da gösterir. |
+| Arnavutluk → İtalya (kaynak adı eşlemesi) | 7–12 Nisan 1939 İtalyan işgali ve İtalyan tacına bağlanma; CShapes (Gleditsch–Ward) ayrı tutar. |
+| Avusturya → Alman Reich (kaynak adı eşlemesi) | Mart 1938 Anschluss; CShapes ayrı tutar. |

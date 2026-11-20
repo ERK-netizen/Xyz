@@ -628,13 +628,13 @@ def write_package(pkg):
     w.i32(len(cfg["countries"]))
     for c in cfg["countries"]:
         w.u64(c["id"])
-        w.string("ulke.1914." + c["key"])
+        w.string("ulke." + key_prefix(pkg["cfg"]) + "." + c["key"])
     regions = pkg["regions"]
     w.i32(len(regions))
     for r in regions:
         w.u64(r["id"])
         w.u64(r["owner"])
-        w.string("bolge.1914." + r["city"]["key"])
+        w.string("bolge." + key_prefix(pkg["cfg"]) + "." + r["city"]["key"])
         w.i64(r["population"])
         w.i32(len(r["rings"]))
         for outer, holes in r["rings"]:
@@ -670,7 +670,7 @@ def write_package(pkg):
     for i, r in enumerate(regions):
         c = r["city"]
         w.u64(i + 1)
-        w.string("sehir.1914." + c["key"])
+        w.string("sehir." + key_prefix(pkg["cfg"]) + "." + c["key"])
         w.i32(e6(c["glat"]))
         w.i32(e6(c["glon"]))
         w.u64(r["id"])
@@ -682,21 +682,27 @@ def write_package(pkg):
     return payload + hashlib.sha256(payload).digest()
 
 
+def key_prefix(cfg):
+    """Ad anahtarı öneki: yapılandırmadaki keyPrefix, yoksa senaryo yılı (ulke.1914.*, sehir.1939.*)."""
+    return str(cfg.get("keyPrefix", cfg["date"][0]))
+
+
 def update_tr(path, cfg):
-    begin, end = "# <senaryo-1914: ContentCompiler üretir, elle düzenlemeyin>", "# </senaryo-1914>"
+    k = key_prefix(cfg)
+    begin, end = "# <senaryo-%s: ContentCompiler üretir, elle düzenlemeyin>" % k, "# </senaryo-%s>" % k
     text = open(path, encoding="utf-8").read()
     outside = text
     if begin in text:
         outside = text[: text.index(begin)] + text[text.index(end) + len(end):]
     lines = [begin]
     for c in cfg["countries"]:
-        lines.append("ulke.1914.%s = %s" % (c["key"], c["name"]))
+        lines.append("ulke.%s.%s = %s" % (k, c["key"], c["name"]))
         # Genel ülke adı başka senaryoda tanımlıysa (ulke.1 Türkiye, ulke.2 Yunanistan) ezilmez.
         if "\nulke.%d = " % c["id"] not in outside:
             lines.append("ulke.%d = %s" % (c["id"], c["name"]))
     for c in cfg["cities"]:
-        lines.append("sehir.1914.%s = %s" % (c["key"], c["name"]))
-        lines.append("bolge.1914.%s = %s" % (c["key"], c["name"]))
+        lines.append("sehir.%s.%s = %s" % (k, c["key"], c["name"]))
+        lines.append("bolge.%s.%s = %s" % (k, c["key"], c["name"]))
     lines.append(end)
     if begin in text:
         head = text[: text.index(begin)]
