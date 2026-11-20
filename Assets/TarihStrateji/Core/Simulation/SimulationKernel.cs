@@ -120,6 +120,16 @@ namespace TarihStrateji.Core.Simulation
             ReadModelProjection.Units(_state, _content, into);
         }
 
+        public OrderPreview PreviewOrder(ulong unitId, TargetRef target, bool attack, List<GeoPoint> path)
+        {
+            if (_content == null)
+            {
+                throw new InvalidOperationException(SimulationErrorKeys.KurulumEksik);
+            }
+
+            return OrderPreviewProjection.Preview(_state, _content, unitId, target, attack, path);
+        }
+
         public bool IsAtWarWith(CountryId other) => _state.Diplomacy.AtWar(_state.PlayerCountry, other);
 
         public bool IsHalted => _haltReasons.Count > 0;

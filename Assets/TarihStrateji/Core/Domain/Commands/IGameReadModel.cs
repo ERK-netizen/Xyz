@@ -50,6 +50,13 @@ namespace TarihStrateji.Core.Domain.Commands
         /// <summary>Oyuncunun görebildiği birlikler: kendi birlikleri ve savaş sisindeki temaslar.</summary>
         void GetVisibleUnits(List<UnitView> into);
 
+        /// <summary>
+        /// Oyuncunun kara birliği için yürüme (<paramref name="attack"/> false) ya da saldırı emrinin önizlemesi:
+        /// geçerlilik, rota noktaları (<paramref name="path"/>, birliğin konumundan başlar), tahmini gün, hedefteki
+        /// ikmal ve bilinen düşman gücüne göre risk. Durumu değiştirmez; savaş sisine uyar.
+        /// </summary>
+        OrderPreview PreviewOrder(ulong unitId, TargetRef target, bool attack, List<GeoPoint> path);
+
         /// <summary>Oyuncunun savaşta olduğu ülke mi.</summary>
         bool IsAtWarWith(CountryId other);
     }
