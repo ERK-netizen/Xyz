@@ -17,14 +17,19 @@ namespace TarihStrateji.Unity.Editor
     /// <c>Unity -batchmode -nographics -quit -buildTarget Android -executeMethod
     /// TarihStrateji.Unity.Editor.AndroidBuild.BuildFromCommandLine [-ciktiYolu yol] [-aab]</c>.
     /// Sonuç <see cref="BuildResult.Succeeded"/> değilse çıkış kodu 1'dir.
+    /// Yayın imzası (Adım 20): <c>TS_KEYSTORE_PATH</c>, <c>TS_KEYSTORE_PASS</c>, <c>TS_KEY_ALIAS</c>, <c>TS_KEY_PASS</c> ortam
+    /// değişkenlerinin hepsi varsa APK/AAB bu anahtarla imzalanır (aynı anahtarla imzalı sürümler birbirinin üzerine
+    /// kurulur, kayıtlar korunur); yoksa Unity'nin hata ayıklama anahtarı kullanılır. Anahtar ve parolalar depoya
+    /// girmez; CI'da depo sırlarından geçici dosyaya yazılır. Sürüm kodu <c>TS_VERSION_CODE</c> (CI çalıştırma numarası)
+    /// ya da <see cref="VersionCode"/>.
     /// </summary>
     public static class AndroidBuild
     {
         public const string ScenePath = "Assets/TarihStrateji/Scenes/Ana.unity";
         public const string ApplicationId = "com.tarihstrateji.oyun";
         public const string ProductName = "Tarih Strateji";
-        public const string Version = "0.10.0";
-        public const int VersionCode = 10;
+        public const string Version = "1.0.0";
+        public const int VersionCode = 100;
         public const string DefaultApkPath = "Build/Android/TarihStrateji.apk";
         public const string DefaultAabPath = "Build/Android/TarihStrateji.aab";
 
@@ -92,7 +97,11 @@ namespace TarihStrateji.Unity.Editor
             PlayerSettings.companyName = "TarihStrateji";
             PlayerSettings.productName = ProductName;
             PlayerSettings.bundleVersion = Version;
-            PlayerSettings.Android.bundleVersionCode = VersionCode;
+            string code = Environment.GetEnvironmentVariable("TS_VERSION_CODE");
+            PlayerSettings.Android.bundleVersionCode = int.TryParse(code, System.Globalization.NumberStyles.Integer, System.Globalization.CultureInfo.InvariantCulture, out int parsed) && parsed > 0
+                ? VersionCode + parsed
+                : VersionCode;
+            ConfigureSigning();
             PlayerSettings.SetApplicationIdentifier(android, ApplicationId);
             PlayerSettings.SetScriptingBackend(android, ScriptingImplementation.IL2CPP);
             PlayerSettings.SetIl2CppCompilerConfiguration(android, Il2CppCompilerConfiguration.Release);
@@ -108,6 +117,28 @@ namespace TarihStrateji.Unity.Editor
             PlayerSettings.allowedAutorotateToLandscapeLeft = false;
             PlayerSettings.allowedAutorotateToLandscapeRight = false;
             PlayerSettings.runInBackground = false;
+        }
+
+        /// <summary>Yayın anahtarı ortam değişkenleriyle verilmişse onu, yoksa hata ayıklama anahtarını seçer.</summary>
+        public static bool ConfigureSigning()
+        {
+            string path = Environment.GetEnvironmentVariable("TS_KEYSTORE_PATH");
+            string storePass = Environment.GetEnvironmentVariable("TS_KEYSTORE_PASS");
+            string alias = Environment.GetEnvironmentVariable("TS_KEY_ALIAS");
+            string keyPass = Environment.GetEnvironmentVariable("TS_KEY_PASS");
+            bool release = !string.IsNullOrEmpty(path) && File.Exists(path) && !string.IsNullOrEmpty(storePass) && !string.IsNullOrEmpty(alias)
+                && !string.IsNullOrEmpty(keyPass);
+            PlayerSettings.Android.useCustomKeystore = release;
+            if (release)
+            {
+                PlayerSettings.Android.keystoreName = Path.GetFullPath(path);
+                PlayerSettings.Android.keystorePass = storePass;
+                PlayerSettings.Android.keyaliasName = alias;
+                PlayerSettings.Android.keyaliasPass = keyPass;
+            }
+
+            Debug.Log(release ? "İmza: yayın anahtarı (" + alias + ")" : "İmza: hata ayıklama anahtarı (yayın anahtarı sırları tanımlı değil)");
+            return release;
         }
 
         /// <summary>Boş ana sahneyi oluşturur (yoksa) ve derleme listesine tek sahne olarak yazar.</summary>
@@ -133,6 +164,8 @@ namespace TarihStrateji.Unity.Editor
             BuildSummary s = report.summary;
             var text = new StringBuilder();
             text.Append("Sonuç: ").Append(s.result).AppendLine();
+            text.Append("Sürüm: ").Append(PlayerSettings.bundleVersion).Append(" (").Append(PlayerSettings.Android.bundleVersionCode.ToString(System.Globalization.CultureInfo.InvariantCulture))
+                .Append("), imza: ").Append(PlayerSettings.Android.useCustomKeystore ? "yayın anahtarı" : "hata ayıklama anahtarı").AppendLine();
             text.Append("Çıktı: ").Append(s.outputPath).AppendLine();
             text.Append("Boyut: ").Append((s.totalSize / (1024UL * 1024UL)).ToString(System.Globalization.CultureInfo.InvariantCulture)).Append(" MB").AppendLine();
             text.Append("Süre: ").Append(((int)s.totalTime.TotalSeconds).ToString(System.Globalization.CultureInfo.InvariantCulture)).Append(" s").AppendLine();

@@ -118,7 +118,8 @@ Her adım headless testleriyle gelir; altıgen kodu yalnız yerine geçen sistem
 | 17 1914 denge (tarama, barış eşiği 120 gün, Temmuz Krizi tarihi, bant kapıları) ve cihaz ölçüm aracı | TESTED (headless 330/330, 32 tohum taraması bantta); cihaz ölçümü depo sahibinin telefonunda bekliyor (`Docs/CIHAZ_OLCUMU.md`) |
 | 18 1939 senaryosu (CShapes 01.09.1939, 14 ülke) ve yeni oyunda senaryo/ülke seçimi | TESTED (headless 333/333: paket, fiilî yönetim, siyaset, başkentler, 365 gün determinizm ve YZ savaş tarihi); Unity CI sonucu commit notunda; açık: 1939 barış ekonomisi |
 | 19 1936 senaryosu (CShapes 07.03.1936, 15 ülke; Hatay Fransız, Arnavutluk ve Avusturya bağımsız) | TESTED (headless 336/336: paket, düzeltmeler, başkentler, siyaset, 365 gün determinizm ve barış) |
-| 20 ürünleştirme · 21 tam dünya | PLAN (depo sahibinin 20.11.2026 "hepsi" kararı; bu sırayla) |
+| 20 ürünleştirme: ana menü, kayıt yuvaları, ayarlar, hakkında/lisans, sürüm 1.0.0, isteğe bağlı yayın imzası | TESTED (headless 336/336; EditMode GameSettingsTests; Unity CI sonucu commit notunda) |
+| 21 tam dünya | PLAN (depo sahibinin 20.11.2026 "hepsi" kararı) |
 
 Not (tarihî): Altıgen kural dosyaları Adım 12'de değil 13'te silindi; çünkü Simulation onlara bağlıdır ve her
 commit derlenebilir kalmalıdır (§4 "sıfır eksik kod"). Adım 12 yeni kuralları `*.Geo` isim alanlarında

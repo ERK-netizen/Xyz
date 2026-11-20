@@ -69,8 +69,15 @@ namespace TarihStrateji.Unity.Presentation.UI
         private VisualElement _actions;
         private Button _diplomacyButton;
         private DiplomacyPanel _diplomacy;
-        private Button _newGameButton;
+        private Button _menuButton;
         private NewGamePanel _newGame;
+        private MainMenuPanel _menu;
+        private GameSettings _settings;
+        private PanelSettings _panelSettings;
+        private int _resumeSpeed = 1;
+
+        /// <summary>Ana menü uygulama açılışında bir kez açılır; yeni oyun/yüklemeden sonra sunum yeniden kurulunca açılmaz.</summary>
+        private static bool s_menuShownThisRun;
 
         private long _previewVersion = -1;
         private bool _dirty = true;
@@ -106,8 +113,17 @@ namespace TarihStrateji.Unity.Presentation.UI
             _document = gameObject.AddComponent<UIDocument>();
             _document.panelSettings = settings;
             gameObject.SetActive(true);
+            _panelSettings = settings;
+            _settings = GameSettings.Load();
 
             Build(_document.rootVisualElement);
+            ApplySettings();
+            if (!s_menuShownThisRun)
+            {
+                s_menuShownThisRun = true;
+                ShowMenu(true);
+            }
+
             _session.ReadModel.StateChanged += OnStateChanged;
             _selection.Changed += OnSelectionChanged;
             _flow.Changed += MarkDirty;
@@ -205,9 +221,9 @@ namespace TarihStrateji.Unity.Presentation.UI
             });
             measure.style.flexGrow = 1;
             timeRow.Add(measure);
-            _newGameButton = MakeButton("arayuz.yeniOyun", ToggleNewGame);
-            _newGameButton.style.flexGrow = 1;
-            timeRow.Add(_newGameButton);
+            _menuButton = MakeButton("arayuz.menu", () => ShowMenu(!_menu.IsVisible));
+            _menuButton.style.flexGrow = 1;
+            timeRow.Add(_menuButton);
             _top.Add(timeRow);
 
             _summary = MakeLabel(32, false);
@@ -237,6 +253,13 @@ namespace TarihStrateji.Unity.Presentation.UI
             VisualElement newGame = _newGame.Build(ToggleNewGame);
             newGame.style.alignSelf = Align.Stretch;
             _spacer.Add(newGame);
+            _menu = new MainMenuPanel(_session, _text, ShowMessage, _settings, ApplySettings);
+            VisualElement menu = _menu.Build(() => ShowMenu(false), () =>
+            {
+                ShowMenu(false);
+                ToggleNewGame();
+            });
+            _spacer.Add(menu);
             _spacer.Add(_toast);
             _root.Add(_spacer);
 
@@ -717,7 +740,53 @@ namespace TarihStrateji.Unity.Presentation.UI
 
             _newGame.Show(show);
             _bottom.style.display = show ? DisplayStyle.None : DisplayStyle.Flex;
-            _newGameButton.style.backgroundColor = show ? ActiveButtonColor : ButtonColor;
+        }
+
+        /// <summary>
+        /// Ana menüyü açar/kapatır (Adım 20). Açıkken oyun duraklatılır, diğer ekranlar ve alt panel kapanır; "Devam et"
+        /// oyunu açılmadan önceki hızla sürdürür.
+        /// </summary>
+        private void ShowMenu(bool show)
+        {
+            if (show == _menu.IsVisible)
+            {
+                return;
+            }
+
+            if (show)
+            {
+                if (_diplomacy.IsVisible)
+                {
+                    ToggleDiplomacy();
+                }
+
+                if (_newGame.IsVisible)
+                {
+                    ToggleNewGame();
+                }
+
+                _resumeSpeed = _session.DaysPerSecond;
+                _session.SetDaysPerSecond(0);
+            }
+            else
+            {
+                _session.SetDaysPerSecond(_resumeSpeed);
+            }
+
+            _menu.Show(show);
+            _top.style.display = show ? DisplayStyle.None : DisplayStyle.Flex;
+            _bottom.style.display = show ? DisplayStyle.None : DisplayStyle.Flex;
+            MarkDirty();
+        }
+
+        /// <summary>Oyuncu ayarlarını uygular: arayüz ölçeği, şehir adları katmanı, kare hızı ve ekran uykusu.</summary>
+        private void ApplySettings()
+        {
+            _panelSettings.scale = _settings.PanelScale;
+            MapOverlay.style.display = _settings.CityNames ? DisplayStyle.Flex : DisplayStyle.None;
+            _settings.ApplyApplication();
+            _appliedPanelSize = Vector2.zero;
+            MarkDirty();
         }
 
         /// <summary>Diplomasi ekranını açar/kapatır; açıkken alt panel (seçim, önizleme) gizlenir.</summary>
@@ -727,6 +796,11 @@ namespace TarihStrateji.Unity.Presentation.UI
             if (show && _newGame.IsVisible)
             {
                 ToggleNewGame();
+            }
+
+            if (show && _menu.IsVisible)
+            {
+                ShowMenu(false);
             }
 
             _diplomacy.Show(show);

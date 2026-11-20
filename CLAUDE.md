@@ -548,6 +548,19 @@ Yeni bir Core modülü eklemek anayasa değişikliğidir.
   Türkiye CHP tek parti (istikrar 0,65), 10 başkent (Tiran dahil), YZ'nin ilk savaşı ≥ 07.04.1939 (ilk yıl tam barış, testle).
   `ScenarioFactory.Create1936`, katalogda 1914 → 1936 → 1939 sırası.
 
+**Uygulama kararları (Adım 20, ürünleştirme):**
+- Kayıt yuvaları: elle `yuva_1..3` ve otomatik halka senaryo başına `kayitlar/<senaryo>/` klasöründedir (harita içeriği
+  senaryoya bağlı); `son_oturum` kökte, yan dosyasıyla. `IGameSession.GetSaveSlots`/`SaveGame`/`LoadGame`/`DeleteSave`
+  (`SaveSlotView`, `SaveSlotKind`); yükleme `SessionReplaced` ile sunumu yeniden kurar. Otomatik ve son oturum yuvaları silinmez.
+- Ana menü (`MainMenuPanel`): uygulama açılışında bir kez ve HUD'daki "Menü" ile açılır, açıkken oyun duraklar; Devam et,
+  Yeni oyun, Kaydet / Yükle (`SaveLoadPanel`, silme iki dokunuşla), Ayarlar (`SettingsPanel`), Hakkında (sürüm, CShapes 2.0
+  atfı ve CC BY-NC-SA 4.0 lisansı). Ortak görünüm `PanelKit`.
+- Ayarlar (`GameSettings`, `PlayerPrefs` `ayar.*`, yalnız sunum): yazı boyutu (panel ölçeği 0,9/1/1,15), ekranı açık tut,
+  kare hızı 30/60, şehir adları.
+- Sürüm 1.0.0; sürüm kodu 100 + CI çalıştırma numarası. Yayın imzası isteğe bağlı: `ANDROID_KEYSTORE_BASE64`,
+  `ANDROID_KEYSTORE_PASS`, `ANDROID_KEY_ALIAS`, `ANDROID_KEY_PASS` sırları varsa `AndroidBuild.ConfigureSigning` o anahtarı
+  kullanır (anahtar yalnız çalıştırıcının geçici klasöründe, iş sonunda silinir); yoksa hata ayıklama anahtarı.
+
 ---
 
 ## 3. Depo düzeni

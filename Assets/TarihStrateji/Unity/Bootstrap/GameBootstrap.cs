@@ -1,9 +1,12 @@
 using System;
+using System.Collections.Generic;
 using System.IO;
 using TarihStrateji.Core.Content;
 using TarihStrateji.Core.Content.Packages;
 using TarihStrateji.Core.Domain;
 using TarihStrateji.Core.Domain.Commands;
+using TarihStrateji.Core.Domain.Ids;
+using TarihStrateji.Core.Domain.Views;
 using TarihStrateji.Core.Persistence;
 using TarihStrateji.Core.Simulation;
 using TarihStrateji.Core.Simulation.State;
@@ -18,6 +21,8 @@ namespace TarihStrateji.Unity.Bootstrap
     /// parçacığında ilerler (karede en çok 4 gün). Oyun kuralı yazmaz: yalnız çekirdeği çalıştırır
     /// ve sunuma <see cref="IGameSession"/> verir. Uygulama arka plana alınınca veya kapanınca
     /// "son_oturum" yuvasına atomik kayıt yapılır; 30 günde bir otomatik kayıt halkası işler.
+    /// Kayıt yuvaları (Adım 20): elle <c>yuva_1..3</c> ve otomatik halka senaryo başına ayrı klasördedir
+    /// (<c>kayitlar/&lt;senaryo&gt;/</c>; harita içeriği senaryoya bağlı olduğundan); <c>son_oturum</c> kökte, yan dosyasıyla.
     /// </summary>
     public sealed class GameBootstrap : MonoBehaviour, IGameSession
     {
@@ -25,6 +30,9 @@ namespace TarihStrateji.Unity.Bootstrap
         /// <summary>Son oturumun senaryo kimliğini tutan yan dosya (kayıt klasöründe); yoksa 1914 sayılır.</summary>
         public const string ScenarioSidecar = LastSessionSlot + ".senaryo";
         private const int MaxDaysPerFrame = 4;
+
+        /// <summary>Elle kayıt yuvaları (Adım 20).</summary>
+        public static readonly string[] ManualSlots = { "yuva_1", "yuva_2", "yuva_3" };
 
         private SimulationKernel _kernel;
         private FileSaveStore _store;
@@ -105,12 +113,12 @@ namespace TarihStrateji.Unity.Bootstrap
             _directory = Path.Combine(Application.persistentDataPath, "kayitlar");
             Directory.CreateDirectory(_directory);
             _store = new FileSaveStore(_directory);
-            _measurement = new DeviceMeasurement(() => _kernel, () => CreateSetup(_scenario, null), Application.persistentDataPath);
+            _measurement = new DeviceMeasurement(() => _kernel, () => CreateSetup(_scenario, false), Application.persistentDataPath);
             _orders = new BootstrapCommandFactory(() => _kernel);
 
             // Son oturum kendi senaryosunun haritasıyla yüklenir; yoksa ya da yüklenemezse varsayılan senaryo başlar.
             _scenario = _catalog.Find(ReadSidecar());
-            Result<LoadedGame> loaded = GameSaveService.Load(_store, LastSessionSlot, CreateSetup(_scenario, _store));
+            Result<LoadedGame> loaded = GameSaveService.Load(_store, LastSessionSlot, CreateSetup(_scenario, true));
             if (loaded.IsSuccess)
             {
                 _kernel = loaded.Value.Kernel;
@@ -125,9 +133,9 @@ namespace TarihStrateji.Unity.Bootstrap
             }
         }
 
-        public void GetScenarios(System.Collections.Generic.List<Core.Domain.Views.ScenarioView> into) => _catalog.Views(into);
+        public void GetScenarios(List<ScenarioView> into) => _catalog.Views(into);
 
-        public ValidationResult StartNewGame(string scenarioId, Core.Domain.Ids.CountryId player)
+        public ValidationResult StartNewGame(string scenarioId, CountryId player)
         {
             ScenarioCatalog.Entry entry = _catalog.Find(scenarioId);
             if (!string.Equals(entry.Id, scenarioId, StringComparison.Ordinal))
@@ -144,7 +152,7 @@ namespace TarihStrateji.Unity.Bootstrap
             return started;
         }
 
-        private ValidationResult StartGame(ScenarioCatalog.Entry entry, Core.Domain.Ids.CountryId player)
+        private ValidationResult StartGame(ScenarioCatalog.Entry entry, CountryId player)
         {
             GeoPackage package = _catalog.Package(entry);
             bool known = false;
@@ -160,7 +168,7 @@ namespace TarihStrateji.Unity.Bootstrap
 
             ulong seed = (ulong)Environment.TickCount;
             GameState state = entry.Create(_content, package, seed, GameMode.Normal, player);
-            Result<SimulationKernel> created = SimulationKernel.Create(CreateSetup(entry, _store), state);
+            Result<SimulationKernel> created = SimulationKernel.Create(CreateSetup(entry, true), state);
             if (!created.IsSuccess)
             {
                 return ValidationResult.Fail(created.ErrorKey);
@@ -200,8 +208,116 @@ namespace TarihStrateji.Unity.Bootstrap
             }
         }
 
-        private SimulationSetup CreateSetup(ScenarioCatalog.Entry entry, FileSaveStore store)
+        /// <summary>Senaryonun kayıt klasörü (elle yuvalar + otomatik halka).</summary>
+        private FileSaveStore ScenarioStore(ScenarioCatalog.Entry entry)
         {
+            string directory = Path.Combine(_directory, entry.Id);
+            Directory.CreateDirectory(directory);
+            return new FileSaveStore(directory);
+        }
+
+        private static bool IsManualSlot(string slot) => Array.IndexOf(ManualSlots, slot) >= 0;
+
+        public void GetSaveSlots(List<SaveSlotView> into)
+        {
+            string lastScenario = ReadSidecar();
+            for (int e = 0; e < _catalog.Entries.Count; e++)
+            {
+                ScenarioCatalog.Entry entry = _catalog.Entries[e];
+                FileSaveStore store = ScenarioStore(entry);
+                List<string> slots = store.ListSlots();
+                for (int pass = 0; pass < 2; pass++)
+                {
+                    for (int i = 0; i < slots.Count; i++)
+                    {
+                        bool manual = IsManualSlot(slots[i]);
+                        bool auto = slots[i].StartsWith(AutosaveRing.Prefix, StringComparison.Ordinal);
+                        if ((pass == 0 && manual) || (pass == 1 && auto))
+                        {
+                            AddSlot(into, entry, store, slots[i], manual ? SaveSlotKind.Manual : SaveSlotKind.Autosave);
+                        }
+                    }
+                }
+
+                if (string.Equals(lastScenario, entry.Id, StringComparison.Ordinal))
+                {
+                    AddSlot(into, entry, _store, LastSessionSlot, SaveSlotKind.LastSession);
+                }
+            }
+        }
+
+        private void AddSlot(List<SaveSlotView> into, ScenarioCatalog.Entry entry, FileSaveStore store, string slot, SaveSlotKind kind)
+        {
+            SaveLoadResult read = store.Load(slot);
+            if (!read.Succeeded)
+            {
+                return;
+            }
+
+            SaveMetadata meta = read.File.Metadata;
+            string name = meta.PlayerCountry.IsValid ? _catalog.Package(entry).CountryNameKey(meta.PlayerCountry) : string.Empty;
+            into.Add(new SaveSlotView(entry.Id, slot, meta.GameDate, meta.PlayerCountry, name, kind));
+        }
+
+        public ValidationResult SaveGame(string slot)
+        {
+            if (!IsManualSlot(slot))
+            {
+                return ValidationResult.Fail("hata.kayit.yuvaAdiGecersiz");
+            }
+
+            if (_kernel == null || _kernel.IsHalted)
+            {
+                return ValidationResult.Fail("hata.kayit.simulasyonDurdu");
+            }
+
+            return GameSaveService.Save(_kernel, ScenarioStore(_scenario), slot, "Elle kayıt");
+        }
+
+        public ValidationResult LoadGame(string scenarioId, string slot)
+        {
+            ScenarioCatalog.Entry entry = _catalog.Find(scenarioId);
+            if (!string.Equals(entry.Id, scenarioId, StringComparison.Ordinal))
+            {
+                return ValidationResult.Fail("hata.senaryo.bilinmiyor");
+            }
+
+            bool last = string.Equals(slot, LastSessionSlot, StringComparison.Ordinal);
+            if (last && !string.Equals(ReadSidecar(), entry.Id, StringComparison.Ordinal))
+            {
+                return ValidationResult.Fail("hata.kayit.bulunamadi");
+            }
+
+            Result<LoadedGame> loaded = GameSaveService.Load(last ? _store : ScenarioStore(entry), slot, CreateSetup(entry, true));
+            if (!loaded.IsSuccess)
+            {
+                return ValidationResult.Fail(loaded.ErrorKey);
+            }
+
+            _scenario = entry;
+            _kernel = loaded.Value.Kernel;
+            _pendingDays = 0;
+            _accumulator = 0f;
+            HaltReason = string.Empty;
+            WriteSidecar();
+            SessionReplaced?.Invoke();
+            return ValidationResult.Ok;
+        }
+
+        public ValidationResult DeleteSave(string scenarioId, string slot)
+        {
+            ScenarioCatalog.Entry entry = _catalog.Find(scenarioId);
+            if (!string.Equals(entry.Id, scenarioId, StringComparison.Ordinal) || !IsManualSlot(slot))
+            {
+                return ValidationResult.Fail("hata.kayit.yuvaAdiGecersiz");
+            }
+
+            return ScenarioStore(entry).Delete(slot) ? ValidationResult.Ok : ValidationResult.Fail("hata.kayit.bulunamadi");
+        }
+
+        private SimulationSetup CreateSetup(ScenarioCatalog.Entry entry, bool autosave)
+        {
+            FileSaveStore store = autosave ? ScenarioStore(entry) : null;
             GeoPackage package = _catalog.Package(entry);
             GameContent content = _content;
             // Cihazda durum hash'i ve otomatik kayıt seyrek: 30 günde bir (CLAUDE.md §2.5).

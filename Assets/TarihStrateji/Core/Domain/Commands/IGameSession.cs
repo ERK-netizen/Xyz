@@ -56,7 +56,22 @@ namespace TarihStrateji.Core.Domain.Commands
         /// </summary>
         ValidationResult StartNewGame(string scenarioId, CountryId player);
 
-        /// <summary>Çalışan oyun başka bir çekirdekle değişti (yeni oyun).</summary>
+        /// <summary>Çalışan oyun başka bir çekirdekle değişti (yeni oyun ya da kayıttan yükleme).</summary>
         event Action SessionReplaced;
+
+        /// <summary>
+        /// Tüm senaryoların kayıtları (Adım 20): senaryo sırası, her senaryoda elle yuvalar, otomatik halka, son oturum.
+        /// Dosyaları okuyup doğruladığı için yalnız kayıt ekranı açılırken çağrılır; bozuk yuva listelenmez.
+        /// </summary>
+        void GetSaveSlots(List<SaveSlotView> into);
+
+        /// <summary>Çalışan oyunu elle yuvaya (<c>yuva_1..3</c>) atomik yazar; başka adlar reddedilir.</summary>
+        ValidationResult SaveGame(string slot);
+
+        /// <summary>Yuvayı yükler ve çalışan oyunun yerine koyar (<see cref="SessionReplaced"/> tetiklenir).</summary>
+        ValidationResult LoadGame(string scenarioId, string slot);
+
+        /// <summary>Elle yuvayı siler (otomatik ve son oturum yuvaları silinmez).</summary>
+        ValidationResult DeleteSave(string scenarioId, string slot);
     }
 }
