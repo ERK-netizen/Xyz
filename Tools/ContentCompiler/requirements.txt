@@ -1,0 +1,2 @@
+# ContentCompiler yalnız geliştirme aracıdır; çıktısı (.bytes paketi) depoya girer, oyun çalışırken gerekmez.
+shapely==2.0.6

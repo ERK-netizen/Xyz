@@ -62,3 +62,4 @@ __pycache__/
 # ---------- İşletim sistemi ----------
 .DS_Store
 Thumbs.db
+Tools/ContentCompiler/.cache/
