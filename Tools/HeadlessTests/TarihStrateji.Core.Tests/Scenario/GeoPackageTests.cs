@@ -47,7 +47,7 @@ namespace TarihStrateji.Core.Tests.Scenario
             Assert.That(p.Regions.Count, Is.EqualTo(p.Cities.Count), "her şehir bir idari bölgenin merkezi");
             Assert.That(p.Cities.Count, Is.GreaterThanOrEqualTo(120));
             Assert.That(p.Sources.Count, Is.EqualTo(1));
-            Assert.That(p.Sources[0].License, Is.EqualTo("GPL-3.0"));
+            Assert.That(p.Sources[0].License, Is.EqualTo("CC BY-NC-SA 4.0"));
             Assert.That(p.Sources[0].Sha256, Has.Length.EqualTo(64));
         }
 

@@ -29,7 +29,7 @@ kaynağı olarak §22 hattından geçirilir.
 | Nüfus kohortu, ekonomi, araştırma, siyaset, karakter (F2-01..05) | Var, küçük katalog | KISMİ (içerik az) |
 | Deniz, hava, konvoy, abluka (F2-06..08) | Ulaşım grafında (deniz düğümü/yolu, büyük çember menzil) | MEVCUT/KODDA + test |
 | Diplomasi, kapitülasyon/sürgün, istihbarat, YZ, olay/odak (F2-09..12) | Var | KISMİ |
-| Gerçek sınırlı dünya haritası (F3, F4) | 1914 MVP bölgesi (12 ülke, 129 bölge/şehir, historical-basemaps); tam dünya yok | KISMİ: F3 bölgesel MVP; F4 (tam dünya, diğer dönemler) PLAN |
+| Gerçek sınırlı dünya haritası (F3, F4) | 1914 MVP bölgesi (12 ülke, 129 bölge/şehir, CShapes 2.0); tam dünya yok | KISMİ: F3 bölgesel MVP; F4 (tam dünya, diğer dönemler) PLAN |
 | Mobil arayüz (F5-01) | UI Toolkit dikey HUD, çokgen ülke haritası, şehir adları, başkent/liman simgeleri | KISMİ: emir önizlemesi ve diplomasi ekranı Adım 16 |
 
 ## 2. Altıgene bağlı kod envanteri (EK A.1)
@@ -112,6 +112,7 @@ Her adım headless testleriyle gelir; altıgen kodu yalnız yerine geçen sistem
 | 13/1 coğrafi oyun durumu, günlük sistemler, emirler, kayıt şeması 4 | CODED + TESTED (headless 392/392) |
 | 14 ContentCompiler + 1914 MVP (12 ülke, 129 bölge/şehir, tarihî düzeltmeler, senaryo kurulumu, açılış 1914) | TESTED (headless 322/322); Unity CI sonucu commit notunda |
 | 13/2–4 altıgen silindi; ekonomi/diplomasi/istihbarat/YZ/senaryo/kayıt (şema 5) coğrafi; Unity ülke haritası (yalnız ülke sınırları + şehirler) | TESTED (headless 309/309); Unity CI sonucu commit notunda |
+| 14 eki: kaynak CShapes 2.0'a geçti (birincil kaynak kararı uygulandı) | TESTED (headless 324/324); paket yeniden derlendi, determinist |
 | 15 çokgen harita: sınır zincirleri + LOD sadeleştirme, mekânsal indeksli dokunma, liman simgesi, çakışmasız şehir adları, yığın rozetleri | Unity EditMode (MapGeometryTests, MapLabelTests); Unity CI sonucu commit notunda; başkent verisi (`CapitalTable`) ve yıldız simgesi eklendi; Unity CI ve Android APK geçti |
 
 Not (tarihî): Altıgen kural dosyaları Adım 12'de değil 13'te silindi; çünkü Simulation onlara bağlıdır ve her

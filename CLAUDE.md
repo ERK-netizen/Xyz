@@ -464,9 +464,9 @@ Yeni bir Core modülü eklemek anayasa değişikliğidir.
 - Paket çalışma anında `GeoPackageReader` ile okunur (özet, sürüm, biçim ve tam dünya doğrulaması);
   `GeoPackage.BuildWorld` her çağrıda taze dünya kurar (yeni oyun + kayıt şablonu aynı veriden).
   Kademe → gelişim (5→7, 4→6, 3→4, 2→3), kademe ≥ 4 tahkimat 1,5.
-- Kaynak: historical-basemaps 1914 (GPL-3.0; CShapes erişilemedi). Düzeltmeler ve türetilmiş veri
-  `Docs/KAYNAK_ENVANTERI.md`'de: Doğu Trakya/İstanbul Osmanlı (1913), Kars–Ardahan ve Besarabya Rus,
-  Kafkasya Rus, adalar. Kapsam 12–46,5° D, 29,5–48° K; 12 ülke, 129 bölge/şehir; nüfus 1/5 ölçek.
+- Kaynak: CShapes 2.0 (CC BY-NC-SA 4.0; derleyicide `format: cshapes`, yalnız senaryo tarihinde geçerli
+  kayıtlar, kara maskesi tüm yıllar). İlk sürüm historical-basemaps'tendi; 20.11.2026'da CShapes'e geçildi.
+  Düzeltmeler (fiilî yönetim: Kıbrıs İngiliz, Onikiadalar İtalyan) ve türetilmiş veri `Docs/KAYNAK_ENVANTERI.md`'de. Kapsam 12–46,5° D, 29,5–48° K; 12 ülke, 129 bölge/şehir; nüfus 1/5 ölçek.
 - Ülke adları senaryo verisidir: `IGameReadModel.CountryNameKey` (`SimulationSetup.CountryNameKeys`,
   ör. `ulke.1914.osmanli`); `tr.txt`'teki 1914 ad bloğunu derleyici yazar.
 - `Scenario1914`: 12 ülkeye ekonomi/araştırma/karakter; Osmanlı (İttihat ve Terakki iktidar) ve Yunanistan

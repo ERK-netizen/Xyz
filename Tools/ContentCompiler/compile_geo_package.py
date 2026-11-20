@@ -3,7 +3,10 @@
 
 Hat:
   1. Kaynak GeoJSON indirilir (önbellek) ve SHA-256'sı yapılandırmadakiyle karşılaştırılır.
-  2. Kapsam kutusuna kırpılır; ülkeler kaynak adlarından birleştirilir; tarihî düzeltmeler
+  2. Kaynak biçimi "cshapes" ise (CShapes 2.0) yalnız senaryo tarihinde geçerli kayıtlar alınır ve ad
+     `cntry_name`'den okunur; aksi halde (historical-basemaps) ad `NAME`'dir. Deniz ızgarasının kara
+     maskesi kaynağın tüm kayıtlarıdır (CShapes'te tüm yıllar: 1914'te devletsiz kara da kara sayılır).
+     Kapsam kutusuna kırpılır; ülkeler kaynak adlarından birleştirilir; tarihî düzeltmeler
      (alan devri) uygulanır; adsız adalar en yakın ada kaydının ülkesine verilir.
   3. Her ülke kendi şehirlerinin Voronoi hücreleriyle idari bölgelere bölünür (bölgeler ülkeyi
      boşluksuz ve örtüşmesiz kaplar, komşu bölgeler aynı köşeleri paylaşır).
@@ -219,6 +222,21 @@ def load_source(cfg, cache_dir):
     return json.loads(raw.decode("utf-8"))
 
 
+def feature_name(cfg, props):
+    """Kaynak biçimine göre ülke adı; senaryo tarihinde geçerli olmayan kayıt için None."""
+    if cfg["source"].get("format") == "cshapes":
+        day = tuple(cfg["date"])
+        start = (props["gwsyear"], props["gwsmonth"], props["gwsday"])
+        end = (props["gweyear"], props["gwemonth"], props["gweday"])
+        return props["cntry_name"] if start <= day <= end else None
+    return props.get("NAME")
+
+
+def feature_active(cfg, props):
+    """historical-basemaps'te tüm kayıtlar tek tarihlidir; CShapes'te yalnız senaryo tarihindekiler."""
+    return cfg["source"].get("format") != "cshapes" or feature_name(cfg, props) is not None
+
+
 def build_countries(cfg, data):
     clip = box(*cfg["bbox"])
     by_source = {}
@@ -229,12 +247,15 @@ def build_countries(cfg, data):
     unnamed = []
     all_land = []
     for f in data["features"]:
-        g = shape(f["geometry"]).buffer(0)
-        name = f["properties"].get("NAME")
-        g = g.intersection(clip)
+        active = feature_active(cfg, f["properties"])
+        g = shape(f["geometry"]).buffer(0).intersection(clip)
         if g.is_empty:
             continue
+        # Kara maskesi: CShapes'te tüm yılların kayıtları (1914'te devletsiz kara, ör. Necd, de kara sayılır).
         all_land.append(g)
+        if not active:
+            continue
+        name = feature_name(cfg, f["properties"])
         if name in by_source:
             parts[by_source[name]].append(g)
         elif name is None:

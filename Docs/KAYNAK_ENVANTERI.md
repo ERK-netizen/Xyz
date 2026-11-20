@@ -8,29 +8,51 @@ her paket kaynak dosyanın SHA-256'sını taşır.
 
 | Alan | Değer |
 |---|---|
-| Kaynak | historical-basemaps, `geojson/world_1914.geojson` — André Ourednik ve katkıcılar |
-| Adres | https://github.com/aourednik/historical-basemaps |
-| Lisans | GPL-3.0 (türetilmiş paket de GPL-3.0 kapsamındadır) |
-| Doğruluk | "estimated" (kaynağın `BORDERPRECISION` alanı); sınırlar oyun ölçeğinde sadeleştirilmiş kabul edilir |
-| Kaynak SHA-256 | `Tools/ContentCompiler/data/1914_mvp.json` içinde sabitlenmiştir |
+| Kaynak | CShapes 2.0 (`CShapes-2.0.geojson`), Gleditsch–Ward kodlaması — ETH Zürich, International Conflict Research |
+| Adres | https://icr.ethz.ch/data/cshapes/ |
+| Atıf | Schvitz, G., Girardin, L., Rüegger, S., Weidmann, N. B., Cederman, L.-E., & Gleditsch, K. S. (2022). Mapping the International System, 1886-2019: The CShapes 2.0 Dataset. *Journal of Conflict Resolution*, 66(1), 144-161. |
+| Lisans | CC BY-NC-SA 4.0: atıf zorunlu, ticari kullanım yok; türetilmiş paket (`1914_mvp.bytes`) aynı lisansla paylaşılır |
+| Seçim | Yalnız 28.06.1914'te geçerli kayıtlar (`gwsdate ≤ tarih ≤ gwedate`); ad `cntry_name` |
+| Doğruluk | Biger (1995) sınır ansiklopedisine dayalı kodlama; oyun ölçeğinde sadeleştirilmiş kabul edilir |
+| Kaynak SHA-256 | `384b1ea90b9419f30a858d7ec237c85a22c60d1b35b5f85f215a1204f9989d42` (`data/1914_mvp.json` içinde sabit) |
 | Kapsam | 12,0°–46,5° D, 29,5°–48,0° K (Balkanlar, Anadolu, Doğu Akdeniz, Kafkasya'nın batısı) |
 
-Planlanan birincil kaynak CShapes 2.0 (CC BY-NC-SA 4.0) bu ortamdan indirilemediği için ikinci seçenek
-historical-basemaps kullanıldı (depo sahibinin 19.11.2026 kararındaki yedek). Kullanım kişiseldir, ticari
-değildir. Oyun ticari yayına çıkacaksa kaynaklar yeniden seçilmelidir.
+Depo sahibinin 19.11.2026 kararıyla birincil kaynak CShapes 2.0'dır. İlk sürüm (Adım 14) bu ortamdan
+CShapes'e erişilemediği için historical-basemaps (GPL-3.0) ile üretilmişti; 20.11.2026'da `icr.ethz.ch`
+erişimi açılınca paket CShapes'ten yeniden derlendi ve historical-basemaps bağımlılığı kalktı. Kullanım
+kişiseldir, ticari değildir. Oyun ticari yayına çıkacaksa kaynaklar yeniden seçilmelidir.
+
+### Kaynak adı → senaryo ülkesi
+
+| Senaryo ülkesi | CShapes kayıtları (28.06.1914) |
+|---|---|
+| Osmanlı İmparatorluğu | Turkey (Ottoman Empire) |
+| Yunanistan, Bulgaristan, Sırbistan, Karadağ, Arnavutluk | Greece, Bulgaria, Serbia, Montenegro, Albania |
+| Romanya | Rumania |
+| Avusturya-Macaristan | Austria-Hungary |
+| İtalya | Italy/Sardinia, Libya (1912'den beri İtalyan) |
+| Rus İmparatorluğu | Russia (Soviet Union) kaydının 1914 sınırları (Kafkasya, Besarabya dahil) |
+| Birleşik Krallık | Egypt (1882'den beri İngiliz işgali), Malta |
+| İran | Iran (Persia) |
+
+Kapsamdaki Almanya kırıntısı (Bavyera'nın güneydoğu ucu) senaryoya alınmaz; sahipsiz kara olarak kalır.
+Deniz ızgarasının kara maskesi CShapes'in tüm yıllarındaki kayıtlarıdır: 1914'te hiçbir devlete ait olmayan
+kara (ör. Necd, Kuveyt) deniz sayılmaz.
 
 ### Tarihî düzeltmeler (derleyicide `corrections`)
 
 | Düzeltme | Gerekçe |
 |---|---|
-| Doğu Trakya ve İstanbul Bulgaristan'dan Osmanlı'ya | Kaynak hatası. 29.09.1913 İstanbul Antlaşması: Enez–Meriç–Edirne'nin kuzeyi–Rezve hattının doğusu Osmanlı. |
-| Kars–Ardahan Osmanlı'dan Rusya'ya | Kaynak hatası. 1878 Berlin Antlaşması'ndan 1918'e kadar Rus Kars ve Batum vilayetleri. |
-| Besarabya Romanya'dan Rusya'ya | Kaynak hatası. 1812–1918 arası Rus İmparatorluğu. |
-| Ermenistan, Gürcistan, Azerbaycan → Rusya | Kaynakta ayrı ülke; 1914'te Rus İmparatorluğu'nun parçası. |
-| Adsız adalar | En yakın ada kaydına göre: Ege ve İyon adaları, Girit → Yunanistan; Onikiada → İtalya (1912); Kıbrıs → Birleşik Krallık. |
+| Kıbrıs Osmanlı'dan Birleşik Krallık'a | CShapes hukukî sahibi (Osmanlı) gösterir; ada 1878 Kıbrıs Sözleşmesi'nden beri İngiliz idaresinde, 5.11.1914'te ilhak. Senaryo fiilî yönetimi esas alır. |
+| Onikiadalar Yunanistan'dan İtalya'ya | CShapes adaları Yunanistan'da gösterir; Mayıs 1912'den itibaren İtalyan işgalindedir (1923 Lozan ile İtalyan, 1947'de Yunan). |
 
-Mısır (Hidivlik) ve Kıbrıs hukuken Osmanlı'ya bağlı olsa da 1914'te fiilen Britanya yönetiminde olduğundan
-"Birleşik Krallık" olarak modellenir.
+historical-basemaps için gereken Doğu Trakya, Kars–Ardahan, Besarabya ve Kafkasya düzeltmeleri CShapes'te
+doğru olduğundan kaldırıldı (ilgili testler `GeoPackageTests.HistoricalCorrections_AreApplied` geçmeye devam eder).
+
+### Başkentler
+
+Senaryo başkentleri (`Scenario1914.CapitalCityKeys`) CShapes'in `capname` alanıyla örtüşür: İstanbul, Atina,
+Sofya, Belgrad, Çetine, Dıraç (Durres), Bükreş, Roma. Viyana, Petersburg, Londra ve Tahran kapsam dışıdır.
 
 ### Türetilmiş veri (kaynakta yok, derleyici üretir)
 

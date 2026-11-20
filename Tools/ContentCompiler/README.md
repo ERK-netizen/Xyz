@@ -1,6 +1,6 @@
 # ContentCompiler
 
-Tarihsel GeoJSON'dan oyunun coğrafi senaryo paketini (`.bytes`, TSGP sürüm 1) üretir. Yalnız geliştirme
+Tarihsel GeoJSON'dan (1914 MVP: CShapes 2.0, `format: cshapes`) oyunun coğrafi senaryo paketini (`.bytes`, TSGP sürüm 1) üretir. Yalnız geliştirme
 aracıdır; çıktı depoya girer, oyun çalışırken Python gerekmez. Ayrıntı: `compile_geo_package.py` başlığı,
 kaynak ve lisanslar: `Docs/KAYNAK_ENVANTERI.md`.
 

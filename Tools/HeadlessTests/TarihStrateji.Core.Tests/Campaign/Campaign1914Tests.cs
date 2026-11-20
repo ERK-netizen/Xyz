@@ -79,7 +79,9 @@ namespace TarihStrateji.Core.Tests.Campaign
                 Assert.That(ratio >= Fixed64.Parse("0.25") && ratio <= Fixed64.FromInt(3), Is.True, who + ": hazine oranı " + ratio);
                 Fixed64 change = Fixed64.FromRatio(Population(k, home[c.Value]) - population[c.Value], population[c.Value]);
                 Assert.That(change >= Fixed64.Parse("-0.25") && change <= Fixed64.Parse("0.05"), Is.True, who + ": nüfus değişimi " + change);
-                Fixed64 mobilized = MobilizedShare(k, home[c.Value]);
+                // Seferberlik ülkenin şu anki bölgelerinde ölçülür: barışla devredilen bölgedeki seferberler yeni
+                // sahibin askerleridir (başlangıç bölgeleriyle ölçmek onları eski sahibe yazar).
+                Fixed64 mobilized = MobilizedShare(k, HomeRegions(k, c));
                 Assert.That(mobilized <= Fixed64.Parse("0.3"), Is.True, who + ": seferberlik " + mobilized);
                 Assert.That(Held(k, c) - held[c.Value], Is.LessThanOrEqualTo(6), who + ": bölge kazancı");
             }

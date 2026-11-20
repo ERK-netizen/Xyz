@@ -13,12 +13,14 @@
   48.0
  ],
  "source": {
-  "id": "historical-basemaps-1914",
-  "url": "https://raw.githubusercontent.com/aourednik/historical-basemaps/master/geojson/world_1914.geojson",
-  "license": "GPL-3.0",
-  "author": "André Ourednik ve katkıcılar",
-  "accuracy": "estimated (BORDERPRECISION alanı)",
-  "sha256": "5adf01da9a7c25c97d89236a90abe7c79ebe04f9dfe01f0cb975775172ad0caf"
+  "id": "cshapes-2.0",
+  "format": "cshapes",
+  "url": "https://icr.ethz.ch/data/cshapes/CShapes-2.0.geojson",
+  "license": "CC BY-NC-SA 4.0",
+  "author": "Schvitz, Girardin, Rüegger, Weidmann, Cederman ve Gleditsch (ETH Zürich, International Conflict Research)",
+  "citation": "Schvitz, G., Girardin, L., Rüegger, S., Weidmann, N. B., Cederman, L.-E., & Gleditsch, K. S. (2022). Mapping the International System, 1886-2019: The CShapes 2.0 Dataset. Journal of Conflict Resolution, 66(1), 144-161.",
+  "accuracy": "Gleditsch–Ward devlet sistemi; Biger (1995) sınır ansiklopedisine dayalı kodlama",
+  "sha256": "384b1ea90b9419f30a858d7ec237c85a22c60d1b35b5f85f215a1204f9989d42"
  },
  "countries": [
   {
@@ -26,7 +28,7 @@
    "id": 1,
    "name": "Osmanlı İmparatorluğu",
    "sources": [
-    "Ottoman Empire"
+    "Turkey (Ottoman Empire)"
    ],
    "population": 21000
   },
@@ -80,7 +82,7 @@
    "id": 7,
    "name": "Romanya",
    "sources": [
-    "Romania"
+    "Rumania"
    ],
    "population": 7500
   },
@@ -89,7 +91,7 @@
    "id": 8,
    "name": "Avusturya-Macaristan",
    "sources": [
-    "Austro-Hungarian Empire"
+    "Austria-Hungary"
    ],
    "population": 9000
   },
@@ -98,7 +100,7 @@
    "id": 9,
    "name": "İtalya",
    "sources": [
-    "Kingdom of Italy",
+    "Italy/Sardinia",
     "Libya"
    ],
    "population": 14000
@@ -108,10 +110,7 @@
    "id": 10,
    "name": "Rus İmparatorluğu",
    "sources": [
-    "Russian Empire",
-    "Armenia",
-    "Georgia",
-    "Azerbaijan"
+    "Russia (Soviet Union)"
    ],
    "population": 12000
   },
@@ -121,9 +120,7 @@
    "name": "Birleşik Krallık",
    "sources": [
     "Egypt",
-    "Malta",
-    "Cyprus",
-    "United Kingdom of Great Britain and Ireland"
+    "Malta"
    ],
    "population": 13000
   },
@@ -132,7 +129,7 @@
    "id": 12,
    "name": "İran",
    "sources": [
-    "Persia"
+    "Iran (Persia)"
    ],
    "population": 1500
   }
@@ -140,217 +137,66 @@
  "corrections": [
   {
    "kind": "transfer",
-   "from": "bulgaristan",
-   "to": "osmanli",
-   "note": "Kaynak 1914 haritası Doğu Trakya'yı ve İstanbul'u Bulgaristan'a vermiş. 29.09.1913 İstanbul Antlaşması: Enez–Meriç–Edirne'nin kuzeyi–Rezve (Midye hattının kuzeyi) sınırının doğusu Osmanlı'da.",
-   "polygon": [
-    [
-     26.03,
-     40.7
-    ],
-    [
-     26.33,
-     41.25
-    ],
-    [
-     26.33,
-     41.72
-    ],
-    [
-     26.6,
-     41.9
-    ],
-    [
-     27.05,
-     42.08
-    ],
-    [
-     27.6,
-     41.98
-    ],
-    [
-     28.02,
-     41.98
-    ],
-    [
-     29.6,
-     41.6
-    ],
-    [
-     29.6,
-     40.3
-    ],
-    [
-     26.0,
-     40.3
-    ]
-   ]
-  },
-  {
-   "kind": "transfer",
    "from": "osmanli",
-   "to": "rusya",
-   "note": "Kaynak Kars–Ardahan'ı Osmanlı'ya vermiş; 1878 Berlin Antlaşması'ndan 1918'e kadar Rus İmparatorluğu'nun Kars ve Batum vilayetleri.",
+   "to": "britanya",
+   "note": "CShapes Kıbrıs'ı hukukî sahibi Osmanlı'ya verir; ada 1878 Kıbrıs Sözleşmesi'nden beri İngiliz idaresindedir (5.11.1914'te ilhak). Senaryo fiilî yönetimi esas alır.",
    "polygon": [
     [
-     41.45,
-     41.6
+     32.2,
+     34.45
     ],
     [
-     43.5,
-     41.6
+     34.7,
+     34.45
     ],
     [
-     44.0,
-     41.2
+     34.7,
+     35.8
     ],
     [
-     43.8,
-     40.0
-    ],
-    [
-     43.4,
-     39.8
-    ],
-    [
-     42.3,
-     40.0
-    ],
-    [
-     42.0,
-     40.55
-    ],
-    [
-     41.6,
-     41.0
+     32.2,
+     35.8
     ]
    ]
   },
   {
    "kind": "transfer",
-   "from": "romanya",
-   "to": "rusya",
-   "note": "Kaynak Besarabya'yı Romanya'ya vermiş; 1812–1918 arası Rus İmparatorluğu (Prut–Dinyester arası).",
+   "from": "yunanistan",
+   "to": "italya",
+   "note": "CShapes Onikiadalar'ı Yunanistan'da gösterir; adalar Mayıs 1912'den 1943'e İtalyan işgalinde (1923 Lozan ile İtalyan), Yunanistan'a 1947'de geçti.",
    "polygon": [
     [
      26.6,
-     48.5
+     35.35
     ],
     [
-     29.5,
-     48.5
+     28.4,
+     35.35
     ],
     [
-     30.8,
-     46.5
+     28.4,
+     37.45
     ],
     [
-     29.7,
-     45.2
+     26.4,
+     37.45
     ],
     [
-     28.2,
-     45.45
-    ],
-    [
-     28.2,
-     46.4
-    ],
-    [
-     27.8,
-     47.3
-    ],
-    [
-     26.9,
-     48.0
+     26.4,
+     35.6
     ]
    ]
   },
   {
    "kind": "note",
-   "note": "Ermenistan, Gürcistan ve Azerbaycan kaynakta ayrı; 1914'te Rus İmparatorluğu'nun parçası (rusya kaynak listesinde)."
+   "note": "Doğu Trakya (Osmanlı, 1913), Kars–Ardahan–Batum (Rus, 1878), Besarabya (Rus, 1812) ve Kafkasya CShapes'te doğrudur; historical-basemaps için gereken elle düzeltmeler kaldırıldı."
+  },
+  {
+   "kind": "note",
+   "note": "Mısır hukuken Osmanlı'ya bağlı ama 1882'den beri İngiliz işgalindedir; Libya 1912'den beri İtalyan'dır; Malta İngiliz kolonisidir. CShapes'te ayrı kayıtlardır, senaryoda fiilî yöneticiye bağlanır."
   }
  ],
- "islands": [
-  {
-   "lon": 24.9,
-   "lat": 35.25,
-   "country": "yunanistan",
-   "name": "Girit"
-  },
-  {
-   "lon": 26.3,
-   "lat": 39.2,
-   "country": "yunanistan",
-   "name": "Midilli"
-  },
-  {
-   "lon": 26.0,
-   "lat": 38.4,
-   "country": "yunanistan",
-   "name": "Sakız"
-  },
-  {
-   "lon": 26.8,
-   "lat": 37.7,
-   "country": "yunanistan",
-   "name": "Sisam"
-  },
-  {
-   "lon": 25.2,
-   "lat": 39.9,
-   "country": "yunanistan",
-   "name": "Limni"
-  },
-  {
-   "lon": 19.9,
-   "lat": 39.6,
-   "country": "yunanistan",
-   "name": "Korfu"
-  },
-  {
-   "lon": 20.6,
-   "lat": 38.25,
-   "country": "yunanistan",
-   "name": "Kefalonya"
-  },
-  {
-   "lon": 20.8,
-   "lat": 37.75,
-   "country": "yunanistan",
-   "name": "Zanta"
-  },
-  {
-   "lon": 23.0,
-   "lat": 36.25,
-   "country": "yunanistan",
-   "name": "Çuha"
-  },
-  {
-   "lon": 26.2,
-   "lat": 37.6,
-   "country": "yunanistan",
-   "name": "İkarya"
-  },
-  {
-   "lon": 20.65,
-   "lat": 38.7,
-   "country": "yunanistan",
-   "name": "Ayamavra"
-  },
-  {
-   "lon": 27.5,
-   "lat": 36.6,
-   "country": "italya",
-   "name": "Onikiada"
-  },
-  {
-   "lon": 33.2,
-   "lat": 35.1,
-   "country": "britanya",
-   "name": "Kıbrıs"
-  }
- ],
+ "islands": [],
  "straits": [
   {
    "name": "İstanbul Boğazı",
