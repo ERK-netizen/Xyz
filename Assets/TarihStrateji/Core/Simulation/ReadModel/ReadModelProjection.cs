@@ -50,14 +50,14 @@ namespace TarihStrateji.Core.Simulation.ReadModel
             }
         }
 
-        public static void Cities(GameState state, List<CityView> into)
+        public static void Cities(GameState state, System.Func<CountryId, CityId> capitals, List<CityView> into)
         {
             GeoWorld world = state.World;
             for (int i = 0; i < world.Cities.Count; i++)
             {
                 world.TryGetCity(world.Cities[i], out City city);
                 into.Add(new CityView(city.Id, city.Location, city.NameKey, city.DevelopmentLevel, city.Owner, city.Controller,
-                    city.Siege == SiegeState.Besieged, world.IsPort(city)));
+                    city.Siege == SiegeState.Besieged, world.IsPort(city), capitals != null && city.Owner.IsValid && capitals(city.Owner) == city.Id));
             }
         }
 

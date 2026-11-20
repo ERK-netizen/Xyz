@@ -12,7 +12,7 @@ namespace TarihStrateji.Unity.Presentation.Map
     /// Harita yazıları (yalnız sunum): şehir adları ve birlik yığını sayıları, arayüz panelinin arkasındaki
     /// dokunmayı geçiren katmanda (<see cref="HudController.MapOverlay"/>) UI Toolkit etiketleri olarak çizilir.
     /// Şehir adı LOD düzeyinin en küçük gelişim seviyesini geçen ve ekranda olan şehirlere,
-    /// <see cref="LabelPlacer"/> ile çakışmasız konur (öncelik: gelişim, sonra oyuncunun kendi şehri). Aynı
+    /// <see cref="LabelPlacer"/> ile çakışmasız konur (öncelik: gelişim, sonra başkent, sonra oyuncunun kendi şehri). Aynı
     /// yerde birden çok görünür birlik varsa sayısı işaretin sağ üstüne rozet olarak yazılır (ağ en çok
     /// <see cref="MarkerLayer.MaxUnitsDrawnPerPlace"/> şekil çizer; rozet gerçek sayıyı söyler). Etiketler
     /// havuzdan gelir; kamera, işaret katmanının kurulduğu durum sürümü veya panel boyu değişmedikçe yeniden yerleştirilmez.
@@ -97,8 +97,8 @@ namespace TarihStrateji.Unity.Presentation.Map
         /// <summary>Yazı genişliği tahmini (panel pikseli).</summary>
         public static float EstimateWidth(string text, int fontSize) => (text.Length * fontSize * CharWidthRatio) + LabelPadding;
 
-        /// <summary>Etiket önceliği: gelişim seviyesi baskındır; aynı seviyede oyuncunun kendi şehri önce.</summary>
-        public static int Priority(CityView city, bool own) => (city.DevelopmentLevel * 2) + (own ? 1 : 0);
+        /// <summary>Etiket önceliği: gelişim seviyesi baskındır; aynı seviyede başkent, sonra oyuncunun kendi şehri önce.</summary>
+        public static int Priority(CityView city, bool own) => (city.DevelopmentLevel * 4) + (city.IsCapital ? 2 : 0) + (own ? 1 : 0);
 
         private void PlaceCityLabels(int level, Vector2 panelSize)
         {
@@ -109,7 +109,7 @@ namespace TarihStrateji.Unity.Presentation.Map
             for (int i = 0; i < cities.Count; i++)
             {
                 CityView city = cities[i];
-                if (city.DevelopmentLevel < minDevelopment || !ToPanel(city.Location, panelSize, out Vector2 anchor))
+                if ((city.DevelopmentLevel < minDevelopment && !city.IsCapital) || !ToPanel(city.Location, panelSize, out Vector2 anchor))
                 {
                     continue;
                 }

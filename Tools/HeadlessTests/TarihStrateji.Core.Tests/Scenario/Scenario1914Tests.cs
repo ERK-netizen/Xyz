@@ -22,13 +22,62 @@ namespace TarihStrateji.Core.Tests.Scenario
 
         public static SimulationSetup Setup(bool ai)
         {
-            var setup = new SimulationSetup { HashIntervalDays = 1, GeoWorldTemplate = Package.BuildWorld, CountryNameKeys = Package.CountryNameKey };
+            var setup = new SimulationSetup { HashIntervalDays = 1, GeoWorldTemplate = Package.BuildWorld, CountryNameKeys = Package.CountryNameKey,
+                Capitals = CapitalTable.FromCityKeys(Package.BuildWorld(), Scenario1914.CapitalCityKeys).Of };
             StandardRules.Install(setup, Content);
             return ai ? StandardRules.InstallArtificialIntelligence(setup, Content) : setup;
         }
 
         public static SimulationKernel Kernel(ulong seed, GameMode mode, bool ai) =>
             TestSimulation.Kernel(Setup(ai), ScenarioFactory.Create1914(Content, Package, seed, mode, mode == GameMode.Observer ? CountryId.None : Scenario1914.Ottoman));
+
+        [Test]
+        public void Capitals_EightInMap_OnePerCountry_FollowLegalOwner()
+        {
+            SimulationKernel k = Kernel(1914, GameMode.Observer, false);
+            var cities = new List<CityView>();
+            k.GetCities(cities);
+            var capitalOwners = new HashSet<CountryId>();
+            string ottomanCapital = null;
+            for (int i = 0; i < cities.Count; i++)
+            {
+                if (cities[i].IsCapital)
+                {
+                    Assert.That(capitalOwners.Add(cities[i].Owner), Is.True, "ülke başına tek başkent");
+                    if (cities[i].Owner == Scenario1914.Ottoman)
+                    {
+                        ottomanCapital = cities[i].NameKey;
+                    }
+                }
+            }
+
+            Assert.That(capitalOwners.Count, Is.EqualTo(8), "Viyana, Petersburg, Londra, Tahran kapsam dışı");
+            Assert.That(ottomanCapital, Is.EqualTo("sehir.1914.istanbul"));
+
+            // Başkent sahibine bağlıdır: şehir barışla el değiştirirse yeni sahibin başkenti sayılmaz.
+            CityId istanbul = ScenarioFactory.CityOf(k.State, "sehir.1914.istanbul");
+            k.State.World.TryGetCity(istanbul, out TarihStrateji.Core.World.Geography.City city);
+            city.Owner = BaselineStatecraft.Greece;
+            cities.Clear();
+            k.GetCities(cities);
+            for (int i = 0; i < cities.Count; i++)
+            {
+                if (cities[i].Id == istanbul)
+                {
+                    Assert.That(cities[i].IsCapital, Is.False);
+                }
+            }
+        }
+
+        [Test]
+        public void CapitalTable_RejectsUnknownCityAndSecondCapital()
+        {
+            Assert.That(() => CapitalTable.FromCityKeys(Package.BuildWorld(), new[] { "sehir.1914.viyana" }),
+                Throws.InvalidOperationException.With.Message.StartsWith(CapitalTable.BaskentSehriYok));
+            Assert.That(() => CapitalTable.FromCityKeys(Package.BuildWorld(), new[] { "sehir.1914.istanbul", "sehir.1914.edirne" }),
+                Throws.InvalidOperationException.With.Message.StartsWith(CapitalTable.BaskentTekrari));
+            Assert.That(CapitalTable.Empty.Of(Scenario1914.Ottoman), Is.EqualTo(CityId.None));
+        }
 
         [Test]
         public void Scenario_BuildsAllCountries_WithArmiesFleetsAndNames()

@@ -42,7 +42,8 @@ namespace TarihStrateji.Core.Tests.Scenario
 
         public static SimulationSetup Setup(bool ai = false)
         {
-            SimulationSetup setup = StandardRules.Install(new SimulationSetup { HashIntervalDays = 1, GeoWorldTemplate = AegeanScenario.BuildWorld }, Content);
+            SimulationSetup setup = StandardRules.Install(new SimulationSetup { HashIntervalDays = 1, GeoWorldTemplate = AegeanScenario.BuildWorld,
+                Capitals = CapitalTable.FromCityKeys(AegeanScenario.BuildWorld(), AegeanScenario.CapitalCityKeys).Of }, Content);
             return ai ? StandardRules.InstallArtificialIntelligence(setup, Content) : setup;
         }
 

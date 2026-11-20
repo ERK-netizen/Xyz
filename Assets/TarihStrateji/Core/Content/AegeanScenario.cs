@@ -30,6 +30,9 @@ namespace TarihStrateji.Core.Content
     public static class AegeanScenario
     {
         public static readonly GameDate Start = GameDate.FromYmd(1925, 1, 1);
+
+        /// <summary>Başkentler (1925): Türkiye Ankara (1923'ten beri), Yunanistan Atina.</summary>
+        public static readonly string[] CapitalCityKeys = { "sehir.ege.ankara", "sehir.ege.atina" };
         public static readonly CountryId[] Countries = { BaselineStatecraft.Turkey, BaselineStatecraft.Greece };
 
         private static readonly GameDate Opened = GameDate.FromYmd(1900, 1, 1);

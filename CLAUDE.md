@@ -489,11 +489,15 @@ Yeni bir Core modülü eklemek anayasa değişikliğidir.
 - İşaretler (`MarkerLayer`, tek ağ): şehir karesi gelişimle büyür, kuşatmada kırmızı çerçeve, limanda çapa; birlik
   şekilleri yerde en çok 4.
 - Yazılar (`MapLabelLayer`, UI Toolkit, arayüzün arkasındaki dokunmayı geçiren `HudController.MapOverlay`): şehir
-  adları `LabelPlacer` ile çakışmasız (öncelik = 2 × gelişim + kendi şehri; sağ/sol/üst/alt; tüm şehir işaretleri
+  adları `LabelPlacer` ile çakışmasız (öncelik = 4 × gelişim + 2 × başkent + kendi şehri; başkent adı LOD eşiğinden bağımsız; sağ/sol/üst/alt; tüm şehir işaretleri
   engel; ekrana sığmayan gizlenir; eşitlikte küçük kimlik), oyuncunun şehirleri altın renkli; aynı yerde ≥ 2
   birlik varsa sayı rozeti. Yazı genişliği ölçülmez, tahmin edilir (karakter × 0,56 × boy). Kamera, işaret
   sürümü veya panel boyu değişmedikçe yeniden yerleşmez.
-- Başkent simgesi yok: çekirdekte başkent verisi yoktur; eklenmesi içerik + kural değişikliğidir (sonraki adım).
+- Başkent (Adım 15 eki): tanım verisidir, durum değildir. `CapitalTable.FromCityKeys` senaryonun şehir anahtarlarından
+  kurulur (ülke = şehrin başlangıç sahibi, ülke başına tek başkent; 1914'te kapsam içi 8: İstanbul, Atina, Sofya, Belgrad,
+  Çetine, Dıraç, Bükreş, Roma; Ege 1925: Ankara, Atina) ve `SimulationSetup.Capitals` ile okuma modeline verilir.
+  `CityView.IsCapital` = şehir hukukî sahibinin başkentidir; haritada karenin üstünde altın yıldız, şehir kartında "Başkent".
+  Kural etkisi yoktur (kayıt şeması ve altın değerler değişmez).
 
 ---
 

@@ -44,6 +44,7 @@ namespace TarihStrateji.Core.Simulation
         private byte[] _lastStateHash;
         private readonly Content.GameContent _content;
         private readonly System.Func<CountryId, string> _countryNames;
+        private readonly System.Func<CountryId, CityId> _capitals;
 
         private SimulationKernel(SimulationSetup setup, GameState state)
         {
@@ -54,6 +55,7 @@ namespace TarihStrateji.Core.Simulation
             _hashIntervalDays = setup.HashIntervalDays;
             _content = setup.Content;
             _countryNames = setup.CountryNameKeys;
+            _capitals = setup.Capitals;
             _phases = new List<ISimulationSystem>[SimulationPhases.Count];
             for (int p = 0; p < _phases.Length; p++)
             {
@@ -90,7 +92,7 @@ namespace TarihStrateji.Core.Simulation
 
         public RegionId FindRegion(GeoPoint point) => _state.World.Atlas.FindRegion(point);
 
-        public void GetCities(List<CityView> into) => ReadModelProjection.Cities(_state, into);
+        public void GetCities(List<CityView> into) => ReadModelProjection.Cities(_state, _capitals, into);
 
         public bool TryGetCountry(CountryId country, out CountryView view) => ReadModelProjection.TryCountry(_state, country, out view);
 

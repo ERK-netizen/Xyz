@@ -33,6 +33,17 @@ namespace TarihStrateji.Core.Content
         /// <summary>Ölçekli nüfusun bu kadar kişisine bir tümen düşer (başlangıç ordusu).</summary>
         public const long PeoplePerDivision = 400_000;
 
+        /// <summary>
+        /// 28 Haziran 1914 başkentleri (kapsam içindekiler): İstanbul, Atina, Sofya, Belgrad, Çetine, Dıraç
+        /// (Prens Wied'in merkezi), Bükreş, Roma. Viyana, Petersburg, Londra ve Tahran kapsam dışındadır; bu
+        /// ülkelerin haritada başkenti yoktur.
+        /// </summary>
+        public static readonly string[] CapitalCityKeys =
+        {
+            "sehir.1914.istanbul", "sehir.1914.atina", "sehir.1914.sofya", "sehir.1914.belgrad",
+            "sehir.1914.cetine", "sehir.1914.drac", "sehir.1914.bukres", "sehir.1914.roma",
+        };
+
         public static void Populate(GeoPackage package, GeoWorld world, PopulationState population, EconomyState economy, ResearchState research,
             PoliticsState politics, CharacterState characters, EffectEngine effects, GameContent content, GameDate today)
         {

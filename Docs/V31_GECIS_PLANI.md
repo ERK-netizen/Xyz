@@ -1,6 +1,6 @@
 # TS-GDD-TDD-3.1 → Bu depo: Durum eşlemesi ve geçiş planı
 
-Belge tarihi: 19 Kasım 2026 · Ana şartname: **TS-GDD-TDD-3.1** (depo sahibinin 19.11.2026 talimatı;
+Belge tarihi: 19 Kasım 2026 (durum tablosu 20 Kasım 2026'da güncellendi) · Ana şartname: **TS-GDD-TDD-3.1** (depo sahibinin 19.11.2026 talimatı;
 harita kararı ADR-011). Bu dosya şartnamenin bu depoya nasıl uygulanacağını tanımlar. Şartname
 "MEVCUT / KISMİ / PLAN / KABUL EDİLDİ" terimlerini zorunlu kılar; aşağıda aynı terimler kullanılır.
 
@@ -17,20 +17,20 @@ kaynağı olarak §22 hattından geçirilir.
 |---|---|---|
 | Unity derlemesi (F0-01) | Unity 6000.3.28f1, CI'da derleniyor | KABUL EDİLDİ (Editor/CI) |
 | EditMode testleri (F0-02) | CI'da koşuyor ve geçiyor | KABUL EDİLDİ (CI) |
-| Android ARM64 IL2CPP (F0-03) | APK CI'da üretiliyor | KISMİ: cihaz testi yapılmadı |
+| Android ARM64 IL2CPP (F0-03) | APK CI'da üretiliyor (`tarih-strateji-android` yapıtı) | KISMİ: cihaz testi yapılmadı (Adım 17) |
 | Tek emir kapısı, oyuncu/YZ yetkisi (F1-01) | `SimulationKernel.Submit/Validate`, YZ aynı kapı | MEVCUT/KODDA + headless test |
-| owner/controller (F1-02) | Bölge/hücre/sektör düzeyinde | KISMİ: altıgene bağlı |
-| Teleport/ücretsiz çıkarma engeli (F1-03) | A*, `transportCapacity > 0` | KISMİ: altıgen A* |
-| AP, resolutionId, kayıp muhasebesi (F1-04) | Var, testli | KISMİ: hedef = altıgen |
+| owner/controller (F1-02) | Bölge ve şehir düzeyinde (`RegionControl`, `City`), aşamalı kontrol | MEVCUT/KODDA + test |
+| Teleport/ücretsiz çıkarma engeli (F1-03) | Ulaşım grafında A*, `transportCapacity > 0` | MEVCUT/KODDA + test |
+| AP, resolutionId, kayıp muhasebesi (F1-04) | Var, hedef `TargetRef` (birlik/şehir) | MEVCUT/KODDA + test |
 | İki taraflı barış (F1-05) | `Pending → Accepted`, testli | MEVCUT/KODDA + test |
 | Sandbox yetkisi (F1-06) | `GameModeRules` | MEVCUT/KODDA + test |
 | Fixed64 S=1.000.000, SHA-256, RNG (F1-07) | Var, altın testli | MEVCUT/KODDA + test |
 | Atomik kayıt, halka, hata bildirimi (F1-08) | Var | MEVCUT/KODDA + test |
 | Nüfus kohortu, ekonomi, araştırma, siyaset, karakter (F2-01..05) | Var, küçük katalog | KISMİ (içerik az) |
-| Deniz, hava, konvoy, abluka (F2-06..08) | Var | KISMİ: altıgene bağlı |
+| Deniz, hava, konvoy, abluka (F2-06..08) | Ulaşım grafında (deniz düğümü/yolu, büyük çember menzil) | MEVCUT/KODDA + test |
 | Diplomasi, kapitülasyon/sürgün, istihbarat, YZ, olay/odak (F2-09..12) | Var | KISMİ |
-| Gerçek sınırlı dünya haritası (F3, F4) | Yok: 720×18 altıgen deneme şeridi | PLAN |
-| Mobil arayüz (F5-01) | UI Toolkit dikey HUD, altıgen harita | KISMİ |
+| Gerçek sınırlı dünya haritası (F3, F4) | 1914 MVP bölgesi (12 ülke, 129 bölge/şehir, historical-basemaps); tam dünya yok | KISMİ: F3 bölgesel MVP; F4 (tam dünya, diğer dönemler) PLAN |
+| Mobil arayüz (F5-01) | UI Toolkit dikey HUD, çokgen ülke haritası, şehir adları, başkent/liman simgeleri | KISMİ: emir önizlemesi ve diplomasi ekranı Adım 16 |
 
 ## 2. Altıgene bağlı kod envanteri (EK A.1)
 
@@ -112,7 +112,7 @@ Her adım headless testleriyle gelir; altıgen kodu yalnız yerine geçen sistem
 | 13/1 coğrafi oyun durumu, günlük sistemler, emirler, kayıt şeması 4 | CODED + TESTED (headless 392/392) |
 | 14 ContentCompiler + 1914 MVP (12 ülke, 129 bölge/şehir, tarihî düzeltmeler, senaryo kurulumu, açılış 1914) | TESTED (headless 322/322); Unity CI sonucu commit notunda |
 | 13/2–4 altıgen silindi; ekonomi/diplomasi/istihbarat/YZ/senaryo/kayıt (şema 5) coğrafi; Unity ülke haritası (yalnız ülke sınırları + şehirler) | TESTED (headless 309/309); Unity CI sonucu commit notunda |
-| 15 çokgen harita: sınır zincirleri + LOD sadeleştirme, mekânsal indeksli dokunma, liman simgesi, çakışmasız şehir adları, yığın rozetleri | Unity EditMode (MapGeometryTests, MapLabelTests); Unity CI sonucu commit notunda; başkent simgesi bekliyor (çekirdekte başkent verisi yok) |
+| 15 çokgen harita: sınır zincirleri + LOD sadeleştirme, mekânsal indeksli dokunma, liman simgesi, çakışmasız şehir adları, yığın rozetleri | Unity EditMode (MapGeometryTests, MapLabelTests); Unity CI sonucu commit notunda; başkent verisi (`CapitalTable`) ve yıldız simgesi eklendi; Unity CI ve Android APK geçti |
 
 Not (tarihî): Altıgen kural dosyaları Adım 12'de değil 13'te silindi; çünkü Simulation onlara bağlıdır ve her
 commit derlenebilir kalmalıdır (§4 "sıfır eksik kod"). Adım 12 yeni kuralları `*.Geo` isim alanlarında

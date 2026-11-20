@@ -9,7 +9,7 @@ namespace TarihStrateji.Unity.Presentation.Map
 {
     /// <summary>
     /// Şehir, birlik ve seçim işaretleri: tek dinamik ağ (tek çizim çağrısı). Şehir kare (gelişim
-    /// seviyesiyle büyür, kuşatmada kırmızı çerçeve, limanda içinde çapa), kara birliği eşkenar dörtgen, filo üçgen, hava kanadı
+    /// seviyesiyle büyür, kuşatmada kırmızı çerçeve, limanda içinde çapa, başkentte üstünde altın yıldız), kara birliği eşkenar dörtgen, filo üçgen, hava kanadı
     /// ters üçgen; çerçeve rengi kendi (beyaz) / savaştaki düşman (kırmızı) / diğer (gri). Yalnız oyuncunun
     /// gördükleri çizilir (okuma modeli savaş sisini uygular). Konumlar gerçek koordinattır
     /// (<see cref="MapProjection"/>); işaret boyu ekranda sabit kalacak şekilde kamera yakınlığıyla ölçeklenir.
@@ -118,6 +118,12 @@ namespace TarihStrateji.Unity.Presentation.Map
                 {
                     AddPortIcon(at, half);
                 }
+
+                if (city.IsCapital)
+                {
+                    AddStar(at + new Vector2(0f, half * 1.9f), half * 1.05f, MapPalette.Border);
+                    AddStar(at + new Vector2(0f, half * 1.9f), half * 0.8f, MapPalette.Highlight);
+                }
             }
 
             for (int i = 0; i < _units.Count; i++)
@@ -219,6 +225,21 @@ namespace TarihStrateji.Unity.Presentation.Map
             AddRect(at.x - w, at.y - (s * 0.7f), at.x + w, at.y + (s * 0.55f), MapPalette.Outline);
             AddRect(at.x - (s * 0.62f), at.y - (s * 0.7f), at.x + (s * 0.62f), at.y - (s * 0.7f) + (w * 2f), MapPalette.Outline);
             AddRect(at.x - (s * 0.35f), at.y + (s * 0.45f), at.x + (s * 0.35f), at.y + (s * 0.45f) + (w * 2f), MapPalette.Outline);
+        }
+
+        /// <summary>Beş köşeli yıldız (başkent): merkezden on üçgen, dış/iç yarıçap oranı 0,45.</summary>
+        private void AddStar(Vector2 center, float radius, Color32 color)
+        {
+            const int Points = 5;
+            float inner = radius * 0.45f;
+            for (int i = 0; i < Points * 2; i++)
+            {
+                float a0 = (Mathf.PI * 0.5f) + (i * Mathf.PI / Points);
+                float a1 = (Mathf.PI * 0.5f) + ((i + 1) * Mathf.PI / Points);
+                float r0 = i % 2 == 0 ? radius : inner;
+                float r1 = i % 2 == 0 ? inner : radius;
+                AddTriangle(center, center + (new Vector2(Mathf.Cos(a1), Mathf.Sin(a1)) * r1), center + (new Vector2(Mathf.Cos(a0), Mathf.Sin(a0)) * r0), color);
+            }
         }
 
         private void AddRect(float left, float bottom, float right, float top, Color32 color)

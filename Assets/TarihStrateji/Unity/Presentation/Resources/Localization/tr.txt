@@ -350,6 +350,7 @@ arayuz.tahmini = tahmini
 arayuz.kusatma = Kuşatma altında
 arayuz.gelisim = Gelişim
 arayuz.liman = Liman
+arayuz.baskent = Başkent
 arayuz.isgal = İşgal altında
 arayuz.deniz = Deniz
 arayuz.emirKabul = Emir verildi.
@@ -403,6 +404,8 @@ hata.kayit.cografyaSablonuYok = Coğrafi kayıt yüklenemedi: harita içeriği b
 hata.icerik.paketBozuk = Senaryo paketi bozuk.
 hata.icerik.paketOzetiUyusmuyor = Senaryo paketinin bütünlük özeti uyuşmuyor.
 hata.icerik.paketSurumuDesteklenmiyor = Senaryo paketinin sürümü desteklenmiyor.
+hata.icerik.baskentSehriYok = Senaryo başkenti haritada bulunamadı.
+hata.icerik.baskentTekrari = Bir ülkeye birden fazla başkent tanımlanmış.
 hata.icerik.paketGeometrisiGecersiz = Senaryo paketinin geometrisi geçersiz.
 # <senaryo-1914: ContentCompiler üretir, elle düzenlemeyin>
 ulke.1914.osmanli = Osmanlı İmparatorluğu

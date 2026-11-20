@@ -49,6 +49,9 @@ namespace TarihStrateji.Core.Simulation
         /// <summary>Senaryonun ülke ad anahtarları (sunum içindir; durum değildir). Boşsa <c>ulke.N</c>.</summary>
         public System.Func<CountryId, string> CountryNameKeys { get; set; }
 
+        /// <summary>Senaryonun başkent tablosu (tanım verisidir, durum değildir): ülke → başkent şehri. Boşsa başkent yok.</summary>
+        public System.Func<CountryId, CityId> Capitals { get; set; }
+
         public SimulationSetup AddSystem(ISimulationSystem system)
         {
             if (system == null)

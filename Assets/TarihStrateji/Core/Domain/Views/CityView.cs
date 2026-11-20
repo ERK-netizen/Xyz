@@ -3,10 +3,10 @@ using TarihStrateji.Core.Domain.Ids;
 
 namespace TarihStrateji.Core.Domain.Views
 {
-    /// <summary>Sunum için şehir görünümü: gerçek konum, gelişim seviyesi (1–10), sahip ≠ kontrolcü.</summary>
+    /// <summary>Sunum için şehir görünümü: gerçek konum, gelişim seviyesi (1–10), sahip ≠ kontrolcü, sahibinin başkenti mi.</summary>
     public readonly struct CityView
     {
-        public CityView(CityId id, GeoPoint location, string nameKey, int developmentLevel, CountryId owner, CountryId controller, bool isBesieged, bool isPort)
+        public CityView(CityId id, GeoPoint location, string nameKey, int developmentLevel, CountryId owner, CountryId controller, bool isBesieged, bool isPort, bool isCapital = false)
         {
             Id = id;
             Location = location;
@@ -16,6 +16,7 @@ namespace TarihStrateji.Core.Domain.Views
             Controller = controller;
             IsBesieged = isBesieged;
             IsPort = isPort;
+            IsCapital = isCapital;
         }
 
         public CityId Id { get; }
@@ -33,5 +34,8 @@ namespace TarihStrateji.Core.Domain.Views
         public bool IsBesieged { get; }
 
         public bool IsPort { get; }
+
+        /// <summary>Şehir, hukukî sahibinin senaryo başkentidir.</summary>
+        public bool IsCapital { get; }
     }
 }

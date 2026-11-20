@@ -103,6 +103,10 @@ namespace TarihStrateji.Tests.EditMode
             var small = new CityView(new CityId(2), new GeoPoint(0, 0), "b", 6, new CountryId(1), new CountryId(1), false, false);
             Assert.That(MapLabelLayer.Priority(big, false), Is.GreaterThan(MapLabelLayer.Priority(small, true)), "gelişim baskın");
             Assert.That(MapLabelLayer.Priority(small, true), Is.GreaterThan(MapLabelLayer.Priority(small, false)), "eşitlikte kendi şehri");
+            var capital = new CityView(new CityId(3), new GeoPoint(0, 0), "c", 6, new CountryId(2), new CountryId(2), false, false, true);
+            Assert.That(capital.IsCapital, Is.True);
+            Assert.That(MapLabelLayer.Priority(capital, false), Is.GreaterThan(MapLabelLayer.Priority(small, true)), "aynı seviyede başkent kendi şehrinden önce");
+            Assert.That(MapLabelLayer.Priority(big, false), Is.GreaterThan(MapLabelLayer.Priority(capital, true)), "gelişim başkentten baskın");
             Assert.That(MapLabelLayer.EstimateWidth("İstanbul", 26), Is.GreaterThan(MapLabelLayer.EstimateWidth("Van", 26)));
         }
     }

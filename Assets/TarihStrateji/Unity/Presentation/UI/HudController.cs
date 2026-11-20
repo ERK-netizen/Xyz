@@ -341,6 +341,11 @@ namespace TarihStrateji.Unity.Presentation.UI
                     _builder.Append("  ·  ").Append(_text.Get("arayuz.liman"));
                 }
 
+                if (city.IsCapital)
+                {
+                    _builder.Append("  ·  ").Append(_text.Get("arayuz.baskent"));
+                }
+
                 if (city.IsBesieged)
                 {
                     _builder.Append('\n').Append(_text.Get("arayuz.kusatma"));
