@@ -15,7 +15,9 @@ namespace TarihStrateji.Unity.Presentation.UI
     /// <see cref="IGameCommandGateway.Validate"/> ile önceden doğrular (geçersizse pasif); basınca
     /// <see cref="IGameCommandGateway.Submit"/> sonucu Türkçe bildirim olarak görünür. Durumu
     /// değiştirmez; yalnız emir gönderir (CLAUDE.md §2.1). Dokunma hedefleri ≥ 112 referans pikseli
-    /// (1080 genişlikte ≈ 48 dp); güvenli alan iç boşluk olarak uygulanır.
+    /// (1080 genişlikte ≈ 48 dp); güvenli alan iç boşluk olarak uygulanır. Yürüyüş ve saldırı doğrudan
+    /// gönderilmez: önce önizleme kartı (<see cref="OrderFlow"/>: süre, ikmal, güçler, risk; haritada rota) açılır,
+    /// emir "Onayla" ile gider (Adım 16).
     /// </summary>
     public sealed class HudController : MonoBehaviour
     {
@@ -38,6 +40,7 @@ namespace TarihStrateji.Unity.Presentation.UI
 
         private IGameSession _session;
         private SelectionModel _selection;
+        private OrderFlow _flow;
         private Localizer _text;
         private UIDocument _document;
         private VisualElement _root;
@@ -59,7 +62,13 @@ namespace TarihStrateji.Unity.Presentation.UI
         private Button _recruit;
         private Button _declareWar;
         private Button _proposePeace;
+        private VisualElement _previewCard;
+        private Label _previewTitle;
+        private Label _previewInfo;
+        private Button _confirm;
+        private VisualElement _actions;
 
+        private long _previewVersion = -1;
         private bool _dirty = true;
         private float _nextRefresh;
         private float _toastUntil;
@@ -69,10 +78,11 @@ namespace TarihStrateji.Unity.Presentation.UI
         /// <summary>Harita yazıları (şehir adları, yığın rozetleri) için arayüzün arkasındaki tam ekran katman.</summary>
         public VisualElement MapOverlay { get; private set; }
 
-        public void Initialize(IGameSession session, SelectionModel selection, Localizer text)
+        public void Initialize(IGameSession session, SelectionModel selection, OrderFlow flow, Localizer text)
         {
             _session = session;
             _selection = selection;
+            _flow = flow;
             _text = text;
 
             var settings = ScriptableObject.CreateInstance<PanelSettings>();
@@ -95,7 +105,8 @@ namespace TarihStrateji.Unity.Presentation.UI
 
             Build(_document.rootVisualElement);
             _session.ReadModel.StateChanged += OnStateChanged;
-            _selection.Changed += MarkDirty;
+            _selection.Changed += OnSelectionChanged;
+            _flow.Changed += MarkDirty;
         }
 
         /// <summary>Ekran noktası (piksel, alt-sol orijin) bir panelin üstünde mi (harita dokunuşunu engeller).</summary>
@@ -120,6 +131,12 @@ namespace TarihStrateji.Unity.Presentation.UI
         }
 
         private void OnStateChanged(long version) => _dirty = true;
+
+        private void OnSelectionChanged()
+        {
+            _flow.FollowSelection(_selection.Unit, _selection.Target);
+            MarkDirty();
+        }
 
         private void MarkDirty()
         {
@@ -195,7 +212,29 @@ namespace TarihStrateji.Unity.Presentation.UI
             _unitList = scroll.contentContainer;
             _bottom.Add(scroll);
 
+            _previewCard = new VisualElement { name = "onizleme" };
+            _previewCard.style.marginTop = 10;
+            _previewCard.style.paddingLeft = 16;
+            _previewCard.style.paddingRight = 16;
+            _previewCard.style.paddingTop = 12;
+            _previewCard.style.paddingBottom = 12;
+            _previewCard.style.backgroundColor = new Color(0.1f, 0.16f, 0.26f, 1f);
+            SetRadius(_previewCard, 14);
+            _previewTitle = MakeLabel(34, true);
+            _previewCard.Add(_previewTitle);
+            _previewInfo = MakeLabel(30, false);
+            _previewInfo.style.marginTop = 6;
+            _previewCard.Add(_previewInfo);
+            var decision = Row();
+            decision.style.marginTop = 10;
+            _confirm = AddAction(decision, "arayuz.onayla", OnConfirm);
+            AddAction(decision, "arayuz.vazgec", () => _flow.Close());
+            _previewCard.Add(decision);
+            _previewCard.style.display = DisplayStyle.None;
+            _bottom.Add(_previewCard);
+
             var actions = Row();
+            _actions = actions;
             actions.style.flexWrap = Wrap.Wrap;
             actions.style.marginTop = 10;
             _move = AddAction(actions, "arayuz.tasi", OnMove);
@@ -254,6 +293,12 @@ namespace TarihStrateji.Unity.Presentation.UI
             _units.Clear();
             model.GetVisibleUnits(_units);
             _selection.Reconcile(_units);
+            // Gün geçti ya da emir kabul edildi: açık önizleme aynı emirle yeniden hesaplanır.
+            if (_flow.IsOpen && _previewVersion != model.StateVersion)
+            {
+                _previewVersion = model.StateVersion;
+                _flow.Refresh(model);
+            }
 
             _date.text = DisplayFormat.Date(model.CurrentDate, _text);
             for (int i = 0; i < _speedButtons.Length; i++)
@@ -263,6 +308,7 @@ namespace TarihStrateji.Unity.Presentation.UI
 
             RefreshSummary(model);
             RefreshSelection(model);
+            RefreshPreview();
         }
 
         private void RefreshSummary(IGameReadModel model)
@@ -428,8 +474,9 @@ namespace TarihStrateji.Unity.Presentation.UI
             IGameCommandFactory orders = _session.Orders;
             bool unit = _selection.HasUnit;
             bool target = unit && _selection.HasTarget;
-            Show(_move, target, target ? orders.MoveUnit(_selection.Unit, _selection.Target) : null);
-            Show(_attack, target, target ? orders.Attack(_selection.Unit, _selection.Target) : null);
+            // Yürüyüş/saldırı önizleme açar; geçersiz emrin sebebi önizlemede görünür (düğme pasifleşmez).
+            Show(_move, target, null);
+            Show(_attack, target, null);
             Show(_hold, unit, unit ? orders.HoldPosition(_selection.Unit) : null);
             _deselect.style.display = unit ? DisplayStyle.Flex : DisplayStyle.None;
 
@@ -464,9 +511,9 @@ namespace TarihStrateji.Unity.Presentation.UI
         private void Show(Button button, bool visible, GameCommand command)
         {
             button.style.display = visible ? DisplayStyle.Flex : DisplayStyle.None;
-            if (visible && command != null)
+            if (visible)
             {
-                button.SetEnabled(_session.Commands.Validate(command).IsValid);
+                button.SetEnabled(command == null || _session.Commands.Validate(command).IsValid);
             }
         }
 
@@ -481,9 +528,83 @@ namespace TarihStrateji.Unity.Presentation.UI
             _proposePeace.style.display = DisplayStyle.None;
         }
 
-        private void OnMove() => Submit(_session.Orders.MoveUnit(_selection.Unit, _selection.Target));
+        private void OnMove() => OpenPreview(false);
 
-        private void OnAttack() => Submit(_session.Orders.Attack(_selection.Unit, _selection.Target));
+        private void OnAttack() => OpenPreview(true);
+
+        private void OpenPreview(bool attack)
+        {
+            IGameReadModel model = _session.ReadModel;
+            _previewVersion = model.StateVersion;
+            _flow.Open(model, _selection.Unit, _selection.Target, attack);
+        }
+
+        private void OnConfirm()
+        {
+            GameCommand command = _flow.Confirm(_session.Orders);
+            if (command != null)
+            {
+                Submit(command);
+            }
+        }
+
+        /// <summary>Önizleme kartı: tür, süre, hedefteki ikmal, güçler ve risk; geçersizse sebebi. Açıkken eylem satırı gizlenir.</summary>
+        private void RefreshPreview()
+        {
+            bool open = _flow.IsOpen;
+            _previewCard.style.display = open ? DisplayStyle.Flex : DisplayStyle.None;
+            _actions.style.display = open ? DisplayStyle.None : DisplayStyle.Flex;
+            if (!open)
+            {
+                return;
+            }
+
+            OrderPreview p = _flow.Preview;
+            _previewTitle.text = _text.Get(_flow.IsAttack ? "arayuz.onizleme.saldiri" : "arayuz.onizleme.yuruyus");
+            _confirm.SetEnabled(_flow.CanConfirm);
+            if (!p.IsValid)
+            {
+                _previewInfo.text = _text.Get(p.ErrorKey);
+                return;
+            }
+
+            _builder.Clear();
+            _builder.Append(_text.Get("arayuz.sure")).Append(": ");
+            if (p.Days <= 0)
+            {
+                _builder.Append(_text.Get("arayuz.hemen"));
+            }
+            else
+            {
+                _builder.Append(p.Days).Append(' ').Append(_text.Get("arayuz.gun"));
+            }
+
+            _builder.Append("  ·  ").Append(_text.Get("arayuz.hedefIkmal")).Append(": ").Append(DisplayFormat.Percent(p.SupplyAtTarget)).Append('\n')
+                .Append(_text.Get("arayuz.gucumuz")).Append(' ').Append(DisplayFormat.Decimal1(p.OwnPower)).Append("  ·  ")
+                .Append(_text.Get("arayuz.dusmanGucu")).Append(' ').Append(DisplayFormat.Decimal1(p.EnemyPower));
+            if (p.EnemyEstimated)
+            {
+                _builder.Append(" (").Append(_text.Get("arayuz.tahmini")).Append(')');
+            }
+
+            _builder.Append('\n').Append(_text.Get("arayuz.risk")).Append(": ").Append(_text.Get(RiskKey(p.Risk)));
+            _previewInfo.text = _builder.ToString();
+        }
+
+        public static string RiskKey(int risk)
+        {
+            switch (risk)
+            {
+                case OrderPreview.RiskLow:
+                    return "arayuz.risk.dusuk";
+                case OrderPreview.RiskMedium:
+                    return "arayuz.risk.orta";
+                case OrderPreview.RiskHigh:
+                    return "arayuz.risk.yuksek";
+                default:
+                    return "arayuz.risk.yok";
+            }
+        }
 
         private void OnHold() => Submit(_session.Orders.HoldPosition(_selection.Unit));
 
@@ -623,7 +744,12 @@ namespace TarihStrateji.Unity.Presentation.UI
 
             if (_selection != null)
             {
-                _selection.Changed -= MarkDirty;
+                _selection.Changed -= OnSelectionChanged;
+            }
+
+            if (_flow != null)
+            {
+                _flow.Changed -= MarkDirty;
             }
         }
     }

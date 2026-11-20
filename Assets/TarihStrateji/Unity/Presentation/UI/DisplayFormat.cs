@@ -47,6 +47,15 @@ namespace TarihStrateji.Unity.Presentation.UI
         /// <summary>Oran (1 = %100) → "%45".</summary>
         public static string Percent(Fixed64 ratio) => "%" + Thousands(RoundDiv(ratio.Raw * 100L, Fixed64.Scale));
 
+        /// <summary>Tek ondalıklı değer, Türkçe ondalık virgülüyle: 1,5 → "1,5"; −0,25 → "-0,3".</summary>
+        public static string Decimal1(Fixed64 value)
+        {
+            long tenths = RoundDiv(value.Raw * 10L, Fixed64.Scale);
+            long magnitude = tenths < 0 ? -tenths : tenths;
+            return (tenths < 0 ? "-" : string.Empty) + Thousands(magnitude / 10L) + ","
+                + (magnitude % 10L).ToString(System.Globalization.CultureInfo.InvariantCulture);
+        }
+
         public static string Date(GameDate date, Localizer text) =>
             date.Day.ToString(System.Globalization.CultureInfo.InvariantCulture) + " " + text.Get(MonthKeys[date.Month - 1]) + " "
             + date.Year.ToString(System.Globalization.CultureInfo.InvariantCulture);
