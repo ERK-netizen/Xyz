@@ -40,6 +40,9 @@ namespace TarihStrateji.Unity.Presentation.Map
 
         public List<CityView> Cities => _cities;
 
+        /// <summary>Dokunma seçimi indeksi; görünür birlik ve şehirlerle birlikte yenilenir.</summary>
+        public MapPicker Picker { get; } = new MapPicker();
+
         public void Initialize(IGameReadModel model, SelectionModel selection, Camera mapCamera, Material material)
         {
             _model = model;
@@ -60,6 +63,12 @@ namespace TarihStrateji.Unity.Presentation.Map
         {
             _units.Clear();
             _model.GetVisibleUnits(_units);
+            if (_cities.Count == 0)
+            {
+                _model.GetCities(_cities);
+            }
+
+            Picker.Rebuild(_units, _cities);
         }
 
         private void LateUpdate()
@@ -77,9 +86,9 @@ namespace TarihStrateji.Unity.Presentation.Map
 
             if (_builtVersion != _model.StateVersion)
             {
-                RefreshUnits();
                 _cities.Clear();
                 _model.GetCities(_cities);
+                RefreshUnits();
             }
 
             _builtVersion = _model.StateVersion;

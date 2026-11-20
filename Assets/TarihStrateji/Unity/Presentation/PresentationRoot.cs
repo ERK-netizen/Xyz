@@ -85,9 +85,8 @@ namespace TarihStrateji.Unity.Presentation
             controller.IsOverUi = hud.IsOverUi;
             controller.Tapped += world =>
             {
-                markerLayer.RefreshUnits();
                 float tolerance = (mapCamera.orthographicSize * 2f / Mathf.Max(1, Screen.height)) * TapTolerancePixels;
-                selection.Tap(MapPicker.Pick(model, world, tolerance, markerLayer.VisibleUnits, markerLayer.Cities));
+                selection.Tap(markerLayer.Picker.Pick(model, world, tolerance));
             };
             controller.CenterOn(StartPoint(model, countries.Bounds));
         }

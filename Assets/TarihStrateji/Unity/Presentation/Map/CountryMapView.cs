@@ -11,7 +11,8 @@ namespace TarihStrateji.Unity.Presentation.Map
     /// bölge fiilî kontrolcünün rengini alır (işgalde sahibin rengiyle karışık, koyu). Üstte yalnız ülke
     /// sınırları ve kıyılar çizgi olarak çizilir (<see cref="CountryBorders"/>); idari bölge sınırları
     /// görünmez. Renkler durum değişince en çok 4 Hz yenilenir; sınırlar yalnız sahiplik değişince yeniden
-    /// kurulur. Çizgi kalınlığı kamera yakınlığıyla ölçeklenir.
+    /// kurulur. Sınır kenarları zincirlere birleştirilir ve ayrıntı düzeyine göre (<see cref="MapLod"/>,
+    /// 4 düzey, histerezisli) Douglas–Peucker ile sadeleştirilir; çizgi kalınlığı kamera yakınlığıyla ölçeklenir.
     /// </summary>
     public sealed class CountryMapView : MonoBehaviour
     {
@@ -23,6 +24,9 @@ namespace TarihStrateji.Unity.Presentation.Map
         private readonly List<int> _firstVertex = new List<int>(64);
         private readonly List<int> _vertexCount = new List<int>(64);
         private readonly List<CountryBorders.Segment> _segments = new List<CountryBorders.Segment>(512);
+        private readonly List<BorderChains.Chain> _chains = new List<BorderChains.Chain>(128);
+        private readonly List<Vector2> _chainWorld = new List<Vector2>(256);
+        private readonly List<Vector2> _chainSimple = new List<Vector2>(256);
         private readonly List<Vector3> _vertices = new List<Vector3>(4096);
         private readonly List<Color32> _colors = new List<Color32>(4096);
         private readonly List<int> _triangles = new List<int>(8192);
@@ -34,8 +38,13 @@ namespace TarihStrateji.Unity.Presentation.Map
         private Color32[] _fillColors;
         private string _ownerSignature = string.Empty;
         private float _builtLineWidth = -1f;
+        private int _builtLevel = -1;
+        private int _level = -1;
         private bool _stateDirty = true;
         private float _nextRefresh;
+
+        /// <summary>Geçerli ayrıntı düzeyi (<see cref="MapLod"/>); etiket katmanı da okur.</summary>
+        public int Level => _level < 0 ? 0 : _level;
 
         /// <summary>Bölgelerin dünya birimindeki sınırlayıcı kutusu (kamera sınırı için).</summary>
         public Rect Bounds { get; private set; }
@@ -134,10 +143,11 @@ namespace TarihStrateji.Unity.Presentation.Map
                 RefreshColors();
             }
 
+            _level = MapLod.LevelFor(_camera.orthographicSize, _level);
             float lineWidth = LineWidth();
-            if (!Mathf.Approximately(lineWidth, _builtLineWidth))
+            if (!Mathf.Approximately(lineWidth, _builtLineWidth) || _level != _builtLevel)
             {
-                BuildBorders(lineWidth);
+                BuildBorders(lineWidth, _level);
             }
         }
 
@@ -171,20 +181,36 @@ namespace TarihStrateji.Unity.Presentation.Map
             {
                 _ownerSignature = owners;
                 CountryBorders.Compute(_regions, _rings, _segments);
+                BorderChains.Build(_segments, _chains);
                 _builtLineWidth = -1f;
             }
         }
 
-        private void BuildBorders(float width)
+        /// <summary>Sınır ve kıyı zincirleri düzeyin toleransıyla sadeleştirilip şerit olarak çizilir.</summary>
+        private void BuildBorders(float width, int level)
         {
             _builtLineWidth = width;
+            _builtLevel = level;
             _vertices.Clear();
             _colors.Clear();
             _triangles.Clear();
-            for (int i = 0; i < _segments.Count; i++)
+            float tolerance = MapLod.SimplifyTolerance(level);
+            for (int c = 0; c < _chains.Count; c++)
             {
-                CountryBorders.Segment s = _segments[i];
-                AddLine(MapProjection.ToWorld(s.A), MapProjection.ToWorld(s.B), s.IsCoast ? width * 0.6f : width, s.IsCoast ? MapPalette.Coast : MapPalette.Border);
+                BorderChains.Chain chain = _chains[c];
+                _chainWorld.Clear();
+                for (int i = 0; i < chain.Points.Count; i++)
+                {
+                    _chainWorld.Add(MapProjection.ToWorld(chain.Points[i]));
+                }
+
+                PolylineSimplifier.Simplify(_chainWorld, tolerance, _chainSimple);
+                float w = chain.IsCoast ? width * 0.6f : width;
+                Color32 color = chain.IsCoast ? MapPalette.Coast : MapPalette.Border;
+                for (int i = 0; i + 1 < _chainSimple.Count; i++)
+                {
+                    AddLine(_chainSimple[i], _chainSimple[i + 1], w, color);
+                }
             }
 
             _borders.Clear();
