@@ -112,6 +112,7 @@ Her adım headless testleriyle gelir; altıgen kodu yalnız yerine geçen sistem
 | 13/1 coğrafi oyun durumu, günlük sistemler, emirler, kayıt şeması 4 | CODED + TESTED (headless 392/392) |
 | 14 ContentCompiler + 1914 MVP (12 ülke, 129 bölge/şehir, tarihî düzeltmeler, senaryo kurulumu, açılış 1914) | TESTED (headless 322/322); Unity CI sonucu commit notunda |
 | 13/2–4 altıgen silindi; ekonomi/diplomasi/istihbarat/YZ/senaryo/kayıt (şema 5) coğrafi; Unity ülke haritası (yalnız ülke sınırları + şehirler) | TESTED (headless 309/309); Unity CI sonucu commit notunda |
+| 15 çokgen harita: sınır zincirleri + LOD sadeleştirme, mekânsal indeksli dokunma, liman simgesi, çakışmasız şehir adları, yığın rozetleri | Unity EditMode (MapGeometryTests, MapLabelTests); Unity CI sonucu commit notunda; başkent simgesi bekliyor (çekirdekte başkent verisi yok) |
 
 Not (tarihî): Altıgen kural dosyaları Adım 12'de değil 13'te silindi; çünkü Simulation onlara bağlıdır ve her
 commit derlenebilir kalmalıdır (§4 "sıfır eksik kod"). Adım 12 yeni kuralları `*.Geo` isim alanlarında

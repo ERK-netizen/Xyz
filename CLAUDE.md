@@ -479,6 +479,22 @@ Yeni bir Core modülü eklemek anayasa değişikliğidir.
   bölgelerinin nüfus değişimi [−%25; +%5], seferber ≤ 0,30, ülke başına bölge kazancı ≤ 6, her tohumda
   savaş, barış ve muharebe. Masaüstünde ≈ 6–8 s / 365 gün.
 
+**Uygulama kararları (Adım 15, `Unity.Presentation.Map`, çokgen harita çizicisi):**
+- Sınırlar: `CountryBorders` yalnız farklı sahipli bölgeler arası kenarları ve kıyıyı verir; `BorderChains` bunları
+  derecesi 2 noktalardan geçen zincirlere birleştirir (kavşaklar uç kalır, komşu ülkelerin ortak sınırı aynı
+  noktalarla sadeleşir), `PolylineSimplifier` (Douglas–Peucker) düzey başına sadeleştirir.
+- `MapLod`: ortografik yarı boy eşikleri 2,5 / 6 / 14 (%15 histerezis); tolerans 0 / 0,02 / 0,06 / 0,15°; adı
+  gösterilen en küçük gelişim 1 / 3 / 4 / 6.
+- Dokunma: `SpatialGrid` (0,5° hücre) üzerinde `MapPicker` (birlik → şehir → bölge → nokta), yalnız çevre hücreler.
+- İşaretler (`MarkerLayer`, tek ağ): şehir karesi gelişimle büyür, kuşatmada kırmızı çerçeve, limanda çapa; birlik
+  şekilleri yerde en çok 4.
+- Yazılar (`MapLabelLayer`, UI Toolkit, arayüzün arkasındaki dokunmayı geçiren `HudController.MapOverlay`): şehir
+  adları `LabelPlacer` ile çakışmasız (öncelik = 2 × gelişim + kendi şehri; sağ/sol/üst/alt; tüm şehir işaretleri
+  engel; ekrana sığmayan gizlenir; eşitlikte küçük kimlik), oyuncunun şehirleri altın renkli; aynı yerde ≥ 2
+  birlik varsa sayı rozeti. Yazı genişliği ölçülmez, tahmin edilir (karakter × 0,56 × boy). Kamera, işaret
+  sürümü veya panel boyu değişmedikçe yeniden yerleşmez.
+- Başkent simgesi yok: çekirdekte başkent verisi yoktur; eklenmesi içerik + kural değişikliğidir (sonraki adım).
+
 ---
 
 ## 3. Depo düzeni
