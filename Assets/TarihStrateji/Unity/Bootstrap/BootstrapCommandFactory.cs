@@ -36,5 +36,11 @@ namespace TarihStrateji.Unity.Bootstrap
         public GameCommand DeclareWar(CountryId target) => new DeclareWarCommand(Player, target, new RegionId[0]);
 
         public GameCommand ProposeWhitePeace(CountryId target) => new ProposeTreatyCommand(Player, ProposalKind.Peace, target, new RegionTransfer[0]);
+
+        public GameCommand ProposeNonAggression(CountryId target) => new ProposeTreatyCommand(Player, ProposalKind.NonAggression, target, new RegionTransfer[0]);
+
+        public GameCommand ProposeAlliance(CountryId target) => new ProposeTreatyCommand(Player, ProposalKind.Alliance, target, new RegionTransfer[0]);
+
+        public GameCommand RespondProposal(ulong proposalId, bool accept) => new RespondProposalCommand(Player, new ProposalId(proposalId), accept);
     }
 }

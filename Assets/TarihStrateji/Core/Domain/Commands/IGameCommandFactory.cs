@@ -21,5 +21,12 @@ namespace TarihStrateji.Core.Domain.Commands
         GameCommand DeclareWar(CountryId target);
 
         GameCommand ProposeWhitePeace(CountryId target);
+
+        GameCommand ProposeNonAggression(CountryId target);
+
+        GameCommand ProposeAlliance(CountryId target);
+
+        /// <summary>Oyuncuya gelen teklife yanıt (yalnız muhatap kabul/ret edebilir; çekirdek doğrular).</summary>
+        GameCommand RespondProposal(ulong proposalId, bool accept);
     }
 }

@@ -28,6 +28,10 @@ namespace TarihStrateji.Unity.Bootstrap
         private FileSaveStore _store;
         private BootstrapCommandFactory _orders;
         private float _accumulator;
+        private int _pendingDays;
+
+        /// <summary>Tek seferde istenebilecek en çok gün (+30 düğmesi ve biraz pay).</summary>
+        public const int MaxSkipDays = 90;
         private int _daysPerSecond = 1;
 
         public IGameReadModel ReadModel => _kernel;
@@ -52,6 +56,16 @@ namespace TarihStrateji.Unity.Bootstrap
             var host = new GameObject("TarihStrateji.Oturum");
             DontDestroyOnLoad(host);
             host.AddComponent<GameBootstrap>();
+        }
+
+        public int PendingDays => _pendingDays;
+
+        public void SkipDays(int days)
+        {
+            if (days > 0 && _kernel != null && !_kernel.IsHalted)
+            {
+                _pendingDays = Mathf.Min(_pendingDays + days, MaxSkipDays);
+            }
         }
 
         public void SetDaysPerSecond(int days)
@@ -126,7 +140,38 @@ namespace TarihStrateji.Unity.Bootstrap
 
         private void Update()
         {
-            if (_kernel == null || _daysPerSecond <= 0)
+            if (_kernel == null)
+            {
+                return;
+            }
+
+            // +N gün: hızdan bağımsız, karede en çok MaxDaysPerFrame gün (arayüz akıcı kalır).
+            if (_pendingDays > 0)
+            {
+                int steps = 0;
+                while (_pendingDays > 0 && steps < MaxDaysPerFrame && !_kernel.IsHalted)
+                {
+                    _pendingDays--;
+                    steps++;
+                    Result<DayReport> report = _kernel.AdvanceDay();
+                    if (!report.IsSuccess || report.Value.Halted)
+                    {
+                        _pendingDays = 0;
+                        break;
+                    }
+                }
+
+                if (_kernel.IsHalted)
+                {
+                    HaltReason = string.Join("\n", _kernel.HaltReasons);
+                    SetDaysPerSecond(0);
+                    Debug.LogError("Simülasyon durdu: " + HaltReason);
+                }
+
+                return;
+            }
+
+            if (_daysPerSecond <= 0)
             {
                 return;
             }

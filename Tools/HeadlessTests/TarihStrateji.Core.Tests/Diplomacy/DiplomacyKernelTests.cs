@@ -82,6 +82,35 @@ namespace TarihStrateji.Core.Tests.Diplomacy
         }
 
         [Test]
+        public void ReadModel_ListsPendingProposals_OfThePlayer_AndDropsAnsweredOnes()
+        {
+            (SimulationKernel k, _, _) = NewKernel();
+            var list = new List<TarihStrateji.Core.Domain.Views.ProposalView>();
+            k.GetProposals(list);
+            Assert.That(list, Is.Empty);
+
+            Assert.That(k.Submit(new ProposeTreatyCommand(A, ProposalKind.Peace, B, new RegionTransfer[0])).Accepted, Is.True);
+            TestSimulation.AdvanceOk(k, 1);
+            DiplomacyRules.Propose(k.State.Diplomacy, AegeanWar.Content.Diplomacy, ProposalKind.Peace, B, A, new RegionTransfer[0], k.State.Today);
+            k.GetProposals(list);
+            Assert.That(list.Count, Is.EqualTo(2));
+            Assert.That(list[0].From == A && list[0].To == B && list[0].Kind == TarihStrateji.Core.Domain.Views.ProposalView.KindPeace, Is.True);
+            Assert.That(list[1].From == B && list[1].To == A, Is.True, "gelen teklif");
+            Assert.That(list[0].Id, Is.LessThan(list[1].Id), "kimlik sırası");
+            Assert.That(list[1].LastDay, Is.GreaterThan(k.State.Today));
+
+            Assert.That(k.Submit(new RespondProposalCommand(A, new ProposalId(list[1].Id), true)).Accepted, Is.True);
+            TestSimulation.AdvanceOk(k, 1);
+            list.Clear();
+            k.GetProposals(list);
+            Assert.That(list.Count, Is.LessThanOrEqualTo(1), "yanıtlanan teklif listeden düşer");
+            for (int i = 0; i < list.Count; i++)
+            {
+                Assert.That(list[i].To == A, Is.False);
+            }
+        }
+
+        [Test]
         public void PlayerDiplomacy_FocusAndEvents_ThroughTheKernel()
         {
             (SimulationKernel k, AegeanWar s, LandUnit raider) = NewKernel();

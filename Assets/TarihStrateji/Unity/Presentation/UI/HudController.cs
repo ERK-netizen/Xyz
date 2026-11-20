@@ -17,7 +17,7 @@ namespace TarihStrateji.Unity.Presentation.UI
     /// değiştirmez; yalnız emir gönderir (CLAUDE.md §2.1). Dokunma hedefleri ≥ 112 referans pikseli
     /// (1080 genişlikte ≈ 48 dp); güvenli alan iç boşluk olarak uygulanır. Yürüyüş ve saldırı doğrudan
     /// gönderilmez: önce önizleme kartı (<see cref="OrderFlow"/>: süre, ikmal, güçler, risk; haritada rota) açılır,
-    /// emir "Onayla" ile gider (Adım 16).
+    /// emir "Onayla" ile gider (Adım 16). Üstte +1/+7/+30 gün atlama ve diplomasi ekranı (<see cref="DiplomacyPanel"/>).
     /// </summary>
     public sealed class HudController : MonoBehaviour
     {
@@ -67,6 +67,8 @@ namespace TarihStrateji.Unity.Presentation.UI
         private Label _previewInfo;
         private Button _confirm;
         private VisualElement _actions;
+        private Button _diplomacyButton;
+        private DiplomacyPanel _diplomacy;
 
         private long _previewVersion = -1;
         private bool _dirty = true;
@@ -177,6 +179,24 @@ namespace TarihStrateji.Unity.Presentation.UI
             }
 
             _top.Add(firstRow);
+
+            // Zaman atlama (+1/+7/+30 gün, hızdan bağımsız) ve diplomasi ekranı.
+            var timeRow = Row();
+            int[] skips = { 1, 7, 30 };
+            string[] skipKeys = { "arayuz.atla1", "arayuz.atla7", "arayuz.atla30" };
+            for (int i = 0; i < skips.Length; i++)
+            {
+                int days = skips[i];
+                Button skip = MakeButton(skipKeys[i], () => SkipDays(days));
+                skip.style.flexGrow = 1;
+                timeRow.Add(skip);
+            }
+
+            _diplomacyButton = MakeButton("arayuz.diplomasi", ToggleDiplomacy);
+            _diplomacyButton.style.flexGrow = 1;
+            timeRow.Add(_diplomacyButton);
+            _top.Add(timeRow);
+
             _summary = MakeLabel(32, false);
             _summary.style.marginTop = 8;
             _top.Add(_summary);
@@ -196,6 +216,10 @@ namespace TarihStrateji.Unity.Presentation.UI
             _toast.style.marginBottom = 20;
             SetRadius(_toast, 16);
             _toast.style.display = DisplayStyle.None;
+            _diplomacy = new DiplomacyPanel(_session, _text, CountryName, Submit);
+            VisualElement diplomacy = _diplomacy.Build(ToggleDiplomacy);
+            diplomacy.style.alignSelf = Align.Stretch;
+            _spacer.Add(diplomacy);
             _spacer.Add(_toast);
             _root.Add(_spacer);
 
@@ -309,6 +333,11 @@ namespace TarihStrateji.Unity.Presentation.UI
             RefreshSummary(model);
             RefreshSelection(model);
             RefreshPreview();
+            _diplomacy.Refresh();
+            if (_session.PendingDays > 0)
+            {
+                _date.text += "  (+" + _session.PendingDays.ToString(System.Globalization.CultureInfo.InvariantCulture) + " " + _text.Get("arayuz.gun") + ")";
+            }
         }
 
         private void RefreshSummary(IGameReadModel model)
@@ -641,6 +670,21 @@ namespace TarihStrateji.Unity.Presentation.UI
             CommandReceipt receipt = _session.Commands.Submit(command);
             ShowMessage(receipt.Accepted ? "arayuz.emirKabul" : receipt.Validation.ErrorKey);
             MarkDirty();
+        }
+
+        private void SkipDays(int days)
+        {
+            _session.SkipDays(days);
+            MarkDirty();
+        }
+
+        /// <summary>Diplomasi ekranını açar/kapatır; açıkken alt panel (seçim, önizleme) gizlenir.</summary>
+        private void ToggleDiplomacy()
+        {
+            bool show = !_diplomacy.IsVisible;
+            _diplomacy.Show(show);
+            _bottom.style.display = show ? DisplayStyle.None : DisplayStyle.Flex;
+            _diplomacyButton.style.backgroundColor = show ? ActiveButtonColor : ButtonColor;
         }
 
         private void SetSpeed(int daysPerSecond)

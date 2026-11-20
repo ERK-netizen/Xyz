@@ -57,6 +57,9 @@ namespace TarihStrateji.Core.Domain.Commands
         /// </summary>
         OrderPreview PreviewOrder(ulong unitId, TargetRef target, bool attack, List<GeoPoint> path);
 
+        /// <summary>Oyuncunun taraf olduğu bekleyen teklifler (kimlik sırasıyla); Gözlemci modunda tüm bekleyenler.</summary>
+        void GetProposals(List<ProposalView> into);
+
         /// <summary>Oyuncunun savaşta olduğu ülke mi.</summary>
         bool IsAtWarWith(CountryId other);
     }

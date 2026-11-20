@@ -499,6 +499,22 @@ Yeni bir Core modülü eklemek anayasa değişikliğidir.
   `CityView.IsCapital` = şehir hukukî sahibinin başkentidir; haritada karenin üstünde altın yıldız, şehir kartında "Başkent".
   Kural etkisi yoktur (kayıt şeması ve altın değerler değişmez).
 
+**Uygulama kararları (Adım 16, mobil emir akışı, zaman ve diplomasi):**
+- Önizleme çekirdektedir: `IGameReadModel.PreviewOrder(birlik, TargetRef, saldırı, rota)` → `OrderPreview`
+  (`Simulation.ReadModel.OrderPreviewProjection`); emir işleyicileriyle aynı kurallar (`CheckMove`/`CheckAttack`),
+  süre = rota maliyeti / günlük hareket bütçesi (yukarı yuvarlanır; saldırı 0), ikmal P11 kaynaklarından hedef
+  düğümde, düşman gücü yalnız oyuncunun temasları (savunma, birliğin kendi türüyle tahmin) + düşman şehri
+  garnizonu; risk güç oranıyla (≥ 2 düşük, ≥ 1 orta, altı yüksek, düşman yoksa yok). Durumu değiştirmez (testle).
+- Sunumda `OrderFlow`: Buraya yürü/Saldır önizleme kartını açar (süre, hedefte ikmal, güçler, risk; geçersizse
+  Türkçe sebep, Onayla pasif), Onayla emri `IGameCommandGateway`'den geçirir, Vazgeç kapatır; seçim değişince
+  kapanır, durum sürümü değişince yeniden önizlenir. `RouteLayer` rotayı çizer (yürüyüş mavi, saldırı riske göre).
+- Zaman: `IGameSession.SkipDays` (+1/+7/+30, en çok 90 bekleyen gün), hızdan bağımsız, karede ≤ 4 gün; durma
+  hâlinde bekleyen günler bırakılır.
+- Diplomasi: `IGameReadModel.GetProposals` (oyuncunun taraf olduğu bekleyen teklifler; Gözlemci'de hepsi),
+  emir üretici `ProposeNonAggression`/`ProposeAlliance`/`RespondProposal`; `DiplomacyPanel` gelen teklifleri
+  (Kabul/Ret), bekleyenleri ve ülkeleri (savaş ilanı, beyaz barış, saldırmazlık, ittifak) gösterir; düğmeler
+  `Validate` ile önceden doğrulanır.
+
 ---
 
 ## 3. Depo düzeni

@@ -88,6 +88,8 @@ namespace TarihStrateji.Tests.EditMode
             Assert.That(RouteLayer.ColorFor(true, OrderPreview.RiskHigh), Is.Not.EqualTo(RouteLayer.ColorFor(true, OrderPreview.RiskLow)));
             Assert.That(RouteLayer.ColorFor(true, 99), Is.EqualTo(RouteLayer.ColorFor(true, OrderPreview.RiskHigh)), "taşma en yüksek riske sıkışır");
             Assert.That(HudController.RiskKey(OrderPreview.RiskMedium), Is.EqualTo("arayuz.risk.orta"));
+            Assert.That(DiplomacyPanel.ProposalKey(ProposalView.KindPeace), Is.EqualTo("arayuz.teklif.baris"));
+            Assert.That(DiplomacyPanel.ProposalKey(ProposalView.KindAlliance), Is.EqualTo("arayuz.teklif.ittifak"));
             Assert.That(DisplayFormat.Decimal1(Fixed64.Parse("1.25")), Is.EqualTo("1,3"));
             Assert.That(DisplayFormat.Decimal1(Fixed64.Parse("-0.04")), Is.EqualTo("0,0"));
             Assert.That(DisplayFormat.Decimal1(Fixed64.FromInt(1234)), Is.EqualTo("1.234,0"));
@@ -147,6 +149,8 @@ namespace TarihStrateji.Tests.EditMode
 
             public void GetVisibleUnits(List<UnitView> into) { }
 
+            public void GetProposals(List<ProposalView> into) { }
+
             public bool IsAtWarWith(CountryId other) => false;
         }
 
@@ -165,6 +169,12 @@ namespace TarihStrateji.Tests.EditMode
             public GameCommand DeclareWar(CountryId target) => Make("savas");
 
             public GameCommand ProposeWhitePeace(CountryId target) => Make("baris");
+
+            public GameCommand ProposeNonAggression(CountryId target) => Make("saldirmazlik");
+
+            public GameCommand ProposeAlliance(CountryId target) => Make("ittifak");
+
+            public GameCommand RespondProposal(ulong proposalId, bool accept) => Make((accept ? "kabul:" : "ret:") + proposalId);
 
             private GameCommand Make(string kind)
             {

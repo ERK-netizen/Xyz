@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using TarihStrateji.Core.Content;
+using TarihStrateji.Core.Diplomacy.State;
 using TarihStrateji.Core.Domain.Geography;
 using TarihStrateji.Core.Domain.Ids;
 using TarihStrateji.Core.Domain.Numerics;
@@ -58,6 +59,20 @@ namespace TarihStrateji.Core.Simulation.ReadModel
                 world.TryGetCity(world.Cities[i], out City city);
                 into.Add(new CityView(city.Id, city.Location, city.NameKey, city.DevelopmentLevel, city.Owner, city.Controller,
                     city.Siege == SiegeState.Besieged, world.IsPort(city), capitals != null && city.Owner.IsValid && capitals(city.Owner) == city.Id));
+            }
+        }
+
+        /// <summary>Bekleyen teklifler: oyuncu gönderen ya da muhatapsa; Gözlemci modunda hepsi (kimlik sırasıyla).</summary>
+        public static void Proposals(GameState state, List<ProposalView> into)
+        {
+            CountryId player = state.PlayerCountry;
+            for (int i = 0; i < state.Diplomacy.Proposals.Count; i++)
+            {
+                Proposal p = state.Diplomacy.Proposals.ValueAt(i);
+                if (p.Status == ProposalStatus.Pending && (!player.IsValid || p.From == player || p.To == player))
+                {
+                    into.Add(new ProposalView(p.Id.Value, (byte)p.Kind, p.From, p.To, p.LastDay, p.Transfers.Count));
+                }
             }
         }
 

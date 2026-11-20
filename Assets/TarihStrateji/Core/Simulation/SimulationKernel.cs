@@ -120,6 +120,8 @@ namespace TarihStrateji.Core.Simulation
             ReadModelProjection.Units(_state, _content, into);
         }
 
+        public void GetProposals(List<ProposalView> into) => ReadModelProjection.Proposals(_state, into);
+
         public OrderPreview PreviewOrder(ulong unitId, TargetRef target, bool attack, List<GeoPoint> path)
         {
             if (_content == null)
