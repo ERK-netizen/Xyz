@@ -528,6 +528,20 @@ Yeni bir Core modülü eklemek anayasa değişikliğidir.
   `persistentDataPath/olcum_*.txt` + günlük; sayılar `MeasurementLog` (mikrosaniye tamsayı, en yakın sıra yüzdeliği).
   Süre ölçümü yalnız Unity katmanındadır. Yöntem ve hedefler `Docs/CIHAZ_OLCUMU.md`.
 
+**Uygulama kararları (Adım 18, 1939 senaryosu ve senaryo seçimi):**
+- Plan (depo sahibinin "hepsi" kararı, 20.11.2026): 18 = 1939 + senaryo seçimi, 19 = 1936, 20 = ürünleştirme (ana menü,
+  kayıt yuvaları, ayarlar, yayın imzası), 21 = tam dünya.
+- 1939 paketi aynı derleyici ve CShapes'ten (01.09.1939); ad öneki senaryo yılından (`ulke.1939.*`); 14 ülke, 133
+  bölge/şehir; fiilî yönetim: Arnavutluk ve Onikiadalar İtalyan, Avusturya Alman, Hatay Türk, Levant Fransız, Kıbrıs/Filistin/
+  Ürdün İngiliz (`Docs/KAYNAK_ENVANTERI.md`).
+- `PackageScenario` paket senaryolarının ortak kurulumu (1914 sırası korunur, altın değer değişmedi); `Scenario1939`:
+  Türkiye CHP tek parti, 9 başkent, YZ'nin ilk savaşı ≥ 10.06.1940. `ScenarioFactory.CreateFromPackage`.
+- Seçim: `ScenarioCatalog` (Bootstrap; kimlik, başlık, paket, kurucu, başkentler, YZ tarihi, varsayılan oyuncu);
+  `IGameSession.GetScenarios`/`StartNewGame`/`CurrentScenario`/`SessionReplaced`; son oturumun senaryosu
+  `kayitlar/son_oturum.senaryo` yan dosyasında (yoksa 1914). Yeni oyunda `PresentationRoot` tüm katmanları bir sonraki
+  karede yıkıp aynı oturumla yeniden kurar. `NewGamePanel`: senaryo → ülke. Harita renkleri 16 kimlik.
+- Açık bulgu: 1939 barış ekonomisi (hazine P90 3,03 > 3,0) — ayrı gelir/gider denge geçişi (`Docs/DENGE_1914.md`).
+
 ---
 
 ## 3. Depo düzeni

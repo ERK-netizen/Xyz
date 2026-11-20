@@ -6,14 +6,15 @@ using TarihStrateji.Core.Domain;
 using TarihStrateji.Core.Domain.Commands;
 using TarihStrateji.Core.Persistence;
 using TarihStrateji.Core.Simulation;
+using TarihStrateji.Core.Simulation.State;
 using UnityEngine;
 
 namespace TarihStrateji.Unity.Bootstrap
 {
     /// <summary>
-    /// Oyun oturumu: içerik, kurallar ve YZ kurulur; "1914 MVP" coğrafi paketi
-    /// (<c>Resources/Senaryolar/1914_mvp</c>) okunur; son oturum kaydı varsa (aynı haritayla) yüklenir, yoksa
-    /// senaryo Osmanlı İmparatorluğu ile başlar. Günler <see cref="DaysPerSecond"/> hızında ana iş
+    /// Oyun oturumu: içerik, kurallar ve YZ kurulur; senaryolar <see cref="ScenarioCatalog"/>'tadır (1914, 1939). Son
+    /// oturum kaydı varsa kendi senaryosunun haritasıyla (yan dosya <c>son_oturum.senaryo</c>; yoksa 1914) yüklenir,
+    /// yoksa 1914 Osmanlı ile başlar; yeni oyun <see cref="StartNewGame"/> ile seçilir. Günler <see cref="DaysPerSecond"/> hızında ana iş
     /// parçacığında ilerler (karede en çok 4 gün). Oyun kuralı yazmaz: yalnız çekirdeği çalıştırır
     /// ve sunuma <see cref="IGameSession"/> verir. Uygulama arka plana alınınca veya kapanınca
     /// "son_oturum" yuvasına atomik kayıt yapılır; 30 günde bir otomatik kayıt halkası işler.
@@ -21,7 +22,8 @@ namespace TarihStrateji.Unity.Bootstrap
     public sealed class GameBootstrap : MonoBehaviour, IGameSession
     {
         public const string LastSessionSlot = "son_oturum";
-        public const string PackageResource = "Senaryolar/1914_mvp";
+        /// <summary>Son oturumun senaryo kimliğini tutan yan dosya (kayıt klasöründe); yoksa 1914 sayılır.</summary>
+        public const string ScenarioSidecar = LastSessionSlot + ".senaryo";
         private const int MaxDaysPerFrame = 4;
 
         private SimulationKernel _kernel;
@@ -30,6 +32,14 @@ namespace TarihStrateji.Unity.Bootstrap
         private float _accumulator;
         private int _pendingDays;
         private DeviceMeasurement _measurement;
+        private readonly ScenarioCatalog _catalog = new ScenarioCatalog();
+        private GameContent _content;
+        private ScenarioCatalog.Entry _scenario;
+        private string _directory;
+
+        public string CurrentScenario => _scenario == null ? string.Empty : _scenario.Id;
+
+        public event Action SessionReplaced;
 
         /// <summary>Tek seferde istenebilecek en çok gün (+30 düğmesi ve biraz pay).</summary>
         public const int MaxSkipDays = 90;
@@ -91,60 +101,116 @@ namespace TarihStrateji.Unity.Bootstrap
         {
             Application.targetFrameRate = 60;
             Screen.orientation = ScreenOrientation.Portrait;
-            GameContent content = BaselineContent.Create();
-            GeoPackage package = LoadPackage();
-            string directory = Path.Combine(Application.persistentDataPath, "kayitlar");
-            Directory.CreateDirectory(directory);
-            _store = new FileSaveStore(directory);
-            SimulationSetup setup = CreateSetup(content, package, _store);
-            _measurement = new DeviceMeasurement(() => _kernel, () => CreateSetup(content, package, null), Application.persistentDataPath);
+            _content = BaselineContent.Create();
+            _directory = Path.Combine(Application.persistentDataPath, "kayitlar");
+            Directory.CreateDirectory(_directory);
+            _store = new FileSaveStore(_directory);
+            _measurement = new DeviceMeasurement(() => _kernel, () => CreateSetup(_scenario, null), Application.persistentDataPath);
+            _orders = new BootstrapCommandFactory(() => _kernel);
 
-            Result<LoadedGame> loaded = GameSaveService.Load(_store, LastSessionSlot, setup);
+            // Son oturum kendi senaryosunun haritasıyla yüklenir; yoksa ya da yüklenemezse varsayılan senaryo başlar.
+            _scenario = _catalog.Find(ReadSidecar());
+            Result<LoadedGame> loaded = GameSaveService.Load(_store, LastSessionSlot, CreateSetup(_scenario, _store));
             if (loaded.IsSuccess)
             {
                 _kernel = loaded.Value.Kernel;
+                return;
             }
-            else
+
+            ScenarioCatalog.Entry fallback = _catalog.Find(ScenarioCatalog.DefaultId);
+            ValidationResult created = StartGame(fallback, fallback.DefaultPlayer);
+            if (!created.IsValid)
             {
-                ulong seed = (ulong)Environment.TickCount;
-                Result<SimulationKernel> created = SimulationKernel.Create(setup, ScenarioFactory.Create1914(content, package, seed, GameMode.Normal, Scenario1914.Ottoman));
-                if (!created.IsSuccess)
-                {
-                    throw new InvalidOperationException("Oyun çekirdeği kurulamadı: " + created.ErrorKey);
-                }
-
-                _kernel = created.Value;
+                throw new InvalidOperationException("Oyun çekirdeği kurulamadı: " + created.ErrorKey);
             }
-
-            _orders = new BootstrapCommandFactory(() => _kernel);
         }
 
-        private static GeoPackage LoadPackage()
+        public void GetScenarios(System.Collections.Generic.List<Core.Domain.Views.ScenarioView> into) => _catalog.Views(into);
+
+        public ValidationResult StartNewGame(string scenarioId, Core.Domain.Ids.CountryId player)
         {
-            var asset = Resources.Load<TextAsset>(PackageResource);
-            if (asset == null)
+            ScenarioCatalog.Entry entry = _catalog.Find(scenarioId);
+            if (!string.Equals(entry.Id, scenarioId, StringComparison.Ordinal))
             {
-                throw new InvalidOperationException("Senaryo paketi bulunamadı: Resources/" + PackageResource);
+                return ValidationResult.Fail("hata.senaryo.bilinmiyor");
             }
 
-            Result<GeoPackage> package = GeoPackageReader.Read(asset.bytes);
-            if (!package.IsSuccess)
+            ValidationResult started = StartGame(entry, player);
+            if (started.IsValid)
             {
-                throw new InvalidOperationException("Senaryo paketi okunamadı: " + package.ErrorKey);
+                SessionReplaced?.Invoke();
             }
 
-            return package.Value;
+            return started;
         }
 
-        private static SimulationSetup CreateSetup(GameContent content, GeoPackage package, FileSaveStore store)
+        private ValidationResult StartGame(ScenarioCatalog.Entry entry, Core.Domain.Ids.CountryId player)
         {
+            GeoPackage package = _catalog.Package(entry);
+            bool known = false;
+            for (int i = 0; i < package.Countries.Count; i++)
+            {
+                known |= package.Countries[i] == player;
+            }
+
+            if (!known)
+            {
+                return ValidationResult.Fail("hata.senaryo.ulkeYok");
+            }
+
+            ulong seed = (ulong)Environment.TickCount;
+            GameState state = ScenarioFactory.CreateFromPackage(_content, package, seed, GameMode.Normal, player, entry.Populate);
+            Result<SimulationKernel> created = SimulationKernel.Create(CreateSetup(entry, _store), state);
+            if (!created.IsSuccess)
+            {
+                return ValidationResult.Fail(created.ErrorKey);
+            }
+
+            _scenario = entry;
+            _kernel = created.Value;
+            _pendingDays = 0;
+            _accumulator = 0f;
+            HaltReason = string.Empty;
+            WriteSidecar();
+            return ValidationResult.Ok;
+        }
+
+        private string ReadSidecar()
+        {
+            try
+            {
+                string path = Path.Combine(_directory, ScenarioSidecar);
+                return File.Exists(path) ? File.ReadAllText(path).Trim() : ScenarioCatalog.DefaultId;
+            }
+            catch (IOException)
+            {
+                return ScenarioCatalog.DefaultId;
+            }
+        }
+
+        private void WriteSidecar()
+        {
+            try
+            {
+                File.WriteAllText(Path.Combine(_directory, ScenarioSidecar), _scenario.Id);
+            }
+            catch (IOException e)
+            {
+                Debug.LogWarning("Senaryo kimliği yazılamadı: " + e.Message);
+            }
+        }
+
+        private SimulationSetup CreateSetup(ScenarioCatalog.Entry entry, FileSaveStore store)
+        {
+            GeoPackage package = _catalog.Package(entry);
+            GameContent content = _content;
             // Cihazda durum hash'i ve otomatik kayıt seyrek: 30 günde bir (CLAUDE.md §2.5).
             var setup = new SimulationSetup
             {
                 GeoWorldTemplate = package.BuildWorld,
                 CountryNameKeys = package.CountryNameKey,
-                Capitals = CapitalTable.FromCityKeys(package.BuildWorld(), Scenario1914.CapitalCityKeys).Of,
-                AiEarliestWarDate = Scenario1914.AiEarliestWar,
+                Capitals = CapitalTable.FromCityKeys(package.BuildWorld(), entry.CapitalCityKeys).Of,
+                AiEarliestWarDate = entry.AiEarliestWar,
                 HashIntervalDays = 30,
                 // Ölçüm kopyası (store yok) otomatik kayıt yapmaz: oyuncunun kayıt halkasına dokunulmaz.
                 AutosaveIntervalDays = store == null ? 0 : 30,

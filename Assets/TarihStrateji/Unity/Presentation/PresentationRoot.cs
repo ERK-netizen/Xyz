@@ -21,6 +21,9 @@ namespace TarihStrateji.Unity.Presentation
         private const float TapTolerancePixels = 40f;
 
         private Material _material;
+        private IGameSession _session;
+        private MapCameraController _controller;
+        private bool _rebuildPending;
 
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterSceneLoad)]
         private static void CreateOnStartup()
@@ -58,6 +61,12 @@ namespace TarihStrateji.Unity.Presentation
 
         public void Initialize(IGameSession session)
         {
+            if (_session == null)
+            {
+                _session = session;
+                session.SessionReplaced += () => _rebuildPending = true;
+            }
+
             IGameReadModel model = session.ReadModel;
             Camera mapCamera = CreateCamera();
             _material = CreateMaterial();
@@ -91,6 +100,7 @@ namespace TarihStrateji.Unity.Presentation
             labels.AddComponent<MapLabelLayer>().Initialize(model, markerLayer, countries, mapCamera, text, hud.MapOverlay);
 
             MapCameraController controller = mapCamera.gameObject.AddComponent<MapCameraController>();
+            _controller = controller;
             controller.Initialize(mapCamera, countries.Bounds);
             controller.IsOverUi = hud.IsOverUi;
             controller.Tapped += world =>
@@ -146,6 +156,36 @@ namespace TarihStrateji.Unity.Presentation
             }
 
             return new Material(shader) { name = "HaritaRenk" };
+        }
+
+        /// <summary>
+        /// Yeni oyun (başka senaryo/harita): tüm katmanlar ve kamera denetimi yıkılıp aynı oturumla yeniden kurulur.
+        /// Olay bir düğme geri çağrısından gelebileceği için yıkım bir sonraki karede yapılır.
+        /// </summary>
+        private void LateUpdate()
+        {
+            if (!_rebuildPending)
+            {
+                return;
+            }
+
+            _rebuildPending = false;
+            for (int i = transform.childCount - 1; i >= 0; i--)
+            {
+                Destroy(transform.GetChild(i).gameObject);
+            }
+
+            if (_controller != null)
+            {
+                Destroy(_controller);
+            }
+
+            if (_material != null)
+            {
+                Destroy(_material);
+            }
+
+            Initialize(_session);
         }
 
         private void OnDestroy()

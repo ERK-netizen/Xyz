@@ -93,6 +93,21 @@ namespace TarihStrateji.Core.Tests.Scenario
         }
 
         [Test]
+        public void ScenarioView_PairsCountriesWithNameKeys()
+        {
+            var names = new string[Package.Countries.Count];
+            for (int i = 0; i < names.Length; i++)
+            {
+                names[i] = Package.CountryNameKey(Package.Countries[i]);
+            }
+
+            var view = new ScenarioView("1939", "senaryo.1939", Package.Date, Scenario1939.Turkey, Package.Countries, names);
+            Assert.That(view.Countries.Count, Is.EqualTo(14));
+            Assert.That(view.CountryNameKeys[0], Is.EqualTo("ulke.1939.turkiye"));
+            Assert.That(() => new ScenarioView("x", "y", Package.Date, Scenario1939.Turkey, Package.Countries, new string[1]), Throws.ArgumentException);
+        }
+
+        [Test]
         public void Year_WithAi_StaysDeterministic_InsideBands_AndNoAiWarBeforeJune1940()
         {
             SimulationKernel a = Kernel(41, GameMode.Observer, true);

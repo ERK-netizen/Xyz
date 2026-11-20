@@ -69,6 +69,8 @@ namespace TarihStrateji.Unity.Presentation.UI
         private VisualElement _actions;
         private Button _diplomacyButton;
         private DiplomacyPanel _diplomacy;
+        private Button _newGameButton;
+        private NewGamePanel _newGame;
 
         private long _previewVersion = -1;
         private bool _dirty = true;
@@ -203,6 +205,9 @@ namespace TarihStrateji.Unity.Presentation.UI
             });
             measure.style.flexGrow = 1;
             timeRow.Add(measure);
+            _newGameButton = MakeButton("arayuz.yeniOyun", ToggleNewGame);
+            _newGameButton.style.flexGrow = 1;
+            timeRow.Add(_newGameButton);
             _top.Add(timeRow);
 
             _summary = MakeLabel(32, false);
@@ -228,6 +233,10 @@ namespace TarihStrateji.Unity.Presentation.UI
             VisualElement diplomacy = _diplomacy.Build(ToggleDiplomacy);
             diplomacy.style.alignSelf = Align.Stretch;
             _spacer.Add(diplomacy);
+            _newGame = new NewGamePanel(_session, _text, ShowMessage);
+            VisualElement newGame = _newGame.Build(ToggleNewGame);
+            newGame.style.alignSelf = Align.Stretch;
+            _spacer.Add(newGame);
             _spacer.Add(_toast);
             _root.Add(_spacer);
 
@@ -697,10 +706,29 @@ namespace TarihStrateji.Unity.Presentation.UI
             MarkDirty();
         }
 
+        /// <summary>Yeni oyun ekranını açar/kapatır (diplomasi ekranı kapanır, alt panel gizlenir).</summary>
+        private void ToggleNewGame()
+        {
+            bool show = !_newGame.IsVisible;
+            if (show && _diplomacy.IsVisible)
+            {
+                ToggleDiplomacy();
+            }
+
+            _newGame.Show(show);
+            _bottom.style.display = show ? DisplayStyle.None : DisplayStyle.Flex;
+            _newGameButton.style.backgroundColor = show ? ActiveButtonColor : ButtonColor;
+        }
+
         /// <summary>Diplomasi ekranını açar/kapatır; açıkken alt panel (seçim, önizleme) gizlenir.</summary>
         private void ToggleDiplomacy()
         {
             bool show = !_diplomacy.IsVisible;
+            if (show && _newGame.IsVisible)
+            {
+                ToggleNewGame();
+            }
+
             _diplomacy.Show(show);
             _bottom.style.display = show ? DisplayStyle.None : DisplayStyle.Flex;
             _diplomacyButton.style.backgroundColor = show ? ActiveButtonColor : ButtonColor;

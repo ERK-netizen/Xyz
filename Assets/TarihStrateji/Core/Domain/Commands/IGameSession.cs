@@ -1,3 +1,8 @@
+using System;
+using System.Collections.Generic;
+using TarihStrateji.Core.Domain.Ids;
+using TarihStrateji.Core.Domain.Views;
+
 namespace TarihStrateji.Core.Domain.Commands
 {
     /// <summary>
@@ -38,5 +43,20 @@ namespace TarihStrateji.Core.Domain.Commands
 
         /// <summary>Boş, ölçüm ilerlemesi ya da son ölçümün tek satırlık özeti.</summary>
         string MeasurementStatus { get; }
+
+        /// <summary>Çalışan oyunun senaryo kimliği ("1914", "1939").</summary>
+        string CurrentScenario { get; }
+
+        /// <summary>Yeni oyunda seçilebilen senaryolar ve ülkeleri (Adım 18).</summary>
+        void GetScenarios(List<ScenarioView> into);
+
+        /// <summary>
+        /// Seçilen senaryo ve ülkeyle yeni oyun kurar (Normal mod, YZ'li); çalışan oyunun yerine geçer. Başarılıysa
+        /// <see cref="SessionReplaced"/> tetiklenir: okuma modeli değişmiştir, sunum haritayı baştan kurmalıdır.
+        /// </summary>
+        ValidationResult StartNewGame(string scenarioId, CountryId player);
+
+        /// <summary>Çalışan oyun başka bir çekirdekle değişti (yeni oyun).</summary>
+        event Action SessionReplaced;
     }
 }

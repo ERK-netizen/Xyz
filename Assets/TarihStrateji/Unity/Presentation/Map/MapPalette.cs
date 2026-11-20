@@ -19,20 +19,25 @@ namespace TarihStrateji.Unity.Presentation.Map
         public static readonly Color32 EnemyOutline = new Color32(200, 40, 40, 255);
         public static readonly Color32 EstimateOutline = new Color32(150, 150, 150, 255);
 
+        /// <summary>Ülke kimliğine göre renk (kimlik − 1); senaryolar kimlikleri paylaşır: 1914 / 1939 adları yorumda.</summary>
         private static readonly Color32[] CountryColors =
         {
             new Color32(200, 48, 48, 255),   // 1 Osmanlı / Türkiye
             new Color32(46, 104, 196, 255),  // 2 Yunanistan
             new Color32(54, 150, 84, 255),   // 3 Bulgaristan
-            new Color32(150, 72, 168, 255),  // 4 Sırbistan
-            new Color32(214, 140, 40, 255),  // 5 Karadağ
-            new Color32(40, 160, 168, 255),  // 6 Arnavutluk
+            new Color32(150, 72, 168, 255),  // 4 Sırbistan / Yugoslavya
+            new Color32(214, 140, 40, 255),  // 5 Karadağ / Mısır
+            new Color32(40, 160, 168, 255),  // 6 Arnavutluk / Irak
             new Color32(150, 110, 60, 255),  // 7 Romanya
-            new Color32(120, 120, 130, 255), // 8 Avusturya-Macaristan
+            new Color32(120, 120, 130, 255), // 8 Avusturya-Macaristan / Alman Reich
             new Color32(200, 180, 70, 255),  // 9 İtalya
-            new Color32(80, 80, 190, 255),   // 10 Rus İmparatorluğu
+            new Color32(80, 80, 190, 255),   // 10 Rus İmparatorluğu / Sovyetler
             new Color32(170, 170, 160, 255), // 11 Birleşik Krallık
             new Color32(120, 170, 60, 255),  // 12 İran
+            new Color32(110, 150, 220, 255), // 13 — / Fransa (Levant)
+            new Color32(210, 110, 150, 255), // 14 — / Macaristan
+            new Color32(90, 190, 140, 255),  // 15 yedek
+            new Color32(180, 120, 210, 255), // 16 yedek
         };
 
 
