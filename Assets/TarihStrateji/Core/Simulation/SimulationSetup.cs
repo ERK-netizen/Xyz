@@ -52,6 +52,12 @@ namespace TarihStrateji.Core.Simulation
         /// <summary>Senaryonun başkent tablosu (tanım verisidir, durum değildir): ülke → başkent şehri. Boşsa başkent yok.</summary>
         public System.Func<CountryId, CityId> Capitals { get; set; }
 
+        /// <summary>
+        /// Senaryonun YZ için en erken savaş ilanı tarihi (tanım verisi, durum değildir). YZ kurulmadan
+        /// (<see cref="StandardRules.InstallArtificialIntelligence"/>) önce atanır; varsayılan sınır yok.
+        /// </summary>
+        public Domain.Time.GameDate AiEarliestWarDate { get; set; } = Domain.Time.GameDate.MinValue;
+
         public SimulationSetup AddSystem(ISimulationSystem system)
         {
             if (system == null)

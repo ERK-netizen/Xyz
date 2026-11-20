@@ -102,7 +102,7 @@ namespace TarihStrateji.Core.AI.Layers
 
         private static void ConsiderWar(AiPerception p, AiParameters prm, StrategicAssessment a, List<AiIntent> intents)
         {
-            if (!prm.Aggression.IsPositive || a.AtWar || p.Stability < prm.DeclareWarMinStability || a.OwnPower < prm.MinimumWarPower)
+            if (!prm.Aggression.IsPositive || a.AtWar || p.Today < p.EarliestWar || p.Stability < prm.DeclareWarMinStability || a.OwnPower < prm.MinimumWarPower)
             {
                 return;
             }

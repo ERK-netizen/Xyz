@@ -35,6 +35,6 @@ namespace TarihStrateji.Core.Tests.Support
         public const string CampaignDay365 = "501d5b310b16a5110f8e861bc718d5d4846065dc9538d6f8dc0b534bb23d6972"; // aynı kampanya ve 180. gün kaydet/yükle aynı testte doğrulanır
 
         /// <summary>"1914 MVP" YZ'li Gözlemci koşusu (tohum 11) 180. gün durum hash'i; paket ve senaryo kurulumu dahil.</summary>
-        public const string Scenario1914Day180 = "0280bef1e49f9542963f5a97247869468b0754d4c56cc41398b421d8ff6ba81a"; // aynı tohum ve 90. gün kaydet/yükle aynı testte doğrulanır
+        public const string Scenario1914Day180 = "ece82e9064306859d74dcc7885a2b61d3603cc5db085608bf9d4770ad240018d"; // aynı tohum ve 90. gün kaydet/yükle aynı testte doğrulanır
     }
 }

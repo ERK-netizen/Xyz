@@ -6,6 +6,7 @@ using TarihStrateji.Core.Domain;
 using TarihStrateji.Core.Domain.Commands;
 using TarihStrateji.Core.Domain.Hashing;
 using TarihStrateji.Core.Domain.Ids;
+using TarihStrateji.Core.Domain.Time;
 using TarihStrateji.Core.Domain.Views;
 using TarihStrateji.Core.Simulation;
 using TarihStrateji.Core.Simulation.State;
@@ -23,7 +24,8 @@ namespace TarihStrateji.Core.Tests.Scenario
         public static SimulationSetup Setup(bool ai)
         {
             var setup = new SimulationSetup { HashIntervalDays = 1, GeoWorldTemplate = Package.BuildWorld, CountryNameKeys = Package.CountryNameKey,
-                Capitals = CapitalTable.FromCityKeys(Package.BuildWorld(), Scenario1914.CapitalCityKeys).Of };
+                Capitals = CapitalTable.FromCityKeys(Package.BuildWorld(), Scenario1914.CapitalCityKeys).Of,
+                AiEarliestWarDate = Scenario1914.AiEarliestWar };
             StandardRules.Install(setup, Content);
             return ai ? StandardRules.InstallArtificialIntelligence(setup, Content) : setup;
         }
@@ -67,6 +69,24 @@ namespace TarihStrateji.Core.Tests.Scenario
                     Assert.That(cities[i].IsCapital, Is.False);
                 }
             }
+        }
+
+        [Test]
+        public void Ai_DeclaresNoWarBeforeTheJulyCrisisEnds_ButWarsFollow()
+        {
+            SimulationKernel k = Kernel(4, GameMode.Observer, true);
+            GameDate firstWar = GameDate.MaxValue;
+            for (int d = 0; d < 60; d++)
+            {
+                TestSimulation.AdvanceOk(k, 1);
+                if (k.State.Diplomacy.Wars.Count > 0 && firstWar == GameDate.MaxValue)
+                {
+                    firstWar = k.State.Today;
+                }
+            }
+
+            Assert.That(firstWar, Is.GreaterThanOrEqualTo(Scenario1914.AiEarliestWar), "Temmuz Krizi: 28.07.1914'ten önce YZ savaşı yok");
+            Assert.That(firstWar, Is.LessThan(GameDate.MaxValue), "kriz bitince YZ savaşa girer");
         }
 
         [Test]

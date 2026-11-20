@@ -43,6 +43,12 @@ namespace TarihStrateji.Core.AI.Perception
 
         public GameDate Today { get; }
 
+        /// <summary>
+        /// Senaryonun YZ için en erken savaş ilanı tarihi (tanım verisi; 1914'te Temmuz Krizi: 28.07.1914). Bu
+        /// tarihten önce YZ savaş ilan etmez; savunma, ittifak çağrısı ve oyuncu bundan etkilenmez.
+        /// </summary>
+        public GameDate EarliestWar { get; set; } = GameDate.MinValue;
+
         /// <summary>Coğrafya, ulaşım grafı ve siyasi harita (bölge/şehir sahipliği ve kontrolü kamuya açıktır).</summary>
         public GeoWorld World { get; }
 

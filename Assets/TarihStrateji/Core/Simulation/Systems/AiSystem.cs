@@ -19,12 +19,20 @@ namespace TarihStrateji.Core.Simulation.Systems
     public sealed class AiSystem : ISimulationSystem
     {
         private readonly GameContent _content;
+        private readonly Domain.Time.GameDate _earliestWar;
         private readonly List<ulong> _borders = new List<ulong>();
         private readonly List<AiIntent> _intents = new List<AiIntent>();
 
         public AiSystem(GameContent content)
+            : this(content, Domain.Time.GameDate.MinValue)
+        {
+        }
+
+        /// <param name="earliestWar">Senaryonun YZ savaş ilanı için en erken tarihi (<see cref="SimulationSetup.AiEarliestWarDate"/>).</param>
+        public AiSystem(GameContent content, Domain.Time.GameDate earliestWar)
         {
             _content = content ?? throw new ArgumentNullException(nameof(content));
+            _earliestWar = earliestWar;
         }
 
         public string Name => "yz";
@@ -44,6 +52,7 @@ namespace TarihStrateji.Core.Simulation.Systems
                 }
 
                 AiPerception perception = AiPerceptionBuilder.Build(state, _content, country, _borders);
+                perception.EarliestWar = _earliestWar;
                 _intents.Clear();
                 AiDirector.Decide(perception, _content.Ai, _intents);
                 for (int i = 0; i < _intents.Count; i++)

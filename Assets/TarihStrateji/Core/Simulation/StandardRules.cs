@@ -91,7 +91,7 @@ namespace TarihStrateji.Core.Simulation
                 throw new ArgumentNullException(setup == null ? nameof(setup) : nameof(content));
             }
 
-            setup.AddSystem(new AiSystem(content));
+            setup.AddSystem(new AiSystem(content, setup.AiEarliestWarDate));
             return setup;
         }
     }

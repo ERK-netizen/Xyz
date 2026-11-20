@@ -38,6 +38,12 @@ namespace TarihStrateji.Core.Content
         /// (Prens Wied'in merkezi), Bükreş, Roma. Viyana, Petersburg, Londra ve Tahran kapsam dışındadır; bu
         /// ülkelerin haritada başkenti yoktur.
         /// </summary>
+        /// <summary>
+        /// YZ'nin ilk savaş ilanı için en erken tarih: Temmuz Krizi (Saraybosna 28.06 → Avusturya-Macaristan'ın
+        /// Sırbistan'a savaş ilanı 28.07.1914). Adım 17 denge taramasında YZ her tohumda 6. gün savaş ilan ediyordu.
+        /// </summary>
+        public static readonly GameDate AiEarliestWar = GameDate.FromYmd(1914, 7, 28);
+
         public static readonly string[] CapitalCityKeys =
         {
             "sehir.1914.istanbul", "sehir.1914.atina", "sehir.1914.sofya", "sehir.1914.belgrad",

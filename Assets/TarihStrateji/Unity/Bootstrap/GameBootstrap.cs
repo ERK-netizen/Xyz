@@ -130,6 +130,7 @@ namespace TarihStrateji.Unity.Bootstrap
                 GeoWorldTemplate = package.BuildWorld,
                 CountryNameKeys = package.CountryNameKey,
                 Capitals = CapitalTable.FromCityKeys(package.BuildWorld(), Scenario1914.CapitalCityKeys).Of,
+                AiEarliestWarDate = Scenario1914.AiEarliestWar,
                 HashIntervalDays = 30,
                 AutosaveIntervalDays = 30,
                 AutosaveSink = new AutosaveRing(store),
