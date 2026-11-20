@@ -71,6 +71,7 @@ namespace TarihStrateji.Core.Tests.Campaign
             Assert.That(wars, Is.GreaterThanOrEqualTo(1), "YZ savaş ilan eder");
             Assert.That(peaces, Is.GreaterThanOrEqualTo(1), "YZ iki taraflı barış yapar");
             Assert.That(battles, Is.GreaterThan(0), "ordular çarpışır");
+            Assert.That(k.State.Diplomacy.Wars.Count, Is.GreaterThan(0), "yıpratma savaşı: yıl sonunda süren savaş var (Docs/DENGE_1914.md, A11)");
             for (int i = 0; i < k.State.Economy.Countries.Count; i++)
             {
                 CountryId c = k.State.Economy.Countries.KeyAt(i);
