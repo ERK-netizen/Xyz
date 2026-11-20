@@ -148,11 +148,11 @@ namespace TarihStrateji.Unity.Bootstrap
             // +N gün: hızdan bağımsız, karede en çok MaxDaysPerFrame gün (arayüz akıcı kalır).
             if (_pendingDays > 0)
             {
-                int steps = 0;
-                while (_pendingDays > 0 && steps < MaxDaysPerFrame && !_kernel.IsHalted)
+                int skipped = 0;
+                while (_pendingDays > 0 && skipped < MaxDaysPerFrame && !_kernel.IsHalted)
                 {
                     _pendingDays--;
-                    steps++;
+                    skipped++;
                     Result<DayReport> report = _kernel.AdvanceDay();
                     if (!report.IsSuccess || report.Value.Halted)
                     {
