@@ -123,10 +123,10 @@ Yapılandırma `Tools/ContentCompiler/data/dunya1936.json` (üreteç mantığı 
 Britanya İmparatorluğu (Hindistan, Afrika ve Karayip sömürgeleri, Malaya, Filistin, Sudan…), Fransa (Kuzey ve Batı Afrika,
 Çinhindi, Levant…), Hollanda (Doğu Hint Adaları, Surinam), Belçika (Kongo, Ruanda-Urundi), Portekiz, İspanya, İtalya (Libya,
 Eritre, Somali), Japonya (Kore, Tayvan, Güney Sahalin), ABD (Alaska, Hawaii, Porto Riko, Filipinler). Dominyonlar ayrı devlettir.
-Danzig Almanya'ya, Namibya Güney Afrika'ya, Yeni Gine Avustralya'ya bağlanır; Mançukuo ayrı tutulmaz (CShapes Çin'de gösterir).
+Hong Kong düzeltmeyle Britanya'ya (CShapes Çin'de gösterir); Danzig Almanya'ya, Namibya Güney Afrika'ya, Yeni Gine Avustralya'ya bağlanır; Mançukuo ayrı tutulmaz (CShapes Çin'de gösterir).
 
-Şehirler (418): her birimin başkenti (1936 başkentleriyle düzeltilmiş: Ankara, Rio de Janeiro, Nankin, Lagos, Kaunas…) ve Natural
-Earth listesinden ülke kotasıyla (alan ve nüfusla) en büyük şehirler; aynı ülkede ≥ 0,9°, farklı ülkede ≥ 0,4° aralık. Adlar 1936
+Şehirler (548): zorunlu liste (Rodos, Hong Kong, Hanoi, Saygon, Singapur, Kudüs, Leningrad…), her birimin başkenti (1936 başkentleriyle düzeltilmiş: Ankara, Rio de Janeiro, Nankin, Lagos, Kaunas…) ve Natural
+Earth listesinden önce devlet başına taban kota, sonra küresel nüfus sırası ve seyrek birimlere kapsama; aynı ülkede ≥ 0,9°, farklı ülkede ≥ 0,4° aralık. Adlar 1936
 kullanımı ve Türkçe karşılıklarla (Leningrad, Stalingrad, Batavya, Leopoldville, Saygon…); kademe modern nüfustan tahmindir.
 
 Derleyici dünya ayarları: `gridPrecision` 0,12° (köşeler ızgaraya oturtulur; ortak sınırlar yapışık kalır, 71 bin köşe),

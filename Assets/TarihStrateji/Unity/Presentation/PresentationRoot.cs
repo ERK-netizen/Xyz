@@ -102,11 +102,18 @@ namespace TarihStrateji.Unity.Presentation
             MapCameraController controller = mapCamera.gameObject.AddComponent<MapCameraController>();
             _controller = controller;
             controller.Initialize(mapCamera, countries.Bounds);
+            if (MapProjection.IsWorldWide(countries.Bounds))
+            {
+                // Dünya haritası (Adım 21): kamera ±180°'de sarmalanır, harita/işaret/rota ağları dikişin iki yanında kopyalanır.
+                controller.WrapsHorizontally = true;
+                gameObject.AddComponent<MapWrapRenderer>().Initialize(mapCamera, map.transform, markers.transform, route.transform);
+            }
+
             controller.IsOverUi = hud.IsOverUi;
             controller.Tapped += world =>
             {
                 float tolerance = (mapCamera.orthographicSize * 2f / Mathf.Max(1, Screen.height)) * TapTolerancePixels;
-                selection.Tap(markerLayer.Picker.Pick(model, world, tolerance));
+                selection.Tap(markerLayer.Picker.Pick(model, new Vector2(MapProjection.Canonical(world.x), world.y), tolerance));
             };
             controller.CenterOn(StartPoint(model, countries.Bounds));
         }

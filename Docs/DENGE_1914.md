@@ -131,7 +131,7 @@ Osmanlı yine yılın çoğunu savaşta geçiriyor (C03 ≈ 330 gün) ama hazine
   dek dayandı; küçük devlet garnizonları/milisleri ayrı bir içerik kararıdır.
 - Cihazda performans ölçümü: Adım 17 (3/3).
 
-## 1939 barış ekonomisi (Adım 18 bulgusu, açık)
+## 1939 barış ekonomisi (Adım 18 bulgusu, çözüldü)
 
 `Scenario1939Tests` (tohum 41, 365 gün, YZ'li Gözlemci): bölge 10.06.1940'a kadar barışta. Bir yıl sonunda hazine
 oranları (14 ülke, sıralı): 0,65 · 0,71 · 0,82 · 0,92 · 0,98 · 1,28 · 1,45 · 1,71 · 1,90 · 2,90 · 2,98 · 3,03 · 3,03 · 3,08.
@@ -139,6 +139,21 @@ P90 = 3,03 > 1914 bandı 3,0. Neden: barışta vergi geliri bakım ve inşaat gi
 mutlak eşikte (hazine > 80 bin) düşürüyor ve küçük ülkeler bu eşiğe hiç ulaşmıyor (Graz'daki Alman parçası gibi).
 1914'te ülkelerin çoğu savaşta olduğundan bu fazla görünmüyordu.
 
-Düzeltme ayrı bir denge geçişidir (game-balance, kalıp 3: gelir/gider defteri): ülke büyüklüğüyle ölçeklenen bir
-gider ya da büyüklüğe göreli vergi eşiği, 1914/Ege/1939 taramalarıyla birlikte. O zamana kadar 1939 kapısı P10 ≥ 0,25,
-P50 ≤ 3,0 ve en çok ≤ 4 (kaçak büyüme yok) sınar.
+Kök neden (defter incelemesi): en çok büyüyen ülkeler (İran, Britanya parçası, Fransız Levant'ı, Alman Graz'ı) en yüksek vergi
+oranındaydı (0,20–0,32). Senaryo küçük devletlere alt eşik (25 bin) civarında hazine veriyor; YZ ilk haftalarda vergiyi
+yükseltiyor, hazine mutlak üst eşiğe (80 bin) hiç ulaşmadığı için de bir daha düşürmüyordu.
+
+Düzeltme (tek kaldıraç, veri): maliye eşikleri ülke büyüklüğüyle de sınırlanır — `AiParameters.TreasuryHighPerWorker` 0,16 ve
+`TreasuryLowPerWorker` 0,08 (çalışma çağı kişi başına); etkin eşik = min(mutlak, çalışma çağı × kişi başı). Büyük ülkelerde
+(≥ 0,5 milyon çalışma çağı) mutlak eşikler aynen geçerli. İlk denemede (0,13 / 0,04) 1914'te bir küçük ülke vergiyi geç yükseltip
+0,18'e indi; alt eşik 0,08'e çıkarılınca tüm bantlar sağlandı.
+
+| Ölçüm | Önce | Sonra |
+|---|---|---|
+| 1939 hazine oranları (14 ülke, tohum 41), en çok | 3,08 | 2,49 |
+| 1939 P90 | 3,03 | ≈ 2,4 |
+| 1914 B01 (16 tohum) P10 / P50 / P90 / en az | 0,65 / 1,65 / 2,34 / 0,44 | 0,43 / 0,91 / 2,34 / 0,40 |
+| 1914 A01, A10, A11, A08, B02, B03 | bantta | bantta (değişmedi) |
+
+Kapı: `Scenario1939Tests` ve `Scenario1936Tests` artık hazine oranı P10 ≥ 0,25 ve **P90 ≤ 3,0** sınar.
+`GoldenValues.Scenario1914Day180` bu bilinçli YZ ayarı yüzünden güncellendi (Ege `CampaignDay365` değişmedi).

@@ -72,6 +72,12 @@ namespace TarihStrateji.Core.Tests.Scenario
             Assert.That(OwnerOf(k, "sehir.d1936.leopoldville"), Is.EqualTo(new CountryId(20)), "Belçika Kongosu");
             Assert.That(OwnerOf(k, "sehir.d1936.manila"), Is.EqualTo(new CountryId(30)), "Filipinler ABD'ye bağlı");
             Assert.That(OwnerOf(k, "sehir.d1936.asmara"), Is.EqualTo(new CountryId(9)), "Eritre İtalyan");
+            Assert.That(OwnerOf(k, "sehir.d1936.rodos"), Is.EqualTo(new CountryId(9)), "Onikiadalar İtalyan");
+            Assert.That(OwnerOf(k, "sehir.d1936.hongkong"), Is.EqualTo(britain), "Hong Kong İngiliz (düzeltme)");
+            Assert.That(OwnerOf(k, "sehir.d1936.singapur"), Is.EqualTo(britain), "Boğazlar Yerleşimleri");
+            Assert.That(OwnerOf(k, "sehir.d1936.kalkuta"), Is.EqualTo(britain));
+            Assert.That(OwnerOf(k, "sehir.d1936.saygon"), Is.EqualTo(france), "Fransız Çinhindi");
+            Assert.That(OwnerOf(k, "sehir.d1936.leningrad"), Is.EqualTo(new CountryId(10)));
 
             var cities = new List<CityView>();
             k.GetCities(cities);

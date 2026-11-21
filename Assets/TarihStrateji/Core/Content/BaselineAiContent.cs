@@ -42,7 +42,9 @@ namespace TarihStrateji.Core.Content
             treasuryLow: F("25000"),
             taxStep: F("0.02"),
             minTaxRate: F("0.04"),
-            maxTaxRate: F("0.4"));
+            maxTaxRate: F("0.4"),
+            treasuryHighPerWorker: F("0.16"),
+            treasuryLowPerWorker: F("0.08"));
 
         private static Fixed64 F(string text) => Fixed64.Parse(text);
     }

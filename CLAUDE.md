@@ -563,14 +563,27 @@ Yeni bir Core modülü eklemek anayasa değişikliğidir.
 
 **Uygulama kararları (Adım 21, tam dünya — "Dünya 1936"):**
 - `dunya1936` paketi: CShapes 07.03.1936'nın 170 birimi 71 egemen devlete bağlı (sömürge/manda/himaye → yöneten devlet,
-  dominyonlar ayrı), 418 bölge/şehir (birim başkentleri + Natural Earth kamu malı şehir listesinden kota), ad öneki `d1936`.
+  dominyonlar ayrı), 548 bölge/şehir (birim başkentleri + Natural Earth kamu malı şehir listesi), ad öneki `d1936`.
   Derleyicide yalnız dünya paketinin açtığı ayarlar: `gridPrecision` (köşe ızgarası), ±180°'de sarmalanan deniz ızgarası
   (`seaGridStep` 3°), `maxRoadKm`, `portLinkDegrees`, `portLandCrossing`; −180° köşeleri bir mikro derece içeri alınır
   (çekirdek boylamı (−180, 180] tutar); bağlanamayan limanın şehir kaydı da liman sayılmaz; dış halkaya değen delikler atlanır.
   Hız için hazırlanmış geometri ve sınır kutusu ön elemesi (bölgesel paketler bayt bayt aynı).
 - `ScenarioWorld1936` (CHP tek parti, 71 başkent, YZ'nin ilk savaşı ≥ 07.07.1937), `ScenarioFactory.CreateWorld1936`, katalogda
   "dunya1936". Masaüstünde YZ'li gün ≈ 65 ms (1914: ≈ 20 ms). Harita: 16'dan sonraki ülke kimliklerine altın açılı tonlar;
-  kamera dünya boyuna kadar uzaklaşır. Pasifik haritada ±180°'de bölünür (deniz grafı dikişi geçer).
+  kamera dünya boyuna kadar uzaklaşır.
+
+**Uygulama kararları (Adım 21 sonrası düzeltmeler, depo sahibinin "hataları düzelt" talimatı, 21.11.2026):**
+- Maliye eşikleri ülke büyüklüğüyle sınırlanır: `AiParameters.TreasuryHighPerWorker` 0,16, `TreasuryLowPerWorker` 0,08
+  (etkin eşik = min(mutlak, çalışma çağı × kişi başı)); 1939 barış ekonomisi bulgusu kapandı (en çok 3,08 → 2,49), 1914 bantları
+  korunur. 1936/1939 kapısı P90 ≤ 3,0. `GoldenValues.Scenario1914Day180` güncellendi.
+- Dünya şehirleri: zorunlu liste (Rodos, Hong Kong, Hanoi, Saygon, Singapur, Kudüs, Leningrad, Aden…) → birim başkentleri →
+  devlet başına taban kota → küresel nüfus sırası → seyrek birimlere kapsama; 548 bölge/şehir. Hong Kong düzeltmesi (Çin →
+  Britanya). Avrupa şehir adları Türkçe (Milano, Münih, Barselona…).
+- ±180°: dünya haritasında kamera yatayda sarmalanır (`MapCameraController.WrapsHorizontally`), `MapWrapRenderer` harita/işaret/
+  rota ağlarını dikişin öte yanında kopyalar, şehir adları kameraya en yakın kopyaya (`MapProjection.NearestCopy`), dokunma asıl
+  kopyaya (`Canonical`) indirgenir. Bölgesel haritalarda davranış değişmez.
+- İmza: yayın sırları yoksa depodaki gizli olmayan geliştirme anahtarı (`Tools/Android/gelistirme.keystore`, parola açık) kullanılır;
+  her derleme aynı imzayı taşır, güncellemeler kayıtları korur. Yayın sırları varsa her zaman onlar kullanılır.
 
 ---
 

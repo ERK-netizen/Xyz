@@ -3,8 +3,8 @@
 # UNITY_PASSWORD depo sırları gerekir. Elle (workflow_dispatch), "v*" etiketi veya geliştirme dalına push ile çalışır;
 # çıktı "tarih-strateji-android" yapıtıdır. İsteğe bağlı yayın imzası (Adım 20): ANDROID_KEYSTORE_BASE64,
 # ANDROID_KEYSTORE_PASS, ANDROID_KEY_ALIAS ve ANDROID_KEY_PASS sırlarının hepsi varsa APK/AAB o anahtarla imzalanır
-# (sürümler birbirinin üzerine kurulur); yoksa Unity'nin hata ayıklama anahtarı kullanılır. Anahtar dosyası
-# yalnız çalıştırıcının geçici klasörüne yazılır ve iş sonunda silinir.
+# (sürümler birbirinin üzerine kurulur); yoksa depodaki gizli olmayan geliştirme anahtarı (Tools/Android) kullanılır,
+# böylece her derleme aynı imzayı taşır. Yayın anahtarı yalnız çalıştırıcının geçici klasörüne yazılır, iş sonunda silinir.
 name: Android derlemesi
 
 on:
@@ -98,22 +98,36 @@ jobs:
       - name: Yayın anahtarını hazırla (sırlar varsa)
         env:
           KEYSTORE_B64: ${{ secrets.ANDROID_KEYSTORE_BASE64 }}
+          KEYSTORE_PASS: ${{ secrets.ANDROID_KEYSTORE_PASS }}
+          KEY_ALIAS: ${{ secrets.ANDROID_KEY_ALIAS }}
+          KEY_PASS: ${{ secrets.ANDROID_KEY_PASS }}
         run: |
           if [ -n "$KEYSTORE_B64" ]; then
             printf '%s' "$KEYSTORE_B64" | base64 -d > "$RUNNER_TEMP/yayin.keystore"
-            echo "TS_KEYSTORE_PATH=$RUNNER_TEMP/yayin.keystore" >> "$GITHUB_ENV"
+            {
+              echo "TS_KEYSTORE_PATH=$RUNNER_TEMP/yayin.keystore"
+              echo "TS_KEYSTORE_PASS=$KEYSTORE_PASS"
+              echo "TS_KEY_ALIAS=$KEY_ALIAS"
+              echo "TS_KEY_PASS=$KEY_PASS"
+            } >> "$GITHUB_ENV"
             echo "İmza: yayın anahtarı" >> "$GITHUB_STEP_SUMMARY"
           else
-            echo "İmza: hata ayıklama anahtarı (ANDROID_KEYSTORE_BASE64 sırrı yok)" >> "$GITHUB_STEP_SUMMARY"
+            # Sırlar yoksa depodaki gizli olmayan geliştirme anahtarı (Tools/Android/README.md): her derleme aynı imzayı
+            # taşır, yeni APK eskisinin üzerine kurulur ve kayıtlar korunur.
+            {
+              echo "TS_KEYSTORE_PATH=$GITHUB_WORKSPACE/Tools/Android/gelistirme.keystore"
+              echo "TS_KEYSTORE_PASS=tarihstrateji-gelistirme"
+              echo "TS_KEY_ALIAS=tarihstrateji"
+              echo "TS_KEY_PASS=tarihstrateji-gelistirme"
+            } >> "$GITHUB_ENV"
+            echo "İmza: geliştirme anahtarı (Tools/Android/gelistirme.keystore; yayın sırları yok)" >> "$GITHUB_STEP_SUMMARY"
           fi
 
       - name: Derle
         env:
           AAB: ${{ inputs.aab && 'true' || 'false' }}
           TS_VERSION_CODE: ${{ github.run_number }}
-          TS_KEYSTORE_PASS: ${{ secrets.ANDROID_KEYSTORE_PASS }}
-          TS_KEY_ALIAS: ${{ secrets.ANDROID_KEY_ALIAS }}
-          TS_KEY_PASS: ${{ secrets.ANDROID_KEY_PASS }}
+
         run: |
           mkdir -p "$CIKTI_KLASORU"
           if [ "$AAB" = "true" ]; then

@@ -133,7 +133,7 @@ namespace TarihStrateji.Core.Tests.Scenario
             }
 
             Assert.That(firstWar, Is.EqualTo(GameDate.MaxValue), "YZ 07.04.1939'dan önce savaş ilan etmez: ilk yıl tam barış");
-            // Barış ekonomisi bandı 1939 ile aynıdır (Docs/DENGE_1914.md, "1939 barış ekonomisi").
+            // Barış ekonomisi bandı (Docs/DENGE_1914.md, "1939 barış ekonomisi", çözüldü): hazine oranı P10 ≥ 0,25, P90 ≤ 3,0.
             var ratios = new List<Fixed64>();
             for (int i = 0; i < a.State.Economy.Countries.Count; i++)
             {
@@ -143,8 +143,8 @@ namespace TarihStrateji.Core.Tests.Scenario
 
             ratios.Sort();
             Fixed64 p10 = ratios[((ratios.Count - 1) * 10 + 50) / 100];
-            Fixed64 p50 = ratios[((ratios.Count - 1) * 50 + 50) / 100];
-            Assert.That(p10 >= Fixed64.Parse("0.25") && p50 <= Fixed64.FromInt(3), Is.True, "hazine oranı P10 " + p10 + ", P50 " + p50);
+            Fixed64 p90 = ratios[((ratios.Count - 1) * 90 + 50) / 100];
+            Assert.That(p10 >= Fixed64.Parse("0.25") && p90 <= Fixed64.FromInt(3), Is.True, "hazine oranı P10 " + p10 + ", P90 " + p90);
             Assert.That(ratios[ratios.Count - 1] <= Fixed64.FromInt(4), Is.True, "aykırı ülke bile kaçak büyümez: en çok " + ratios[ratios.Count - 1]);
         }
     }

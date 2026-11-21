@@ -16,7 +16,7 @@ namespace TarihStrateji.Core.Content
 {
     /// <summary>
     /// "Dünya 1936" senaryosu (Adım 21; 7 Mart 1936, tam dünya; coğrafya <c>dunya1936</c> paketinden): CShapes 2.0'ın o gün
-    /// geçerli 170 birimi (devletler, sömürgeler, mandalar) 71 egemen devlete bağlıdır, 418 bölge/şehir. Ortak kurulum
+    /// geçerli 170 birimi (devletler, sömürgeler, mandalar) 71 egemen devlete bağlıdır, 548 bölge/şehir. Ortak kurulum
     /// <see cref="PackageScenario"/>; Türkiye tek parti cumhuriyetidir (CHP). YZ'nin ilk savaş ilanı Marco Polo Köprüsü
     /// olayına (07.07.1937, Çin–Japon Savaşı) kadar ertelenir.
     /// </summary>
@@ -36,9 +36,9 @@ namespace TarihStrateji.Core.Content
         {
             "sehir.d1936.ankara", "sehir.d1936.atina", "sehir.d1936.sofya", "sehir.d1936.belgrad", "sehir.d1936.kahire", "sehir.d1936.bagdat",
             "sehir.d1936.bukres", "sehir.d1936.viyana", "sehir.d1936.roma", "sehir.d1936.moskova", "sehir.d1936.londra", "sehir.d1936.tahran",
-            "sehir.d1936.paris", "sehir.d1936.budapeste", "sehir.d1936.tirane", "sehir.d1936.berlin", "sehir.d1936.madrid", "sehir.d1936.lizbon",
+            "sehir.d1936.paris", "sehir.d1936.budapeste", "sehir.d1936.tiran", "sehir.d1936.berlin", "sehir.d1936.madrid", "sehir.d1936.lizbon",
             "sehir.d1936.amsterdam", "sehir.d1936.bruksel", "sehir.d1936.varsova", "sehir.d1936.prag", "sehir.d1936.bern", "sehir.d1936.kopenhag",
-            "sehir.d1936.stockholm", "sehir.d1936.oslo", "sehir.d1936.helsinki", "sehir.d1936.tallinn", "sehir.d1936.dublin", "sehir.d1936.washington",
+            "sehir.d1936.stockholm", "sehir.d1936.oslo", "sehir.d1936.helsinki", "sehir.d1936.tallinn", "sehir.d1936.dublin", "sehir.d1936.vasington",
             "sehir.d1936.ottava", "sehir.d1936.meksiko", "sehir.d1936.havana", "sehir.d1936.guatemalacity", "sehir.d1936.bogota", "sehir.d1936.lima",
             "sehir.d1936.riodejaneiro", "sehir.d1936.buenosaires", "sehir.d1936.santiago", "sehir.d1936.lapaz", "sehir.d1936.montevideo", "sehir.d1936.monrovia",
             "sehir.d1936.addisababa", "sehir.d1936.pretorya", "sehir.d1936.riyad", "sehir.d1936.sana", "sehir.d1936.kabil", "sehir.d1936.nankin",

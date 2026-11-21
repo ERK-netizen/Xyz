@@ -45,11 +45,11 @@ namespace TarihStrateji.Core.AI.Layers
                 intents.Add(AiIntent.Recruit(prm.RecruitUnitType, p.RecruitSites[0]));
             }
 
-            if (p.Treasury > prm.TreasuryHigh && p.TaxRate > prm.MinTaxRate)
+            if (p.Treasury > prm.EffectiveTreasuryHigh(p.WorkingAge) && p.TaxRate > prm.MinTaxRate)
             {
                 intents.Add(AiIntent.Tax(Fixed64.Max(prm.MinTaxRate, p.TaxRate - prm.TaxStep)));
             }
-            else if (p.Treasury < prm.TreasuryLow && p.TaxRate < prm.MaxTaxRate)
+            else if (p.Treasury < prm.EffectiveTreasuryLow(p.WorkingAge) && p.TaxRate < prm.MaxTaxRate)
             {
                 intents.Add(AiIntent.Tax(Fixed64.Min(prm.MaxTaxRate, p.TaxRate + prm.TaxStep)));
             }

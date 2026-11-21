@@ -26,6 +26,21 @@ namespace TarihStrateji.Tests.EditMode
         }
 
         [Test]
+        public void Wrap_NearestCopyAndCanonical_AcrossTheAntimeridian()
+        {
+            float w = MapProjection.WrapWidth;
+            float fiji = 178f * MapProjection.LonScale;
+            float samoa = -172f * MapProjection.LonScale;
+            Assert.That(MapProjection.NearestCopy(samoa, fiji), Is.EqualTo(samoa + w).Within(1e-3f), "Samoa Fiji'nin doğusunda görünür");
+            Assert.That(MapProjection.NearestCopy(fiji, samoa), Is.EqualTo(fiji - w).Within(1e-3f));
+            Assert.That(MapProjection.Canonical(samoa + w), Is.EqualTo(samoa).Within(1e-3f));
+            float istanbul = 28.97f * MapProjection.LonScale;
+            Assert.That(MapProjection.NearestCopy(istanbul, 20f), Is.EqualTo(istanbul), "bölgesel haritada değer değişmez");
+            Assert.That(MapProjection.IsWorldWide(new Rect(-144f, -56f, 288f, 140f)), Is.True);
+            Assert.That(MapProjection.IsWorldWide(new Rect(9.6f, 29.5f, 27.6f, 18.5f)), Is.False);
+        }
+
+        [Test]
         public void Triangulator_CoversConcaveRingsInEitherWinding()
         {
             // L biçimli (içbükey) halka: alan 3 birim kare.

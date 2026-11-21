@@ -179,6 +179,7 @@ namespace TarihStrateji.Unity.Presentation.Map
         private bool ToPanel(GeoPoint point, Vector2 panelSize, out Vector2 at)
         {
             Vector2 world = MapProjection.ToWorld(point);
+            world.x = MapProjection.NearestCopy(world.x, _camera.transform.position.x);
             Vector2 panel = RuntimePanelUtils.CameraTransformWorldToPanel(_overlay.panel, new Vector3(world.x, world.y, 0f), _camera);
             Rect bounds = _overlay.worldBound;
             at = new Vector2(panel.x - bounds.x, panel.y - bounds.y);

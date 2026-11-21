@@ -21,7 +21,10 @@ namespace TarihStrateji.Core.AI.Definitions
     /// <item><see cref="ConstructionReserve"/>, <see cref="MaxConcurrentConstructions"/>, <see cref="BuildPriority"/>:
     /// hazine yedeğin üstündeyse tercih sırasındaki ilk uygun tesise yatırım.</item>
     /// <item><see cref="TreasuryHigh"/>/<see cref="TreasuryLow"/>: maliye dengeleyicisi; vergi
-    /// <see cref="TaxStep"/> adımlarla [<see cref="MinTaxRate"/>, <see cref="MaxTaxRate"/>] içinde.</item>
+    /// <see cref="TaxStep"/> adımlarla [<see cref="MinTaxRate"/>, <see cref="MaxTaxRate"/>] içinde. Eşikler ülke
+    /// büyüklüğüyle de sınırlanır: çalışma çağı nüfus × <see cref="TreasuryHighPerWorker"/> / <see cref="TreasuryLowPerWorker"/>
+    /// mutlak eşikten küçükse o kullanılır (0 = sınırsız); küçük devletler mutlak eşiğe hiç ulaşmadığı için verginin
+    /// sürekli yüksek kalmasını önler (1939 barış ekonomisi bulgusu).</item>
     /// </list>
     /// </summary>
     public sealed class AiParameters
@@ -53,7 +56,9 @@ namespace TarihStrateji.Core.AI.Definitions
             Fixed64 treasuryLow,
             Fixed64 taxStep,
             Fixed64 minTaxRate,
-            Fixed64 maxTaxRate)
+            Fixed64 maxTaxRate,
+            Fixed64 treasuryHighPerWorker = default,
+            Fixed64 treasuryLowPerWorker = default)
         {
             Fixed64[] fractions = { aggression, declareWarMinStability, attackMinOrganization, losingHeldShare, losingPowerRatio, maxMobilizationShare, taxStep, minTaxRate, maxTaxRate };
             for (int i = 0; i < fractions.Length; i++)
@@ -68,7 +73,9 @@ namespace TarihStrateji.Core.AI.Definitions
                 || !attackPowerRatio.IsPositive || defendRadius < 0L || advanceSearchRadius < 1L || unitsPerAdvanceTarget < 1
                 || peaceAfterWarDays < 0 || stalemateDays < peaceAfterWarDays || recruitPerCity.IsNegative || recruitThreatMargin.IsNegative
                 || !recruitUnitType.IsValid || constructionReserve.IsNegative || maxConcurrentConstructions < 0 || buildPriority == null
-                || treasuryLow.IsNegative || treasuryHigh <= treasuryLow || minTaxRate > maxTaxRate)
+                || treasuryLow.IsNegative || treasuryHigh <= treasuryLow || minTaxRate > maxTaxRate
+                || treasuryHighPerWorker.IsNegative || treasuryLowPerWorker.IsNegative
+                || (treasuryHighPerWorker.IsPositive && treasuryHighPerWorker <= treasuryLowPerWorker))
             {
                 throw new ArgumentException(AiErrorKeys.TanimGecersiz);
             }
@@ -97,6 +104,8 @@ namespace TarihStrateji.Core.AI.Definitions
             _buildPriority = (FacilityTypeId[])buildPriority.Clone();
             TreasuryHigh = treasuryHigh;
             TreasuryLow = treasuryLow;
+            TreasuryHighPerWorker = treasuryHighPerWorker;
+            TreasuryLowPerWorker = treasuryLowPerWorker;
             TaxStep = taxStep;
             MinTaxRate = minTaxRate;
             MaxTaxRate = maxTaxRate;
@@ -158,6 +167,20 @@ namespace TarihStrateji.Core.AI.Definitions
 
         /// <summary>Maliye: hazine bunun altındaysa vergi bir adım artar.</summary>
         public Fixed64 TreasuryLow { get; }
+
+        /// <summary>Maliye: çalışma çağı kişi başına üst eşik (0 = yalnız mutlak eşik).</summary>
+        public Fixed64 TreasuryHighPerWorker { get; }
+
+        /// <summary>Maliye: çalışma çağı kişi başına alt eşik (0 = yalnız mutlak eşik).</summary>
+        public Fixed64 TreasuryLowPerWorker { get; }
+
+        /// <summary>Ülke büyüklüğüyle sınırlanmış üst eşik.</summary>
+        public Fixed64 EffectiveTreasuryHigh(long workingAge) =>
+            TreasuryHighPerWorker.IsPositive ? Fixed64.Min(TreasuryHigh, Fixed64.FromInt(workingAge) * TreasuryHighPerWorker) : TreasuryHigh;
+
+        /// <summary>Ülke büyüklüğüyle sınırlanmış alt eşik.</summary>
+        public Fixed64 EffectiveTreasuryLow(long workingAge) =>
+            TreasuryLowPerWorker.IsPositive ? Fixed64.Min(TreasuryLow, Fixed64.FromInt(workingAge) * TreasuryLowPerWorker) : TreasuryLow;
 
         public Fixed64 TaxStep { get; }
 

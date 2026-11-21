@@ -223,10 +223,13 @@ namespace TarihStrateji.Unity.Presentation.Input
             return new Vector2(world.x, world.y);
         }
 
+        /// <summary>Dünya haritasında kamera ±180°'de sarmalanır (sınırla kısıtlanmaz); harita kopyaları <c>MapWrapRenderer</c>'dadır.</summary>
+        public bool WrapsHorizontally { get; set; }
+
         private void ClampCamera()
         {
             Vector3 p = _camera.transform.position;
-            float x = Mathf.Clamp(p.x, _bounds.xMin, _bounds.xMax);
+            float x = WrapsHorizontally ? MapProjection.Canonical(p.x) : Mathf.Clamp(p.x, _bounds.xMin, _bounds.xMax);
             float y = Mathf.Clamp(p.y, _bounds.yMin, _bounds.yMax);
             _camera.transform.position = new Vector3(x, y, p.z);
         }
