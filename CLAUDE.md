@@ -561,6 +561,17 @@ Yeni bir Core modülü eklemek anayasa değişikliğidir.
   `ANDROID_KEYSTORE_PASS`, `ANDROID_KEY_ALIAS`, `ANDROID_KEY_PASS` sırları varsa `AndroidBuild.ConfigureSigning` o anahtarı
   kullanır (anahtar yalnız çalıştırıcının geçici klasöründe, iş sonunda silinir); yoksa hata ayıklama anahtarı.
 
+**Uygulama kararları (Adım 21, tam dünya — "Dünya 1936"):**
+- `dunya1936` paketi: CShapes 07.03.1936'nın 170 birimi 71 egemen devlete bağlı (sömürge/manda/himaye → yöneten devlet,
+  dominyonlar ayrı), 418 bölge/şehir (birim başkentleri + Natural Earth kamu malı şehir listesinden kota), ad öneki `d1936`.
+  Derleyicide yalnız dünya paketinin açtığı ayarlar: `gridPrecision` (köşe ızgarası), ±180°'de sarmalanan deniz ızgarası
+  (`seaGridStep` 3°), `maxRoadKm`, `portLinkDegrees`, `portLandCrossing`; −180° köşeleri bir mikro derece içeri alınır
+  (çekirdek boylamı (−180, 180] tutar); bağlanamayan limanın şehir kaydı da liman sayılmaz; dış halkaya değen delikler atlanır.
+  Hız için hazırlanmış geometri ve sınır kutusu ön elemesi (bölgesel paketler bayt bayt aynı).
+- `ScenarioWorld1936` (CHP tek parti, 71 başkent, YZ'nin ilk savaşı ≥ 07.07.1937), `ScenarioFactory.CreateWorld1936`, katalogda
+  "dunya1936". Masaüstünde YZ'li gün ≈ 65 ms (1914: ≈ 20 ms). Harita: 16'dan sonraki ülke kimliklerine altın açılı tonlar;
+  kamera dünya boyuna kadar uzaklaşır. Pasifik haritada ±180°'de bölünür (deniz grafı dikişi geçer).
+
 ---
 
 ## 3. Depo düzeni

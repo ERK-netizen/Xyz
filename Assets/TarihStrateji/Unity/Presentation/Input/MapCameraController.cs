@@ -15,6 +15,8 @@ namespace TarihStrateji.Unity.Presentation.Input
         public const float MinOrthographicSize = 0.6f;
         public const float MaxOrthographicSize = 30f;
 
+        private float _maxOrthographicSize = MaxOrthographicSize;
+
         private Camera _camera;
         private Rect _bounds;
 
@@ -40,6 +42,8 @@ namespace TarihStrateji.Unity.Presentation.Input
         {
             _camera = mapCamera;
             _bounds = worldBounds;
+            // Dünya haritasında (Adım 21) tüm dünyaya uzaklaşılabilir; bölgesel haritalarda üst sınır değişmez.
+            _maxOrthographicSize = Mathf.Max(MaxOrthographicSize, worldBounds.height * 0.55f);
 
             // Dokunuşlar ayrıca fare olayı üretmesin (çift dokunuş işlenmesini önler).
             UnityEngine.Input.simulateMouseWithTouches = false;
@@ -92,7 +96,7 @@ namespace TarihStrateji.Unity.Presentation.Input
                 if (!_pointerBlocked)
                 {
                     Pan(_lastPosition, middle);
-                    ZoomAround(middle, GestureMath.PinchOrthographicSize(_camera.orthographicSize, _lastPinchDistance, distance, MinOrthographicSize, MaxOrthographicSize));
+                    ZoomAround(middle, GestureMath.PinchOrthographicSize(_camera.orthographicSize, _lastPinchDistance, distance, MinOrthographicSize, _maxOrthographicSize));
                 }
 
                 _lastPinchDistance = distance;
@@ -146,7 +150,7 @@ namespace TarihStrateji.Unity.Presentation.Input
             float scroll = UnityEngine.Input.mouseScrollDelta.y;
             if (Mathf.Abs(scroll) > 0.01f && (IsOverUi == null || !IsOverUi(position)))
             {
-                ZoomAround(position, GestureMath.ScrollOrthographicSize(_camera.orthographicSize, scroll, MinOrthographicSize, MaxOrthographicSize));
+                ZoomAround(position, GestureMath.ScrollOrthographicSize(_camera.orthographicSize, scroll, MinOrthographicSize, _maxOrthographicSize));
             }
         }
 

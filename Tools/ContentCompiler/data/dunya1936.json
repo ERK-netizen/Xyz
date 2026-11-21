@@ -1,0 +1,4884 @@
+{
+ "scenario": "dunya1936",
+ "title": "1936 Dünya",
+ "date": [
+  1936,
+  3,
+  7
+ ],
+ "bbox": [
+  -180.0,
+  -56.0,
+  180.0,
+  84.0
+ ],
+ "source": {
+  "id": "cshapes-2.0",
+  "format": "cshapes",
+  "url": "https://icr.ethz.ch/data/cshapes/CShapes-2.0.geojson",
+  "license": "CC BY-NC-SA 4.0",
+  "author": "Schvitz, Girardin, Rüegger, Weidmann, Cederman ve Gleditsch (ETH Zürich, International Conflict Research)",
+  "citation": "Schvitz, G., Girardin, L., Rüegger, S., Weidmann, N. B., Cederman, L.-E., & Gleditsch, K. S. (2022). Mapping the International System, 1886-2019: The CShapes 2.0 Dataset. Journal of Conflict Resolution, 66(1), 144-161.",
+  "accuracy": "Gleditsch–Ward devlet sistemi; Biger (1995) sınır ansiklopedisine dayalı kodlama",
+  "sha256": "384b1ea90b9419f30a858d7ec237c85a22c60d1b35b5f85f215a1204f9989d42"
+ },
+ "countries": [
+  {
+   "key": "turkiye",
+   "id": 1,
+   "name": "Türkiye Cumhuriyeti",
+   "sources": [
+    "Turkey (Ottoman Empire)"
+   ],
+   "population": 16200
+  },
+  {
+   "key": "yunanistan",
+   "id": 2,
+   "name": "Yunanistan Krallığı",
+   "sources": [
+    "Greece"
+   ],
+   "population": 6900
+  },
+  {
+   "key": "bulgaristan",
+   "id": 3,
+   "name": "Bulgaristan Çarlığı",
+   "sources": [
+    "Bulgaria"
+   ],
+   "population": 6200
+  },
+  {
+   "key": "yugoslavya",
+   "id": 4,
+   "name": "Yugoslavya Krallığı",
+   "sources": [
+    "Yugoslavia"
+   ],
+   "population": 15200
+  },
+  {
+   "key": "misir",
+   "id": 5,
+   "name": "Mısır Krallığı",
+   "sources": [
+    "Egypt"
+   ],
+   "population": 15900
+  },
+  {
+   "key": "irak",
+   "id": 6,
+   "name": "Irak Krallığı",
+   "sources": [
+    "Iraq"
+   ],
+   "population": 3600
+  },
+  {
+   "key": "romanya",
+   "id": 7,
+   "name": "Romanya Krallığı",
+   "sources": [
+    "Rumania"
+   ],
+   "population": 19100
+  },
+  {
+   "key": "avusturya",
+   "id": 8,
+   "name": "Avusturya Federal Devleti",
+   "sources": [
+    "Austria"
+   ],
+   "population": 6750
+  },
+  {
+   "key": "italya",
+   "id": 9,
+   "name": "İtalya Krallığı",
+   "sources": [
+    "Italy/Sardinia",
+    "Libya",
+    "Eritrea",
+    "Italian Somaliland"
+   ],
+   "population": 45000
+  },
+  {
+   "key": "sovyetler",
+   "id": 10,
+   "name": "Sovyetler Birliği",
+   "sources": [
+    "Russia (Soviet Union)"
+   ],
+   "population": 165000
+  },
+  {
+   "key": "britanya",
+   "id": 11,
+   "name": "Birleşik Krallık",
+   "sources": [
+    "United Kingdom",
+    "Malta",
+    "Cyprus",
+    "Palestine",
+    "Jordan",
+    "Bahamas",
+    "Jamaica",
+    "Trinidad and Tobago",
+    "Barbados",
+    "Belize",
+    "Guyana",
+    "Gambia",
+    "Sierra Leone",
+    "Ghana",
+    "British Togoland",
+    "British Cameroons",
+    "Nigeria",
+    "Uganda",
+    "Kenya",
+    "Tanzania (Tanganyika)",
+    "Zanzibar",
+    "British Somaliland (Somaliland Republic)",
+    "Zambia",
+    "Zimbabwe (Rhodesia)",
+    "Malawi",
+    "Lesotho",
+    "Botswana",
+    "Swaziland (Eswatini)",
+    "Mauritius",
+    "Sudan",
+    "Qatar",
+    "United Arab Emirates",
+    "India",
+    "Sri Lanka (Ceylon)",
+    "Maldives",
+    "Federated Malay States",
+    "Unfederated Malay States",
+    "Sabah (North Borneo)",
+    "Sarawak",
+    "Straits Settlements",
+    "Brunei",
+    "Solomon Islands",
+    "Fiji",
+    "Newfoundland"
+   ],
+   "population": 470000
+  },
+  {
+   "key": "iran",
+   "id": 12,
+   "name": "İran Şahlığı",
+   "sources": [
+    "Iran (Persia)"
+   ],
+   "population": 15000
+  },
+  {
+   "key": "fransa",
+   "id": 13,
+   "name": "Fransa Cumhuriyeti",
+   "sources": [
+    "France",
+    "Guadeloupe",
+    "Martinique",
+    "French Guyana",
+    "Inini",
+    "Syria",
+    "Lebanon",
+    "Mali",
+    "Senegal",
+    "Benin",
+    "Mauritania",
+    "Niger",
+    "Cote D'Ivoire",
+    "Guinea",
+    "Togo",
+    "Cameroon",
+    "Gabon",
+    "Central African Republic",
+    "Chad",
+    "Congo",
+    "Djibouti",
+    "Madagascar (Malagasy)",
+    "Reunion",
+    "Morocco",
+    "Algeria",
+    "Tunisia",
+    "Cambodia (Kampuchea)",
+    "Laos",
+    "Vietnam (Annam/Cochin China/Tonkin)",
+    "New Caledonia and Dependencies",
+    "French Polynesia"
+   ],
+   "population": 110000
+  },
+  {
+   "key": "macaristan",
+   "id": 14,
+   "name": "Macaristan Krallığı",
+   "sources": [
+    "Hungary"
+   ],
+   "population": 9000
+  },
+  {
+   "key": "arnavutluk",
+   "id": 15,
+   "name": "Arnavutluk Krallığı",
+   "sources": [
+    "Albania"
+   ],
+   "population": 1000
+  },
+  {
+   "key": "almanya",
+   "id": 16,
+   "name": "Alman Reich",
+   "sources": [
+    "Germany (Prussia)",
+    "Danzig"
+   ],
+   "population": 67500
+  },
+  {
+   "key": "ispanya",
+   "id": 17,
+   "name": "İspanya Cumhuriyeti",
+   "sources": [
+    "Spain",
+    "Spanish Morocco",
+    "Spanish West Africa",
+    "Equatorial Guinea"
+   ],
+   "population": 25000
+  },
+  {
+   "key": "portekiz",
+   "id": 18,
+   "name": "Portekiz Cumhuriyeti",
+   "sources": [
+    "Portugal",
+    "Cape Verde",
+    "Guinea-Bissau",
+    "Angola",
+    "Mozambique",
+    "East Timor"
+   ],
+   "population": 15500
+  },
+  {
+   "key": "hollanda",
+   "id": 19,
+   "name": "Hollanda Krallığı",
+   "sources": [
+    "Netherlands",
+    "Surinam",
+    "Indonesia"
+   ],
+   "population": 73000
+  },
+  {
+   "key": "belcika",
+   "id": 20,
+   "name": "Belçika Krallığı",
+   "sources": [
+    "Belgium",
+    "Congo, Democratic Republic of (Zaire)",
+    "Rwanda-Urundi"
+   ],
+   "population": 22500
+  },
+  {
+   "key": "polonya",
+   "id": 21,
+   "name": "Polonya Cumhuriyeti",
+   "sources": [
+    "Poland"
+   ],
+   "population": 33500
+  },
+  {
+   "key": "cekoslovakya",
+   "id": 22,
+   "name": "Çekoslovakya Cumhuriyeti",
+   "sources": [
+    "Czechoslovakia"
+   ],
+   "population": 15000
+  },
+  {
+   "key": "isvicre",
+   "id": 23,
+   "name": "İsviçre Konfederasyonu",
+   "sources": [
+    "Switzerland"
+   ],
+   "population": 4100
+  },
+  {
+   "key": "danimarka",
+   "id": 24,
+   "name": "Danimarka Krallığı",
+   "sources": [
+    "Denmark"
+   ],
+   "population": 3800
+  },
+  {
+   "key": "isvec",
+   "id": 25,
+   "name": "İsveç Krallığı",
+   "sources": [
+    "Sweden"
+   ],
+   "population": 6250
+  },
+  {
+   "key": "norvec",
+   "id": 26,
+   "name": "Norveç Krallığı",
+   "sources": [
+    "Norway"
+   ],
+   "population": 2900
+  },
+  {
+   "key": "finlandiya",
+   "id": 27,
+   "name": "Finlandiya Cumhuriyeti",
+   "sources": [
+    "Finland"
+   ],
+   "population": 3700
+  },
+  {
+   "key": "estonya",
+   "id": 28,
+   "name": "Estonya Cumhuriyeti",
+   "sources": [
+    "Estonia"
+   ],
+   "population": 1130
+  },
+  {
+   "key": "irlanda",
+   "id": 29,
+   "name": "İrlanda Serbest Devleti",
+   "sources": [
+    "Ireland"
+   ],
+   "population": 2950
+  },
+  {
+   "key": "abd",
+   "id": 30,
+   "name": "Amerika Birleşik Devletleri",
+   "sources": [
+    "United States of America",
+    "Alaska",
+    "Hawaii",
+    "Puerto Rico",
+    "Philippines"
+   ],
+   "population": 143000
+  },
+  {
+   "key": "kanada",
+   "id": 31,
+   "name": "Kanada",
+   "sources": [
+    "Canada"
+   ],
+   "population": 11000
+  },
+  {
+   "key": "meksika",
+   "id": 32,
+   "name": "Meksika",
+   "sources": [
+    "Mexico"
+   ],
+   "population": 18500
+  },
+  {
+   "key": "kuba",
+   "id": 33,
+   "name": "Küba Cumhuriyeti",
+   "sources": [
+    "Cuba"
+   ],
+   "population": 4100
+  },
+  {
+   "key": "guatemala",
+   "id": 34,
+   "name": "Guatemala Cumhuriyeti",
+   "sources": [
+    "Guatemala"
+   ],
+   "population": 2200
+  },
+  {
+   "key": "kolombiya",
+   "id": 35,
+   "name": "Kolombiya Cumhuriyeti",
+   "sources": [
+    "Colombia"
+   ],
+   "population": 8700
+  },
+  {
+   "key": "peru",
+   "id": 36,
+   "name": "Peru Cumhuriyeti",
+   "sources": [
+    "Peru"
+   ],
+   "population": 6500
+  },
+  {
+   "key": "brezilya",
+   "id": 37,
+   "name": "Brezilya Birleşik Devletleri",
+   "sources": [
+    "Brazil"
+   ],
+   "population": 40000
+  },
+  {
+   "key": "arjantin",
+   "id": 38,
+   "name": "Arjantin Cumhuriyeti",
+   "sources": [
+    "Argentina"
+   ],
+   "population": 12500
+  },
+  {
+   "key": "sili",
+   "id": 39,
+   "name": "Şili Cumhuriyeti",
+   "sources": [
+    "Chile"
+   ],
+   "population": 4600
+  },
+  {
+   "key": "bolivya",
+   "id": 40,
+   "name": "Bolivya Cumhuriyeti",
+   "sources": [
+    "Bolivia"
+   ],
+   "population": 2700
+  },
+  {
+   "key": "uruguay",
+   "id": 41,
+   "name": "Uruguay Cumhuriyeti",
+   "sources": [
+    "Uruguay"
+   ],
+   "population": 2000
+  },
+  {
+   "key": "liberya",
+   "id": 42,
+   "name": "Liberya Cumhuriyeti",
+   "sources": [
+    "Liberia"
+   ],
+   "population": 1500
+  },
+  {
+   "key": "etiyopya",
+   "id": 43,
+   "name": "Habeşistan İmparatorluğu",
+   "sources": [
+    "Ethiopia"
+   ],
+   "population": 11000
+  },
+  {
+   "key": "guneyafrika",
+   "id": 44,
+   "name": "Güney Afrika Birliği",
+   "sources": [
+    "South Africa",
+    "Namibia"
+   ],
+   "population": 9800
+  },
+  {
+   "key": "suudi",
+   "id": 45,
+   "name": "Suudi Arabistan Krallığı",
+   "sources": [
+    "Saudi Arabia"
+   ],
+   "population": 2500
+  },
+  {
+   "key": "yemen",
+   "id": 46,
+   "name": "Yemen Mütevekkil Krallığı",
+   "sources": [
+    "Yemen (Arab Republic of Yemen)"
+   ],
+   "population": 3000
+  },
+  {
+   "key": "afganistan",
+   "id": 47,
+   "name": "Afganistan Krallığı",
+   "sources": [
+    "Afghanistan"
+   ],
+   "population": 7000
+  },
+  {
+   "key": "cin",
+   "id": 48,
+   "name": "Çin Cumhuriyeti",
+   "sources": [
+    "China"
+   ],
+   "population": 450000
+  },
+  {
+   "key": "mogolistan",
+   "id": 49,
+   "name": "Moğolistan Halk Cumhuriyeti",
+   "sources": [
+    "Mongolia"
+   ],
+   "population": 750
+  },
+  {
+   "key": "japonya",
+   "id": 50,
+   "name": "Japon İmparatorluğu",
+   "sources": [
+    "Japan",
+    "Korea",
+    "Taiwan",
+    "Southern Sakhalin Island"
+   ],
+   "population": 97000
+  },
+  {
+   "key": "nepal",
+   "id": 51,
+   "name": "Nepal Krallığı",
+   "sources": [
+    "Nepal"
+   ],
+   "population": 5500
+  },
+  {
+   "key": "tayland",
+   "id": 52,
+   "name": "Siyam Krallığı",
+   "sources": [
+    "Thailand"
+   ],
+   "population": 14000
+  },
+  {
+   "key": "avustralya",
+   "id": 53,
+   "name": "Avustralya",
+   "sources": [
+    "Australia",
+    "Papua",
+    "New Guinea (German New Guinea) (Kaiser Wilhelmsland)"
+   ],
+   "population": 7700
+  },
+  {
+   "key": "yenizelanda",
+   "id": 54,
+   "name": "Yeni Zelanda",
+   "sources": [
+    "New Zealand"
+   ],
+   "population": 1550
+  },
+  {
+   "key": "letonya",
+   "id": 55,
+   "name": "Letonya Cumhuriyeti",
+   "sources": [
+    "Latvia"
+   ],
+   "population": 1950
+  },
+  {
+   "key": "litvanya",
+   "id": 56,
+   "name": "Litvanya Cumhuriyeti",
+   "sources": [
+    "Lithuania"
+   ],
+   "population": 2500
+  },
+  {
+   "key": "haiti",
+   "id": 57,
+   "name": "Haiti Cumhuriyeti",
+   "sources": [
+    "Haiti"
+   ],
+   "population": 2600
+  },
+  {
+   "key": "dominik",
+   "id": 58,
+   "name": "Dominik Cumhuriyeti",
+   "sources": [
+    "Dominican Republic"
+   ],
+   "population": 1500
+  },
+  {
+   "key": "honduras",
+   "id": 59,
+   "name": "Honduras Cumhuriyeti",
+   "sources": [
+    "Honduras"
+   ],
+   "population": 1000
+  },
+  {
+   "key": "elsalvador",
+   "id": 60,
+   "name": "El Salvador Cumhuriyeti",
+   "sources": [
+    "El Salvador"
+   ],
+   "population": 1600
+  },
+  {
+   "key": "nikaragua",
+   "id": 61,
+   "name": "Nikaragua Cumhuriyeti",
+   "sources": [
+    "Nicaragua"
+   ],
+   "population": 800
+  },
+  {
+   "key": "kostarika",
+   "id": 62,
+   "name": "Kosta Rika Cumhuriyeti",
+   "sources": [
+    "Costa Rica"
+   ],
+   "population": 600
+  },
+  {
+   "key": "panama",
+   "id": 63,
+   "name": "Panama Cumhuriyeti",
+   "sources": [
+    "Panama"
+   ],
+   "population": 550
+  },
+  {
+   "key": "venezuela",
+   "id": 64,
+   "name": "Venezuela Birleşik Devletleri",
+   "sources": [
+    "Venezuela"
+   ],
+   "population": 3400
+  },
+  {
+   "key": "ekvador",
+   "id": 65,
+   "name": "Ekvador Cumhuriyeti",
+   "sources": [
+    "Ecuador"
+   ],
+   "population": 2600
+  },
+  {
+   "key": "paraguay",
+   "id": 66,
+   "name": "Paraguay Cumhuriyeti",
+   "sources": [
+    "Paraguay"
+   ],
+   "population": 950
+  },
+  {
+   "key": "umman",
+   "id": 67,
+   "name": "Maskat ve Umman Sultanlığı",
+   "sources": [
+    "Oman"
+   ],
+   "population": 500
+  },
+  {
+   "key": "bhutan",
+   "id": 68,
+   "name": "Bhutan Krallığı",
+   "sources": [
+    "Bhutan"
+   ],
+   "population": 300
+  },
+  {
+   "key": "luksemburg",
+   "id": 69,
+   "name": "Lüksemburg Büyük Dükalığı",
+   "sources": [
+    "Luxembourg"
+   ],
+   "population": 300
+  },
+  {
+   "key": "izlanda",
+   "id": 70,
+   "name": "İzlanda Krallığı",
+   "sources": [
+    "Iceland"
+   ],
+   "population": 115
+  },
+  {
+   "key": "tibet",
+   "id": 71,
+   "name": "Tibet",
+   "sources": [
+    "Tibet"
+   ],
+   "population": 1000
+  }
+ ],
+ "corrections": [
+  {
+   "kind": "transfer",
+   "from": "yunanistan",
+   "to": "italya",
+   "note": "Onikiadalar 1912'den beri İtalyan; 1923 Lozan ile İtalya'ya bırakıldı (1947'de Yunan). CShapes Yunanistan'da gösterir.",
+   "polygon": [
+    [
+     26.6,
+     35.35
+    ],
+    [
+     28.4,
+     35.35
+    ],
+    [
+     28.4,
+     37.45
+    ],
+    [
+     26.4,
+     37.45
+    ],
+    [
+     26.4,
+     35.6
+    ]
+   ]
+  },
+  {
+   "kind": "transfer",
+   "from": "turkiye",
+   "to": "fransa",
+   "note": "Hatay (İskenderun Sancağı) 1936'da Fransız mandası Suriye'nin parçasıdır (1938 Hatay Devleti, 29.06.1939 Türkiye'ye katılım); CShapes Türkiye'de gösterir. Sancak sınırı yaklaşıktır (1921 Ankara Antlaşması çizgisi).",
+   "polygon": [
+    [
+     35.7,
+     35.75
+    ],
+    [
+     36.15,
+     35.8
+    ],
+    [
+     36.4,
+     35.95
+    ],
+    [
+     36.65,
+     36.2
+    ],
+    [
+     36.7,
+     36.6
+    ],
+    [
+     36.55,
+     36.78
+    ],
+    [
+     36.15,
+     36.78
+    ],
+    [
+     35.9,
+     36.6
+    ],
+    [
+     35.7,
+     36.2
+    ]
+   ]
+  },
+  {
+   "kind": "note",
+   "note": "Dünya 1936: CShapes 2.0'ın 07.03.1936'da geçerli 170 birimi (bağımsız devletler, sömürgeler, mandalar, himayeler) yöneten egemen devlete bağlanır (Tools/ContentCompiler/data/dunya1936.json 'sources'). Dominyonlar (Kanada, Avustralya, Yeni Zelanda, Güney Afrika, İrlanda) ayrı devlettir; Danzig Serbest Şehri fiilen Nazi yönetiminde olduğundan Almanya'ya, Namibya mandası Güney Afrika'ya, Yeni Gine mandası Avustralya'ya, Filipinler (Commonwealth) ABD'ye bağlanır. Mançukuo ayrı tutulmaz (CShapes Çin'de gösterir)."
+  },
+  {
+   "kind": "note",
+   "note": "Şehirler: her CShapes biriminin başkenti (1936 başkentleriyle düzeltilmiş: Ankara, Rio de Janeiro, Nankin, Lagos…) ve Natural Earth 'populated places' (kamu malı) listesinden ülke kotasıyla en büyük şehirler (aralık ≥ 0,9°). Adlar 1936 kullanımı ve Türkçe karşılıklarla (Leningrad, Stalingrad, Batavya, Leopoldville…). Nüfus modern değerden kademe tahminidir."
+  }
+ ],
+ "islands": [],
+ "straits": [],
+ "seaLinks": [
+  {
+   "name": "Boğazlar",
+   "points": [
+    [
+     31.0,
+     41.6
+    ],
+    [
+     29.08,
+     41.2
+    ],
+    [
+     28.9,
+     40.85
+    ],
+    [
+     28.0,
+     40.7
+    ],
+    [
+     27.0,
+     40.55
+    ],
+    [
+     26.5,
+     40.25
+    ],
+    [
+     26.05,
+     40.0
+    ],
+    [
+     25.3,
+     39.8
+    ]
+   ]
+  },
+  {
+   "name": "Cebelitarık",
+   "points": [
+    [
+     -7.5,
+     35.9
+    ],
+    [
+     -5.6,
+     35.95
+    ],
+    [
+     -4.0,
+     36.1
+    ],
+    [
+     -2.0,
+     36.3
+    ]
+   ]
+  },
+  {
+   "name": "Süveyş Kanalı",
+   "points": [
+    [
+     32.3,
+     31.8
+    ],
+    [
+     32.35,
+     31.3
+    ],
+    [
+     32.45,
+     30.6
+    ],
+    [
+     32.55,
+     29.9
+    ],
+    [
+     32.9,
+     28.5
+    ],
+    [
+     34.0,
+     27.0
+    ]
+   ]
+  },
+  {
+   "name": "Panama Kanalı",
+   "points": [
+    [
+     -79.9,
+     9.6
+    ],
+    [
+     -79.9,
+     9.35
+    ],
+    [
+     -79.6,
+     9.0
+    ],
+    [
+     -79.5,
+     8.6
+    ],
+    [
+     -79.5,
+     7.5
+    ]
+   ]
+  },
+  {
+   "name": "Danimarka boğazları",
+   "points": [
+    [
+     11.0,
+     57.8
+    ],
+    [
+     11.2,
+     56.8
+    ],
+    [
+     11.0,
+     55.8
+    ],
+    [
+     11.3,
+     54.9
+    ],
+    [
+     13.0,
+     54.8
+    ],
+    [
+     15.0,
+     55.2
+    ]
+   ]
+  },
+  {
+   "name": "Malakka",
+   "points": [
+    [
+     98.0,
+     6.0
+    ],
+    [
+     99.5,
+     4.2
+    ],
+    [
+     101.0,
+     2.6
+    ],
+    [
+     103.0,
+     1.2
+    ],
+    [
+     104.5,
+     1.3
+    ],
+    [
+     105.5,
+     2.0
+    ]
+   ]
+  },
+  {
+   "name": "Kerç",
+   "points": [
+    [
+     36.4,
+     45.1
+    ],
+    [
+     36.55,
+     45.35
+    ],
+    [
+     36.8,
+     45.6
+    ]
+   ]
+  },
+  {
+   "name": "Hürmüz",
+   "points": [
+    [
+     52.0,
+     26.5
+    ],
+    [
+     55.0,
+     26.6
+    ],
+    [
+     56.4,
+     26.4
+    ],
+    [
+     57.5,
+     25.4
+    ],
+    [
+     58.5,
+     24.5
+    ]
+   ]
+  },
+  {
+   "name": "Babülmendep",
+   "points": [
+    [
+     40.5,
+     15.5
+    ],
+    [
+     42.5,
+     13.5
+    ],
+    [
+     43.4,
+     12.6
+    ],
+    [
+     44.5,
+     12.0
+    ],
+    [
+     46.0,
+     12.0
+    ]
+   ]
+  },
+  {
+   "name": "Manş",
+   "points": [
+    [
+     -5.5,
+     49.0
+    ],
+    [
+     -3.0,
+     49.8
+    ],
+    [
+     0.0,
+     50.2
+    ],
+    [
+     1.5,
+     51.0
+    ],
+    [
+     3.0,
+     51.7
+    ]
+   ]
+  }
+ ],
+ "seaGridStep": 3.0,
+ "cities": [
+  {
+   "key": "ankara",
+   "name": "Ankara",
+   "lat": 39.93,
+   "lon": 32.85,
+   "tier": 5,
+   "port": false,
+   "country": "turkiye"
+  },
+  {
+   "key": "istanbul",
+   "name": "İstanbul",
+   "lat": 41.1069,
+   "lon": 29.0081,
+   "tier": 4,
+   "port": true,
+   "country": "turkiye"
+  },
+  {
+   "key": "adana",
+   "name": "Adana",
+   "lat": 36.9969,
+   "lon": 35.3181,
+   "tier": 3,
+   "port": false,
+   "country": "turkiye"
+  },
+  {
+   "key": "bursa",
+   "name": "Bursa",
+   "lat": 40.2019,
+   "lon": 29.0681,
+   "tier": 3,
+   "port": false,
+   "country": "turkiye"
+  },
+  {
+   "key": "gaziantep",
+   "name": "Gaziantep",
+   "lat": 37.0769,
+   "lon": 37.383,
+   "tier": 3,
+   "port": false,
+   "country": "turkiye"
+  },
+  {
+   "key": "izmir",
+   "name": "İzmir",
+   "lat": 38.4381,
+   "lon": 27.1498,
+   "tier": 3,
+   "port": true,
+   "country": "turkiye"
+  },
+  {
+   "key": "atina",
+   "name": "Atina",
+   "lat": 37.9833,
+   "lon": 23.7333,
+   "tier": 5,
+   "port": true,
+   "country": "yunanistan"
+  },
+  {
+   "key": "selanik",
+   "name": "Selanik",
+   "lat": 40.6981,
+   "lon": 22.8831,
+   "tier": 3,
+   "port": true,
+   "country": "yunanistan"
+  },
+  {
+   "key": "patra",
+   "name": "Patra",
+   "lat": 38.23,
+   "lon": 21.73,
+   "tier": 2,
+   "port": true,
+   "country": "yunanistan"
+  },
+  {
+   "key": "sofya",
+   "name": "Sofya",
+   "lat": 42.6833,
+   "lon": 23.3167,
+   "tier": 5,
+   "port": false,
+   "country": "bulgaristan"
+  },
+  {
+   "key": "plovdiv",
+   "name": "Plovdiv",
+   "lat": 42.154,
+   "lon": 24.754,
+   "tier": 2,
+   "port": false,
+   "country": "bulgaristan"
+  },
+  {
+   "key": "varna",
+   "name": "Varna",
+   "lat": 43.2156,
+   "lon": 27.8953,
+   "tier": 2,
+   "port": true,
+   "country": "bulgaristan"
+  },
+  {
+   "key": "belgrad",
+   "name": "Belgrad",
+   "lat": 44.8186,
+   "lon": 20.4681,
+   "tier": 5,
+   "port": false,
+   "country": "yugoslavya"
+  },
+  {
+   "key": "lubyana",
+   "name": "Lubyana",
+   "lat": 46.0553,
+   "lon": 14.515,
+   "tier": 2,
+   "port": false,
+   "country": "yugoslavya"
+  },
+  {
+   "key": "sarajevo",
+   "name": "Sarajevo",
+   "lat": 43.85,
+   "lon": 18.383,
+   "tier": 2,
+   "port": false,
+   "country": "yugoslavya"
+  },
+  {
+   "key": "skopje",
+   "name": "Skopje",
+   "lat": 42.0,
+   "lon": 21.4335,
+   "tier": 2,
+   "port": false,
+   "country": "yugoslavya"
+  },
+  {
+   "key": "zagreb",
+   "name": "Zagreb",
+   "lat": 45.8,
+   "lon": 16.0,
+   "tier": 2,
+   "port": false,
+   "country": "yugoslavya"
+  },
+  {
+   "key": "kahire",
+   "name": "Kahire",
+   "lat": 30.05,
+   "lon": 31.25,
+   "tier": 5,
+   "port": false,
+   "country": "misir"
+  },
+  {
+   "key": "iskenderiye",
+   "name": "İskenderiye",
+   "lat": 31.202,
+   "lon": 29.948,
+   "tier": 4,
+   "port": true,
+   "country": "misir"
+  },
+  {
+   "key": "elmansura",
+   "name": "El Mansura",
+   "lat": 31.0504,
+   "lon": 31.38,
+   "tier": 2,
+   "port": false,
+   "country": "misir"
+  },
+  {
+   "key": "ismailia",
+   "name": "Ismaïlia",
+   "lat": 30.5903,
+   "lon": 32.26,
+   "tier": 2,
+   "port": false,
+   "country": "misir"
+  },
+  {
+   "key": "luxor",
+   "name": "Luxor",
+   "lat": 25.7,
+   "lon": 32.65,
+   "tier": 2,
+   "port": false,
+   "country": "misir"
+  },
+  {
+   "key": "sohag",
+   "name": "Sohag",
+   "lat": 26.5504,
+   "lon": 31.7,
+   "tier": 2,
+   "port": false,
+   "country": "misir"
+  },
+  {
+   "key": "bagdat",
+   "name": "Bağdat",
+   "lat": 33.3386,
+   "lon": 44.3939,
+   "tier": 5,
+   "port": false,
+   "country": "irak"
+  },
+  {
+   "key": "basra",
+   "name": "Basra",
+   "lat": 30.5155,
+   "lon": 47.8116,
+   "tier": 3,
+   "port": false,
+   "country": "irak"
+  },
+  {
+   "key": "mosul",
+   "name": "Mosul",
+   "lat": 36.3469,
+   "lon": 43.1431,
+   "tier": 3,
+   "port": false,
+   "country": "irak"
+  },
+  {
+   "key": "assulaymaniyah",
+   "name": "As Sulaymaniyah",
+   "lat": 35.5613,
+   "lon": 45.4309,
+   "tier": 2,
+   "port": false,
+   "country": "irak"
+  },
+  {
+   "key": "bukres",
+   "name": "Bükreş",
+   "lat": 44.4333,
+   "lon": 26.1,
+   "tier": 5,
+   "port": false,
+   "country": "romanya"
+  },
+  {
+   "key": "chisinau",
+   "name": "Chișinău",
+   "lat": 47.005,
+   "lon": 28.8577,
+   "tier": 2,
+   "port": false,
+   "country": "romanya"
+  },
+  {
+   "key": "clujnapoca",
+   "name": "Cluj-Napoca",
+   "lat": 46.7884,
+   "lon": 23.5984,
+   "tier": 2,
+   "port": false,
+   "country": "romanya"
+  },
+  {
+   "key": "iasi",
+   "name": "Iași",
+   "lat": 47.1683,
+   "lon": 27.5749,
+   "tier": 2,
+   "port": false,
+   "country": "romanya"
+  },
+  {
+   "key": "timisoara",
+   "name": "Timișoara",
+   "lat": 45.7588,
+   "lon": 21.2234,
+   "tier": 2,
+   "port": false,
+   "country": "romanya"
+  },
+  {
+   "key": "viyana",
+   "name": "Viyana",
+   "lat": 48.2,
+   "lon": 16.3667,
+   "tier": 5,
+   "port": false,
+   "country": "avusturya"
+  },
+  {
+   "key": "graz",
+   "name": "Graz",
+   "lat": 47.0778,
+   "lon": 15.41,
+   "tier": 2,
+   "port": false,
+   "country": "avusturya"
+  },
+  {
+   "key": "linz",
+   "name": "Linz",
+   "lat": 48.3192,
+   "lon": 14.2888,
+   "tier": 2,
+   "port": false,
+   "country": "avusturya"
+  },
+  {
+   "key": "roma",
+   "name": "Roma",
+   "lat": 41.9,
+   "lon": 12.4833,
+   "tier": 5,
+   "port": false,
+   "country": "italya"
+  },
+  {
+   "key": "asmara",
+   "name": "Asmara",
+   "lat": 15.3333,
+   "lon": 38.9333,
+   "tier": 3,
+   "port": false,
+   "country": "italya"
+  },
+  {
+   "key": "mogadisu",
+   "name": "Mogadişu",
+   "lat": 2.0469,
+   "lon": 45.3667,
+   "tier": 3,
+   "port": true,
+   "country": "italya"
+  },
+  {
+   "key": "trablusgarp",
+   "name": "Trablusgarp",
+   "lat": 32.89,
+   "lon": 13.18,
+   "tier": 3,
+   "port": true,
+   "country": "italya"
+  },
+  {
+   "key": "banghazi",
+   "name": "Banghazi",
+   "lat": 32.1187,
+   "lon": 20.0648,
+   "tier": 3,
+   "port": true,
+   "country": "italya"
+  },
+  {
+   "key": "florence",
+   "name": "Florence",
+   "lat": 43.78,
+   "lon": 11.25,
+   "tier": 3,
+   "port": false,
+   "country": "italya"
+  },
+  {
+   "key": "milan",
+   "name": "Milan",
+   "lat": 45.4719,
+   "lon": 9.2031,
+   "tier": 3,
+   "port": false,
+   "country": "italya"
+  },
+  {
+   "key": "naples",
+   "name": "Naples",
+   "lat": 40.842,
+   "lon": 14.2431,
+   "tier": 3,
+   "port": true,
+   "country": "italya"
+  },
+  {
+   "key": "turin",
+   "name": "Turin",
+   "lat": 45.0723,
+   "lon": 7.668,
+   "tier": 3,
+   "port": false,
+   "country": "italya"
+  },
+  {
+   "key": "moskova",
+   "name": "Moskova",
+   "lat": 55.75,
+   "lon": 37.62,
+   "tier": 5,
+   "port": false,
+   "country": "sovyetler"
+  },
+  {
+   "key": "stpetersburg",
+   "name": "St.  Petersburg",
+   "lat": 59.941,
+   "lon": 30.3141,
+   "tier": 4,
+   "port": true,
+   "country": "sovyetler"
+  },
+  {
+   "key": "almaata",
+   "name": "Alma-Ata",
+   "lat": 43.3269,
+   "lon": 76.9131,
+   "tier": 3,
+   "port": false,
+   "country": "sovyetler"
+  },
+  {
+   "key": "baku",
+   "name": "Bakü",
+   "lat": 40.3972,
+   "lon": 49.8603,
+   "tier": 3,
+   "port": true,
+   "country": "sovyetler"
+  },
+  {
+   "key": "chelyabinsk",
+   "name": "Chelyabinsk",
+   "lat": 55.1569,
+   "lon": 61.4367,
+   "tier": 3,
+   "port": false,
+   "country": "sovyetler"
+  },
+  {
+   "key": "dnipro",
+   "name": "Dnipro",
+   "lat": 48.4819,
+   "lon": 34.9981,
+   "tier": 3,
+   "port": false,
+   "country": "sovyetler"
+  },
+  {
+   "key": "erivan",
+   "name": "Erivan",
+   "lat": 40.1831,
+   "lon": 44.5116,
+   "tier": 3,
+   "port": false,
+   "country": "sovyetler"
+  },
+  {
+   "key": "gorki",
+   "name": "Gorki",
+   "lat": 56.335,
+   "lon": 43.9981,
+   "tier": 3,
+   "port": false,
+   "country": "sovyetler"
+  },
+  {
+   "key": "harkov",
+   "name": "Harkov",
+   "lat": 50.0019,
+   "lon": 36.2481,
+   "tier": 3,
+   "port": false,
+   "country": "sovyetler"
+  },
+  {
+   "key": "kazan",
+   "name": "Kazan",
+   "lat": 55.7519,
+   "lon": 49.1244,
+   "tier": 3,
+   "port": false,
+   "country": "sovyetler"
+  },
+  {
+   "key": "kiev",
+   "name": "Kiev",
+   "lat": 50.4353,
+   "lon": 30.5147,
+   "tier": 3,
+   "port": false,
+   "country": "sovyetler"
+  },
+  {
+   "key": "krasnoyarsk",
+   "name": "Krasnoyarsk",
+   "lat": 56.0159,
+   "lon": 92.8641,
+   "tier": 3,
+   "port": false,
+   "country": "sovyetler"
+  },
+  {
+   "key": "kuybsev",
+   "name": "Kuybışev",
+   "lat": 53.197,
+   "lon": 50.1493,
+   "tier": 3,
+   "port": false,
+   "country": "sovyetler"
+  },
+  {
+   "key": "minsk",
+   "name": "Minsk",
+   "lat": 53.9019,
+   "lon": 27.5647,
+   "tier": 3,
+   "port": false,
+   "country": "sovyetler"
+  },
+  {
+   "key": "novosibirsk",
+   "name": "Novosibirsk",
+   "lat": 55.0319,
+   "lon": 82.9581,
+   "tier": 3,
+   "port": false,
+   "country": "sovyetler"
+  },
+  {
+   "key": "odessa",
+   "name": "Odessa",
+   "lat": 46.492,
+   "lon": 30.7081,
+   "tier": 3,
+   "port": true,
+   "country": "sovyetler"
+  },
+  {
+   "key": "omsk",
+   "name": "Omsk",
+   "lat": 54.9919,
+   "lon": 73.398,
+   "tier": 3,
+   "port": false,
+   "country": "sovyetler"
+  },
+  {
+   "key": "perm",
+   "name": "Perm",
+   "lat": 58.0019,
+   "lon": 56.248,
+   "tier": 3,
+   "port": false,
+   "country": "sovyetler"
+  },
+  {
+   "key": "rostov",
+   "name": "Rostov",
+   "lat": 47.2366,
+   "lon": 39.7107,
+   "tier": 3,
+   "port": false,
+   "country": "sovyetler"
+  },
+  {
+   "key": "stalinabad",
+   "name": "Stalinabad",
+   "lat": 38.56,
+   "lon": 68.7739,
+   "tier": 3,
+   "port": false,
+   "country": "sovyetler"
+  },
+  {
+   "key": "stalingrad",
+   "name": "Stalingrad",
+   "lat": 48.712,
+   "lon": 44.498,
+   "tier": 3,
+   "port": false,
+   "country": "sovyetler"
+  },
+  {
+   "key": "stalino",
+   "name": "Stalino",
+   "lat": 48.0019,
+   "lon": 37.828,
+   "tier": 3,
+   "port": false,
+   "country": "sovyetler"
+  },
+  {
+   "key": "sverdlovsk",
+   "name": "Sverdlovsk",
+   "lat": 56.852,
+   "lon": 60.598,
+   "tier": 3,
+   "port": false,
+   "country": "sovyetler"
+  },
+  {
+   "key": "taskent",
+   "name": "Taşkent",
+   "lat": 41.3136,
+   "lon": 69.293,
+   "tier": 3,
+   "port": false,
+   "country": "sovyetler"
+  },
+  {
+   "key": "tiflis",
+   "name": "Tiflis",
+   "lat": 41.727,
+   "lon": 44.7888,
+   "tier": 3,
+   "port": false,
+   "country": "sovyetler"
+  },
+  {
+   "key": "ufa",
+   "name": "Ufa",
+   "lat": 54.7919,
+   "lon": 56.0381,
+   "tier": 3,
+   "port": false,
+   "country": "sovyetler"
+  },
+  {
+   "key": "londra",
+   "name": "Londra",
+   "lat": 51.5,
+   "lon": -0.1167,
+   "tier": 5,
+   "port": false,
+   "country": "britanya"
+  },
+  {
+   "key": "abudhabi",
+   "name": "Abu Dhabi",
+   "lat": 24.4667,
+   "lon": 54.3667,
+   "tier": 3,
+   "port": true,
+   "country": "britanya"
+  },
+  {
+   "key": "akra",
+   "name": "Akra",
+   "lat": 5.55,
+   "lon": -0.2167,
+   "tier": 3,
+   "port": true,
+   "country": "britanya"
+  },
+  {
+   "key": "amman",
+   "name": "Amman",
+   "lat": 31.95,
+   "lon": 35.9333,
+   "tier": 3,
+   "port": false,
+   "country": "britanya"
+  },
+  {
+   "key": "bandarseribegawan",
+   "name": "Bandar Seri Begawan",
+   "lat": 4.8833,
+   "lon": 114.933,
+   "tier": 3,
+   "port": true,
+   "country": "britanya"
+  },
+  {
+   "key": "banjul",
+   "name": "Banjul",
+   "lat": 13.4539,
+   "lon": -16.5917,
+   "tier": 3,
+   "port": true,
+   "country": "britanya"
+  },
+  {
+   "key": "belizecity",
+   "name": "Belize City",
+   "lat": 17.4987,
+   "lon": -88.1884,
+   "tier": 3,
+   "port": true,
+   "country": "britanya"
+  },
+  {
+   "key": "berbera",
+   "name": "Berbera",
+   "lat": 10.4355,
+   "lon": 45.0164,
+   "tier": 3,
+   "port": true,
+   "country": "britanya"
+  },
+  {
+   "key": "bridgetown",
+   "name": "Bridgetown",
+   "lat": 13.1,
+   "lon": -59.6167,
+   "tier": 3,
+   "port": true,
+   "country": "britanya"
+  },
+  {
+   "key": "buea",
+   "name": "Buea",
+   "lat": 4.155,
+   "lon": 9.231,
+   "tier": 3,
+   "port": false,
+   "country": "britanya"
+  },
+  {
+   "key": "darusselam",
+   "name": "Darüsselam",
+   "lat": -6.8,
+   "lon": 39.28,
+   "tier": 3,
+   "port": true,
+   "country": "britanya"
+  },
+  {
+   "key": "doha",
+   "name": "Doha",
+   "lat": 25.2867,
+   "lon": 51.5333,
+   "tier": 3,
+   "port": true,
+   "country": "britanya"
+  },
+  {
+   "key": "freetown",
+   "name": "Freetown",
+   "lat": 8.49,
+   "lon": -13.2342,
+   "tier": 3,
+   "port": true,
+   "country": "britanya"
+  },
+  {
+   "key": "georgetown",
+   "name": "Georgetown",
+   "lat": 6.8,
+   "lon": -58.1667,
+   "tier": 3,
+   "port": true,
+   "country": "britanya"
+  },
+  {
+   "key": "hartum",
+   "name": "Hartum",
+   "lat": 15.5881,
+   "lon": 32.5342,
+   "tier": 3,
+   "port": false,
+   "country": "britanya"
+  },
+  {
+   "key": "ho",
+   "name": "Ho",
+   "lat": 6.6004,
+   "lon": 0.47,
+   "tier": 3,
+   "port": false,
+   "country": "britanya"
+  },
+  {
+   "key": "johorbahru",
+   "name": "Johor Bahru",
+   "lat": 1.4927,
+   "lon": 103.741,
+   "tier": 3,
+   "port": true,
+   "country": "britanya"
+  },
+  {
+   "key": "kampala",
+   "name": "Kampala",
+   "lat": 0.3156,
+   "lon": 32.5656,
+   "tier": 3,
+   "port": false,
+   "country": "britanya"
+  },
+  {
+   "key": "kingston",
+   "name": "Kingston",
+   "lat": 18,
+   "lon": -76.8,
+   "tier": 3,
+   "port": true,
+   "country": "britanya"
+  },
+  {
+   "key": "kolombo",
+   "name": "Kolombo",
+   "lat": 6.9319,
+   "lon": 79.8478,
+   "tier": 3,
+   "port": true,
+   "country": "britanya"
+  },
+  {
+   "key": "kualalumpur",
+   "name": "Kuala Lumpur",
+   "lat": 3.1667,
+   "lon": 101.7,
+   "tier": 3,
+   "port": false,
+   "country": "britanya"
+  },
+  {
+   "key": "kuching",
+   "name": "Kuching",
+   "lat": 1.53,
+   "lon": 110.33,
+   "tier": 3,
+   "port": false,
+   "country": "britanya"
+  },
+  {
+   "key": "lagos",
+   "name": "Lagos",
+   "lat": 6.45,
+   "lon": 3.39,
+   "tier": 3,
+   "port": true,
+   "country": "britanya"
+  },
+  {
+   "key": "lusaka",
+   "name": "Lusaka",
+   "lat": -15.4167,
+   "lon": 28.2833,
+   "tier": 3,
+   "port": false,
+   "country": "britanya"
+  },
+  {
+   "key": "mafeking",
+   "name": "Mafeking",
+   "lat": -25.86,
+   "lon": 25.64,
+   "tier": 3,
+   "port": false,
+   "country": "britanya"
+  },
+  {
+   "key": "male",
+   "name": "Male",
+   "lat": 4.1667,
+   "lon": 73.5,
+   "tier": 3,
+   "port": true,
+   "country": "britanya"
+  },
+  {
+   "key": "maseru",
+   "name": "Maseru",
+   "lat": -29.3167,
+   "lon": 27.4833,
+   "tier": 3,
+   "port": false,
+   "country": "britanya"
+  },
+  {
+   "key": "mbabane",
+   "name": "Mbabane",
+   "lat": -26.3167,
+   "lon": 31.1333,
+   "tier": 3,
+   "port": false,
+   "country": "britanya"
+  },
+  {
+   "key": "nairobi",
+   "name": "Nairobi",
+   "lat": -1.2833,
+   "lon": 36.8167,
+   "tier": 3,
+   "port": false,
+   "country": "britanya"
+  },
+  {
+   "key": "nassau",
+   "name": "Nassau",
+   "lat": 25.0774,
+   "lon": -77.343,
+   "tier": 3,
+   "port": true,
+   "country": "britanya"
+  },
+  {
+   "key": "nicosia",
+   "name": "Nicosia",
+   "lat": 35.1667,
+   "lon": 33.3667,
+   "tier": 3,
+   "port": false,
+   "country": "britanya"
+  },
+  {
+   "key": "portlouis",
+   "name": "Port Louis",
+   "lat": -20.1619,
+   "lon": 57.4989,
+   "tier": 3,
+   "port": true,
+   "country": "britanya"
+  },
+  {
+   "key": "portofspain",
+   "name": "Port-of-Spain",
+   "lat": 10.65,
+   "lon": -61.5167,
+   "tier": 3,
+   "port": true,
+   "country": "britanya"
+  },
+  {
+   "key": "salisbury",
+   "name": "Salisbury",
+   "lat": -17.8178,
+   "lon": 31.0447,
+   "tier": 3,
+   "port": false,
+   "country": "britanya"
+  },
+  {
+   "key": "sandakan",
+   "name": "Sandakan",
+   "lat": 5.843,
+   "lon": 118.108,
+   "tier": 3,
+   "port": true,
+   "country": "britanya"
+  },
+  {
+   "key": "stjohns",
+   "name": "St. John's",
+   "lat": 47.585,
+   "lon": -52.681,
+   "tier": 3,
+   "port": true,
+   "country": "britanya"
+  },
+  {
+   "key": "suva",
+   "name": "Suva",
+   "lat": -18.1341,
+   "lon": 178.43,
+   "tier": 3,
+   "port": true,
+   "country": "britanya"
+  },
+  {
+   "key": "tulaghi",
+   "name": "Tulaghi",
+   "lat": -9.0856,
+   "lon": 160.148,
+   "tier": 3,
+   "port": true,
+   "country": "britanya"
+  },
+  {
+   "key": "valletta",
+   "name": "Valletta",
+   "lat": 35.8997,
+   "lon": 14.5147,
+   "tier": 3,
+   "port": true,
+   "country": "britanya"
+  },
+  {
+   "key": "yenidelhi",
+   "name": "Yeni Delhi",
+   "lat": 28.6,
+   "lon": 77.2,
+   "tier": 3,
+   "port": false,
+   "country": "britanya"
+  },
+  {
+   "key": "zomba",
+   "name": "Zomba",
+   "lat": -15.38,
+   "lon": 35.32,
+   "tier": 3,
+   "port": false,
+   "country": "britanya"
+  },
+  {
+   "key": "tahran",
+   "name": "Tahran",
+   "lat": 35.6719,
+   "lon": 51.4244,
+   "tier": 5,
+   "port": false,
+   "country": "iran"
+  },
+  {
+   "key": "ahvaz",
+   "name": "Ahvaz",
+   "lat": 31.2819,
+   "lon": 48.7181,
+   "tier": 3,
+   "port": false,
+   "country": "iran"
+  },
+  {
+   "key": "isfahan",
+   "name": "Isfahan",
+   "lat": 32.702,
+   "lon": 51.6981,
+   "tier": 3,
+   "port": false,
+   "country": "iran"
+  },
+  {
+   "key": "mashhad",
+   "name": "Mashhad",
+   "lat": 36.272,
+   "lon": 59.5681,
+   "tier": 3,
+   "port": false,
+   "country": "iran"
+  },
+  {
+   "key": "qom",
+   "name": "Qom",
+   "lat": 34.652,
+   "lon": 50.9481,
+   "tier": 3,
+   "port": false,
+   "country": "iran"
+  },
+  {
+   "key": "shiraz",
+   "name": "Shiraz",
+   "lat": 29.6319,
+   "lon": 52.5681,
+   "tier": 3,
+   "port": false,
+   "country": "iran"
+  },
+  {
+   "key": "tabriz",
+   "name": "Tabriz",
+   "lat": 38.0882,
+   "lon": 46.2993,
+   "tier": 3,
+   "port": false,
+   "country": "iran"
+  },
+  {
+   "key": "paris",
+   "name": "Paris",
+   "lat": 48.8667,
+   "lon": 2.3333,
+   "tier": 5,
+   "port": false,
+   "country": "fransa"
+  },
+  {
+   "key": "bamako",
+   "name": "Bamako",
+   "lat": 12.6177,
+   "lon": -7.9749,
+   "tier": 3,
+   "port": false,
+   "country": "fransa"
+  },
+  {
+   "key": "bangui",
+   "name": "Bangui",
+   "lat": 4.3681,
+   "lon": 18.5829,
+   "tier": 3,
+   "port": false,
+   "country": "fransa"
+  },
+  {
+   "key": "basseterre",
+   "name": "Basse-Terre",
+   "lat": 15.9966,
+   "lon": -61.72,
+   "tier": 3,
+   "port": true,
+   "country": "fransa"
+  },
+  {
+   "key": "bingerville",
+   "name": "Bingerville",
+   "lat": 5.36,
+   "lon": -3.89,
+   "tier": 3,
+   "port": true,
+   "country": "fransa"
+  },
+  {
+   "key": "cayenne",
+   "name": "Cayenne",
+   "lat": 4.933,
+   "lon": -52.33,
+   "tier": 3,
+   "port": true,
+   "country": "fransa"
+  },
+  {
+   "key": "cezayir",
+   "name": "Cezayir",
+   "lat": 36.7631,
+   "lon": 3.0506,
+   "tier": 3,
+   "port": true,
+   "country": "fransa"
+  },
+  {
+   "key": "cibuti",
+   "name": "Cibuti",
+   "lat": 11.5704,
+   "lon": 43.1506,
+   "tier": 3,
+   "port": true,
+   "country": "fransa"
+  },
+  {
+   "key": "conakry",
+   "name": "Conakry",
+   "lat": 9.5513,
+   "lon": -13.6619,
+   "tier": 3,
+   "port": true,
+   "country": "fransa"
+  },
+  {
+   "key": "dakar",
+   "name": "Dakar",
+   "lat": 14.7089,
+   "lon": -17.4553,
+   "tier": 3,
+   "port": true,
+   "country": "fransa"
+  },
+  {
+   "key": "fortdefrance",
+   "name": "Fort-de-France",
+   "lat": 14.6161,
+   "lon": -61.0588,
+   "tier": 3,
+   "port": true,
+   "country": "fransa"
+  },
+  {
+   "key": "fortlamy",
+   "name": "Fort-Lamy",
+   "lat": 11.7167,
+   "lon": 15.2167,
+   "tier": 3,
+   "port": false,
+   "country": "fransa"
+  },
+  {
+   "key": "hue",
+   "name": "Hue",
+   "lat": 16.47,
+   "lon": 107.58,
+   "tier": 3,
+   "port": true,
+   "country": "fransa"
+  },
+  {
+   "key": "libreville",
+   "name": "Libreville",
+   "lat": 0.3833,
+   "lon": 9.45,
+   "tier": 3,
+   "port": true,
+   "country": "fransa"
+  },
+  {
+   "key": "lome",
+   "name": "Lome",
+   "lat": 6.1725,
+   "lon": 1.2314,
+   "tier": 3,
+   "port": true,
+   "country": "fransa"
+  },
+  {
+   "key": "niamey",
+   "name": "Niamey",
+   "lat": 13.5167,
+   "lon": 2.1167,
+   "tier": 3,
+   "port": false,
+   "country": "fransa"
+  },
+  {
+   "key": "noumea",
+   "name": "Nouméa",
+   "lat": -22.2758,
+   "lon": 166.458,
+   "tier": 3,
+   "port": true,
+   "country": "fransa"
+  },
+  {
+   "key": "papeete",
+   "name": "Pape'ete",
+   "lat": -17.5373,
+   "lon": -149.566,
+   "tier": 3,
+   "port": true,
+   "country": "fransa"
+  },
+  {
+   "key": "pnompen",
+   "name": "Pnom Pen",
+   "lat": 11.55,
+   "lon": 104.917,
+   "tier": 3,
+   "port": false,
+   "country": "fransa"
+  },
+  {
+   "key": "portonovo",
+   "name": "Porto-Novo",
+   "lat": 6.4833,
+   "lon": 2.6167,
+   "tier": 3,
+   "port": true,
+   "country": "fransa"
+  },
+  {
+   "key": "rabat",
+   "name": "Rabat",
+   "lat": 34.02,
+   "lon": -6.83,
+   "tier": 3,
+   "port": true,
+   "country": "fransa"
+  },
+  {
+   "key": "saintdenis",
+   "name": "Saint-Denis",
+   "lat": -20.8907,
+   "lon": 55.4551,
+   "tier": 3,
+   "port": true,
+   "country": "fransa"
+  },
+  {
+   "key": "saintelie",
+   "name": "Saint-Elie",
+   "lat": 4.8227,
+   "lon": -53.2764,
+   "tier": 3,
+   "port": false,
+   "country": "fransa"
+  },
+  {
+   "key": "saintlouis",
+   "name": "Saint-Louis",
+   "lat": 16.03,
+   "lon": -16.5,
+   "tier": 3,
+   "port": true,
+   "country": "fransa"
+  },
+  {
+   "key": "sam",
+   "name": "Şam",
+   "lat": 33.5,
+   "lon": 36.3,
+   "tier": 3,
+   "port": false,
+   "country": "fransa"
+  },
+  {
+   "key": "tananarive",
+   "name": "Tananarive",
+   "lat": -18.9167,
+   "lon": 47.5167,
+   "tier": 3,
+   "port": false,
+   "country": "fransa"
+  },
+  {
+   "key": "tunus",
+   "name": "Tunus",
+   "lat": 36.8028,
+   "lon": 10.1797,
+   "tier": 3,
+   "port": true,
+   "country": "fransa"
+  },
+  {
+   "key": "vientiane",
+   "name": "Vientiane",
+   "lat": 17.9667,
+   "lon": 102.6,
+   "tier": 3,
+   "port": false,
+   "country": "fransa"
+  },
+  {
+   "key": "yaounde",
+   "name": "Yaoundé",
+   "lat": 3.87,
+   "lon": 11.5,
+   "tier": 3,
+   "port": false,
+   "country": "fransa"
+  },
+  {
+   "key": "budapeste",
+   "name": "Budapeşte",
+   "lat": 47.5,
+   "lon": 19.0833,
+   "tier": 5,
+   "port": false,
+   "country": "macaristan"
+  },
+  {
+   "key": "debrecen",
+   "name": "Debrecen",
+   "lat": 47.5305,
+   "lon": 21.63,
+   "tier": 2,
+   "port": false,
+   "country": "macaristan"
+  },
+  {
+   "key": "miskolc",
+   "name": "Miskolc",
+   "lat": 48.1004,
+   "lon": 20.78,
+   "tier": 2,
+   "port": false,
+   "country": "macaristan"
+  },
+  {
+   "key": "szeged",
+   "name": "Szeged",
+   "lat": 46.2504,
+   "lon": 20.15,
+   "tier": 2,
+   "port": false,
+   "country": "macaristan"
+  },
+  {
+   "key": "tirane",
+   "name": "Tirane",
+   "lat": 41.3275,
+   "lon": 19.8189,
+   "tier": 5,
+   "port": false,
+   "country": "arnavutluk"
+  },
+  {
+   "key": "berlin",
+   "name": "Berlin",
+   "lat": 52.5167,
+   "lon": 13.4,
+   "tier": 5,
+   "port": false,
+   "country": "almanya"
+  },
+  {
+   "key": "danzig",
+   "name": "Danzig",
+   "lat": 54.36,
+   "lon": 18.64,
+   "tier": 3,
+   "port": true,
+   "country": "almanya"
+  },
+  {
+   "key": "essen",
+   "name": "Essen",
+   "lat": 51.45,
+   "lon": 7.0166,
+   "tier": 3,
+   "port": false,
+   "country": "almanya"
+  },
+  {
+   "key": "frankfurt",
+   "name": "Frankfurt",
+   "lat": 50.1,
+   "lon": 8.675,
+   "tier": 3,
+   "port": false,
+   "country": "almanya"
+  },
+  {
+   "key": "hamburg",
+   "name": "Hamburg",
+   "lat": 53.552,
+   "lon": 9.9981,
+   "tier": 3,
+   "port": false,
+   "country": "almanya"
+  },
+  {
+   "key": "munich",
+   "name": "Munich",
+   "lat": 48.1319,
+   "lon": 11.573,
+   "tier": 3,
+   "port": false,
+   "country": "almanya"
+  },
+  {
+   "key": "stuttgart",
+   "name": "Stuttgart",
+   "lat": 48.78,
+   "lon": 9.2,
+   "tier": 3,
+   "port": false,
+   "country": "almanya"
+  },
+  {
+   "key": "saarbrucken",
+   "name": "Saarbrücken",
+   "lat": 49.2504,
+   "lon": 6.97,
+   "tier": 2,
+   "port": false,
+   "country": "almanya"
+  },
+  {
+   "key": "madrid",
+   "name": "Madrid",
+   "lat": 40.4,
+   "lon": -3.6833,
+   "tier": 5,
+   "port": false,
+   "country": "ispanya"
+  },
+  {
+   "key": "malabo",
+   "name": "Malabo",
+   "lat": 3.7504,
+   "lon": 8.7371,
+   "tier": 3,
+   "port": true,
+   "country": "ispanya"
+  },
+  {
+   "key": "tetuan",
+   "name": "Tetuan",
+   "lat": 35.5667,
+   "lon": -5.3667,
+   "tier": 3,
+   "port": true,
+   "country": "ispanya"
+  },
+  {
+   "key": "villacisneros",
+   "name": "Villa Cisneros",
+   "lat": 23.7141,
+   "lon": -15.9368,
+   "tier": 3,
+   "port": true,
+   "country": "ispanya"
+  },
+  {
+   "key": "barcelona",
+   "name": "Barcelona",
+   "lat": 41.3852,
+   "lon": 2.1814,
+   "tier": 4,
+   "port": true,
+   "country": "ispanya"
+  },
+  {
+   "key": "bilbao",
+   "name": "Bilbao",
+   "lat": 43.25,
+   "lon": -2.93,
+   "tier": 3,
+   "port": true,
+   "country": "ispanya"
+  },
+  {
+   "key": "seville",
+   "name": "Seville",
+   "lat": 37.405,
+   "lon": -5.98,
+   "tier": 3,
+   "port": false,
+   "country": "ispanya"
+  },
+  {
+   "key": "lizbon",
+   "name": "Lizbon",
+   "lat": 38.7167,
+   "lon": -9.1333,
+   "tier": 5,
+   "port": true,
+   "country": "portekiz"
+  },
+  {
+   "key": "bolama",
+   "name": "Bolama",
+   "lat": 11.5829,
+   "lon": -15.4828,
+   "tier": 3,
+   "port": true,
+   "country": "portekiz"
+  },
+  {
+   "key": "dili",
+   "name": "Dili",
+   "lat": -8.5586,
+   "lon": 125.574,
+   "tier": 3,
+   "port": true,
+   "country": "portekiz"
+  },
+  {
+   "key": "lourencomarques",
+   "name": "Lourenço Marques",
+   "lat": -25.9653,
+   "lon": 32.5892,
+   "tier": 3,
+   "port": true,
+   "country": "portekiz"
+  },
+  {
+   "key": "luanda",
+   "name": "Luanda",
+   "lat": -8.8383,
+   "lon": 13.2344,
+   "tier": 3,
+   "port": true,
+   "country": "portekiz"
+  },
+  {
+   "key": "praia",
+   "name": "Praia",
+   "lat": 14.9167,
+   "lon": -23.5167,
+   "tier": 3,
+   "port": true,
+   "country": "portekiz"
+  },
+  {
+   "key": "porto",
+   "name": "Porto",
+   "lat": 41.152,
+   "lon": -8.6219,
+   "tier": 3,
+   "port": true,
+   "country": "portekiz"
+  },
+  {
+   "key": "amsterdam",
+   "name": "Amsterdam",
+   "lat": 52.35,
+   "lon": 4.9167,
+   "tier": 5,
+   "port": true,
+   "country": "hollanda"
+  },
+  {
+   "key": "batavya",
+   "name": "Batavya",
+   "lat": -6.1744,
+   "lon": 106.829,
+   "tier": 3,
+   "port": true,
+   "country": "hollanda"
+  },
+  {
+   "key": "paramaribo",
+   "name": "Paramaribo",
+   "lat": 5.8333,
+   "lon": -55.1667,
+   "tier": 3,
+   "port": true,
+   "country": "hollanda"
+  },
+  {
+   "key": "bandung",
+   "name": "Bandung",
+   "lat": -6.9481,
+   "lon": 107.5681,
+   "tier": 3,
+   "port": false,
+   "country": "hollanda"
+  },
+  {
+   "key": "cilacap",
+   "name": "Cilacap",
+   "lat": -7.7188,
+   "lon": 109.0154,
+   "tier": 3,
+   "port": true,
+   "country": "hollanda"
+  },
+  {
+   "key": "makassar",
+   "name": "Makassar",
+   "lat": -5.138,
+   "lon": 119.4301,
+   "tier": 3,
+   "port": true,
+   "country": "hollanda"
+  },
+  {
+   "key": "medan",
+   "name": "Medan",
+   "lat": 3.5819,
+   "lon": 98.6481,
+   "tier": 3,
+   "port": false,
+   "country": "hollanda"
+  },
+  {
+   "key": "palembang",
+   "name": "Palembang",
+   "lat": -2.9781,
+   "lon": 104.7481,
+   "tier": 3,
+   "port": false,
+   "country": "hollanda"
+  },
+  {
+   "key": "semarang",
+   "name": "Semarang",
+   "lat": -6.9647,
+   "lon": 110.4181,
+   "tier": 3,
+   "port": true,
+   "country": "hollanda"
+  },
+  {
+   "key": "surabaya",
+   "name": "Surabaya",
+   "lat": -7.2473,
+   "lon": 112.7489,
+   "tier": 3,
+   "port": true,
+   "country": "hollanda"
+  },
+  {
+   "key": "bruksel",
+   "name": "Brüksel",
+   "lat": 50.8333,
+   "lon": 4.3333,
+   "tier": 5,
+   "port": false,
+   "country": "belcika"
+  },
+  {
+   "key": "leopoldville",
+   "name": "Leopoldville",
+   "lat": -4.3297,
+   "lon": 15.315,
+   "tier": 3,
+   "port": false,
+   "country": "belcika"
+  },
+  {
+   "key": "usumbura",
+   "name": "Usumbura",
+   "lat": -3.3761,
+   "lon": 29.36,
+   "tier": 3,
+   "port": false,
+   "country": "belcika"
+  },
+  {
+   "key": "elisabethville",
+   "name": "Elisabethville",
+   "lat": -11.6781,
+   "lon": 27.4781,
+   "tier": 3,
+   "port": false,
+   "country": "belcika"
+  },
+  {
+   "key": "mbujimayi",
+   "name": "Mbuji-Mayi",
+   "lat": -6.1481,
+   "lon": 23.5981,
+   "tier": 3,
+   "port": false,
+   "country": "belcika"
+  },
+  {
+   "key": "kananga",
+   "name": "Kananga",
+   "lat": -5.8881,
+   "lon": 22.3981,
+   "tier": 2,
+   "port": false,
+   "country": "belcika"
+  },
+  {
+   "key": "kikwit",
+   "name": "Kikwit",
+   "lat": -5.03,
+   "lon": 18.85,
+   "tier": 2,
+   "port": false,
+   "country": "belcika"
+  },
+  {
+   "key": "liege",
+   "name": "Liège",
+   "lat": 50.63,
+   "lon": 5.58,
+   "tier": 2,
+   "port": false,
+   "country": "belcika"
+  },
+  {
+   "key": "varsova",
+   "name": "Varşova",
+   "lat": 52.25,
+   "lon": 21,
+   "tier": 5,
+   "port": false,
+   "country": "polonya"
+  },
+  {
+   "key": "katowice",
+   "name": "Katowice",
+   "lat": 50.2604,
+   "lon": 19.02,
+   "tier": 3,
+   "port": false,
+   "country": "polonya"
+  },
+  {
+   "key": "lwow",
+   "name": "Lwów",
+   "lat": 49.835,
+   "lon": 24.03,
+   "tier": 3,
+   "port": false,
+   "country": "polonya"
+  },
+  {
+   "key": "krakow",
+   "name": "Kraków",
+   "lat": 50.0619,
+   "lon": 19.9581,
+   "tier": 2,
+   "port": false,
+   "country": "polonya"
+  },
+  {
+   "key": "odz",
+   "name": "Łódź",
+   "lat": 51.7769,
+   "lon": 19.4494,
+   "tier": 2,
+   "port": false,
+   "country": "polonya"
+  },
+  {
+   "key": "poznan",
+   "name": "Poznań",
+   "lat": 52.4058,
+   "lon": 16.8999,
+   "tier": 2,
+   "port": false,
+   "country": "polonya"
+  },
+  {
+   "key": "prag",
+   "name": "Prag",
+   "lat": 50.0833,
+   "lon": 14.4667,
+   "tier": 5,
+   "port": false,
+   "country": "cekoslovakya"
+  },
+  {
+   "key": "bratislava",
+   "name": "Bratislava",
+   "lat": 48.15,
+   "lon": 17.117,
+   "tier": 2,
+   "port": false,
+   "country": "cekoslovakya"
+  },
+  {
+   "key": "brno",
+   "name": "Brno",
+   "lat": 49.2004,
+   "lon": 16.61,
+   "tier": 2,
+   "port": false,
+   "country": "cekoslovakya"
+  },
+  {
+   "key": "ostrava",
+   "name": "Ostrava",
+   "lat": 49.8304,
+   "lon": 18.25,
+   "tier": 2,
+   "port": false,
+   "country": "cekoslovakya"
+  },
+  {
+   "key": "bern",
+   "name": "Bern",
+   "lat": 46.9167,
+   "lon": 7.4667,
+   "tier": 5,
+   "port": false,
+   "country": "isvicre"
+  },
+  {
+   "key": "geneva",
+   "name": "Geneva",
+   "lat": 46.21,
+   "lon": 6.14,
+   "tier": 3,
+   "port": false,
+   "country": "isvicre"
+  },
+  {
+   "key": "zurich",
+   "name": "Zürich",
+   "lat": 47.3819,
+   "lon": 8.5481,
+   "tier": 3,
+   "port": false,
+   "country": "isvicre"
+  },
+  {
+   "key": "kopenhag",
+   "name": "Kopenhag",
+   "lat": 55.677,
+   "lon": 12.567,
+   "tier": 5,
+   "port": true,
+   "country": "danimarka"
+  },
+  {
+   "key": "arhus",
+   "name": "Århus",
+   "lat": 56.1572,
+   "lon": 10.2107,
+   "tier": 2,
+   "port": true,
+   "country": "danimarka"
+  },
+  {
+   "key": "stockholm",
+   "name": "Stockholm",
+   "lat": 59.3399,
+   "lon": 18.0745,
+   "tier": 5,
+   "port": true,
+   "country": "isvec"
+  },
+  {
+   "key": "goteborg",
+   "name": "Göteborg",
+   "lat": 57.75,
+   "lon": 12.0,
+   "tier": 2,
+   "port": true,
+   "country": "isvec"
+  },
+  {
+   "key": "malmo",
+   "name": "Malmö",
+   "lat": 55.5833,
+   "lon": 13.0333,
+   "tier": 2,
+   "port": true,
+   "country": "isvec"
+  },
+  {
+   "key": "oslo",
+   "name": "Oslo",
+   "lat": 59.9139,
+   "lon": 10.7522,
+   "tier": 5,
+   "port": true,
+   "country": "norvec"
+  },
+  {
+   "key": "bergen",
+   "name": "Bergen",
+   "lat": 60.391,
+   "lon": 5.3245,
+   "tier": 2,
+   "port": true,
+   "country": "norvec"
+  },
+  {
+   "key": "stavanger",
+   "name": "Stavanger",
+   "lat": 58.97,
+   "lon": 5.68,
+   "tier": 2,
+   "port": true,
+   "country": "norvec"
+  },
+  {
+   "key": "helsinki",
+   "name": "Helsinki",
+   "lat": 60.1756,
+   "lon": 24.9342,
+   "tier": 5,
+   "port": true,
+   "country": "finlandiya"
+  },
+  {
+   "key": "tampere",
+   "name": "Tampere",
+   "lat": 61.5,
+   "lon": 23.75,
+   "tier": 2,
+   "port": false,
+   "country": "finlandiya"
+  },
+  {
+   "key": "turku",
+   "name": "Turku",
+   "lat": 60.4539,
+   "lon": 22.255,
+   "tier": 2,
+   "port": true,
+   "country": "finlandiya"
+  },
+  {
+   "key": "tallinn",
+   "name": "Tallinn",
+   "lat": 59.4339,
+   "lon": 24.7281,
+   "tier": 5,
+   "port": true,
+   "country": "estonya"
+  },
+  {
+   "key": "dublin",
+   "name": "Dublin",
+   "lat": 53.3331,
+   "lon": -6.2489,
+   "tier": 5,
+   "port": true,
+   "country": "irlanda"
+  },
+  {
+   "key": "cork",
+   "name": "Cork",
+   "lat": 51.8986,
+   "lon": -8.4958,
+   "tier": 2,
+   "port": true,
+   "country": "irlanda"
+  },
+  {
+   "key": "washington",
+   "name": "Washington",
+   "lat": 38.895,
+   "lon": -77.0367,
+   "tier": 5,
+   "port": true,
+   "country": "abd"
+  },
+  {
+   "key": "honolulu",
+   "name": "Honolulu",
+   "lat": 21.3075,
+   "lon": -157.856,
+   "tier": 3,
+   "port": true,
+   "country": "abd"
+  },
+  {
+   "key": "juneau",
+   "name": "Juneau",
+   "lat": 58.3043,
+   "lon": -134.412,
+   "tier": 3,
+   "port": true,
+   "country": "abd"
+  },
+  {
+   "key": "manila",
+   "name": "Manila",
+   "lat": 14.6042,
+   "lon": 120.982,
+   "tier": 3,
+   "port": true,
+   "country": "abd"
+  },
+  {
+   "key": "sanjuan",
+   "name": "San Juan",
+   "lat": 18.4655,
+   "lon": -66.1057,
+   "tier": 3,
+   "port": true,
+   "country": "abd"
+  },
+  {
+   "key": "atlanta",
+   "name": "Atlanta",
+   "lat": 33.832,
+   "lon": -84.4019,
+   "tier": 4,
+   "port": false,
+   "country": "abd"
+  },
+  {
+   "key": "boston",
+   "name": "Boston",
+   "lat": 42.3319,
+   "lon": -71.072,
+   "tier": 4,
+   "port": true,
+   "country": "abd"
+  },
+  {
+   "key": "chicago",
+   "name": "Chicago",
+   "lat": 41.8319,
+   "lon": -87.752,
+   "tier": 4,
+   "port": false,
+   "country": "abd"
+  },
+  {
+   "key": "dallas",
+   "name": "Dallas",
+   "lat": 32.822,
+   "lon": -96.842,
+   "tier": 4,
+   "port": false,
+   "country": "abd"
+  },
+  {
+   "key": "detroit",
+   "name": "Detroit",
+   "lat": 42.3319,
+   "lon": -83.082,
+   "tier": 4,
+   "port": false,
+   "country": "abd"
+  },
+  {
+   "key": "houston",
+   "name": "Houston",
+   "lat": 29.8219,
+   "lon": -95.3419,
+   "tier": 4,
+   "port": false,
+   "country": "abd"
+  },
+  {
+   "key": "losangeles",
+   "name": "Los Angeles",
+   "lat": 33.9919,
+   "lon": -118.1819,
+   "tier": 4,
+   "port": false,
+   "country": "abd"
+  },
+  {
+   "key": "miami",
+   "name": "Miami",
+   "lat": 25.7896,
+   "lon": -80.2261,
+   "tier": 4,
+   "port": true,
+   "country": "abd"
+  },
+  {
+   "key": "newyork",
+   "name": "New York",
+   "lat": 40.7519,
+   "lon": -73.982,
+   "tier": 4,
+   "port": true,
+   "country": "abd"
+  },
+  {
+   "key": "philadelphia",
+   "name": "Philadelphia",
+   "lat": 40.0019,
+   "lon": -75.1719,
+   "tier": 4,
+   "port": true,
+   "country": "abd"
+  },
+  {
+   "key": "phoenix",
+   "name": "Phoenix",
+   "lat": 33.5419,
+   "lon": -112.0719,
+   "tier": 4,
+   "port": false,
+   "country": "abd"
+  },
+  {
+   "key": "sanfrancisco",
+   "name": "San Francisco",
+   "lat": 37.7692,
+   "lon": -122.4172,
+   "tier": 4,
+   "port": true,
+   "country": "abd"
+  },
+  {
+   "key": "seattle",
+   "name": "Seattle",
+   "lat": 47.5719,
+   "lon": -122.3419,
+   "tier": 4,
+   "port": true,
+   "country": "abd"
+  },
+  {
+   "key": "ottava",
+   "name": "Ottava",
+   "lat": 45.4208,
+   "lon": -75.69,
+   "tier": 5,
+   "port": false,
+   "country": "kanada"
+  },
+  {
+   "key": "montreal",
+   "name": "Montréal",
+   "lat": 45.5019,
+   "lon": -73.5852,
+   "tier": 4,
+   "port": false,
+   "country": "kanada"
+  },
+  {
+   "key": "toronto",
+   "name": "Toronto",
+   "lat": 43.7019,
+   "lon": -79.422,
+   "tier": 4,
+   "port": false,
+   "country": "kanada"
+  },
+  {
+   "key": "calgary",
+   "name": "Calgary",
+   "lat": 51.0849,
+   "lon": -114.0819,
+   "tier": 3,
+   "port": false,
+   "country": "kanada"
+  },
+  {
+   "key": "edmonton",
+   "name": "Edmonton",
+   "lat": 53.552,
+   "lon": -113.5019,
+   "tier": 3,
+   "port": false,
+   "country": "kanada"
+  },
+  {
+   "key": "vancouver",
+   "name": "Vancouver",
+   "lat": 49.2754,
+   "lon": -123.1236,
+   "tier": 3,
+   "port": true,
+   "country": "kanada"
+  },
+  {
+   "key": "halifax",
+   "name": "Halifax",
+   "lat": 44.65,
+   "lon": -63.6,
+   "tier": 2,
+   "port": true,
+   "country": "kanada"
+  },
+  {
+   "key": "kitchener",
+   "name": "Kitchener",
+   "lat": 43.45,
+   "lon": -80.5,
+   "tier": 2,
+   "port": false,
+   "country": "kanada"
+  },
+  {
+   "key": "quebec",
+   "name": "Québec",
+   "lat": 46.84,
+   "lon": -71.2456,
+   "tier": 2,
+   "port": true,
+   "country": "kanada"
+  },
+  {
+   "key": "regina",
+   "name": "Regina",
+   "lat": 50.45,
+   "lon": -104.617,
+   "tier": 2,
+   "port": false,
+   "country": "kanada"
+  },
+  {
+   "key": "saskatoon",
+   "name": "Saskatoon",
+   "lat": 52.17,
+   "lon": -106.67,
+   "tier": 2,
+   "port": false,
+   "country": "kanada"
+  },
+  {
+   "key": "sudbury",
+   "name": "Sudbury",
+   "lat": 46.5,
+   "lon": -80.9666,
+   "tier": 2,
+   "port": false,
+   "country": "kanada"
+  },
+  {
+   "key": "winnipeg",
+   "name": "Winnipeg",
+   "lat": 49.883,
+   "lon": -97.166,
+   "tier": 2,
+   "port": false,
+   "country": "kanada"
+  },
+  {
+   "key": "meksiko",
+   "name": "Meksiko",
+   "lat": 19.4342,
+   "lon": -99.1386,
+   "tier": 5,
+   "port": false,
+   "country": "meksika"
+  },
+  {
+   "key": "guadalajara",
+   "name": "Guadalajara",
+   "lat": 20.672,
+   "lon": -103.332,
+   "tier": 4,
+   "port": false,
+   "country": "meksika"
+  },
+  {
+   "key": "monterrey",
+   "name": "Monterrey",
+   "lat": 25.6719,
+   "lon": -100.3319,
+   "tier": 4,
+   "port": false,
+   "country": "meksika"
+  },
+  {
+   "key": "ciudadjuarez",
+   "name": "Ciudad Juárez",
+   "lat": 31.6923,
+   "lon": -106.492,
+   "tier": 3,
+   "port": false,
+   "country": "meksika"
+  },
+  {
+   "key": "leon",
+   "name": "León",
+   "lat": 21.1519,
+   "lon": -101.702,
+   "tier": 3,
+   "port": false,
+   "country": "meksika"
+  },
+  {
+   "key": "puebla",
+   "name": "Puebla",
+   "lat": 19.0519,
+   "lon": -98.202,
+   "tier": 3,
+   "port": false,
+   "country": "meksika"
+  },
+  {
+   "key": "tijuana",
+   "name": "Tijuana",
+   "lat": 32.502,
+   "lon": -117.0819,
+   "tier": 3,
+   "port": true,
+   "country": "meksika"
+  },
+  {
+   "key": "havana",
+   "name": "Havana",
+   "lat": 23.1319,
+   "lon": -82.3642,
+   "tier": 5,
+   "port": true,
+   "country": "kuba"
+  },
+  {
+   "key": "camaguey",
+   "name": "Camagüey",
+   "lat": 21.3808,
+   "lon": -77.9169,
+   "tier": 2,
+   "port": false,
+   "country": "kuba"
+  },
+  {
+   "key": "santiagodecuba",
+   "name": "Santiago de Cuba",
+   "lat": 20.025,
+   "lon": -75.8213,
+   "tier": 2,
+   "port": true,
+   "country": "kuba"
+  },
+  {
+   "key": "guatemalacity",
+   "name": "Guatemala City",
+   "lat": 14.6211,
+   "lon": -90.5269,
+   "tier": 5,
+   "port": false,
+   "country": "guatemala"
+  },
+  {
+   "key": "quetzaltenango",
+   "name": "Quetzaltenango",
+   "lat": 14.83,
+   "lon": -91.52,
+   "tier": 2,
+   "port": false,
+   "country": "guatemala"
+  },
+  {
+   "key": "bogota",
+   "name": "Bogota",
+   "lat": 4.6,
+   "lon": -74.0833,
+   "tier": 5,
+   "port": false,
+   "country": "kolombiya"
+  },
+  {
+   "key": "medellin",
+   "name": "Medellín",
+   "lat": 6.2769,
+   "lon": -75.577,
+   "tier": 4,
+   "port": false,
+   "country": "kolombiya"
+  },
+  {
+   "key": "barranquilla",
+   "name": "Barranquilla",
+   "lat": 10.9619,
+   "lon": -74.8019,
+   "tier": 3,
+   "port": true,
+   "country": "kolombiya"
+  },
+  {
+   "key": "bucaramanga",
+   "name": "Bucaramanga",
+   "lat": 7.132,
+   "lon": -73.1278,
+   "tier": 3,
+   "port": false,
+   "country": "kolombiya"
+  },
+  {
+   "key": "cali",
+   "name": "Cali",
+   "lat": 3.4019,
+   "lon": -76.5019,
+   "tier": 3,
+   "port": false,
+   "country": "kolombiya"
+  },
+  {
+   "key": "cartagena",
+   "name": "Cartagena",
+   "lat": 10.4017,
+   "lon": -75.5163,
+   "tier": 3,
+   "port": true,
+   "country": "kolombiya"
+  },
+  {
+   "key": "lima",
+   "name": "Lima",
+   "lat": -12.05,
+   "lon": -77.05,
+   "tier": 5,
+   "port": true,
+   "country": "peru"
+  },
+  {
+   "key": "arequipa",
+   "name": "Arequipa",
+   "lat": -16.418,
+   "lon": -71.532,
+   "tier": 3,
+   "port": false,
+   "country": "peru"
+  },
+  {
+   "key": "chiclayo",
+   "name": "Chiclayo",
+   "lat": -6.7629,
+   "lon": -79.8366,
+   "tier": 2,
+   "port": true,
+   "country": "peru"
+  },
+  {
+   "key": "iquitos",
+   "name": "Iquitos",
+   "lat": -3.75,
+   "lon": -73.25,
+   "tier": 2,
+   "port": false,
+   "country": "peru"
+  },
+  {
+   "key": "trujillo",
+   "name": "Trujillo",
+   "lat": -8.12,
+   "lon": -79.02,
+   "tier": 2,
+   "port": true,
+   "country": "peru"
+  },
+  {
+   "key": "riodejaneiro",
+   "name": "Rio de Janeiro",
+   "lat": -22.9,
+   "lon": -43.2,
+   "tier": 5,
+   "port": true,
+   "country": "brezilya"
+  },
+  {
+   "key": "belohorizonte",
+   "name": "Belo Horizonte",
+   "lat": -19.9131,
+   "lon": -43.9169,
+   "tier": 4,
+   "port": false,
+   "country": "brezilya"
+  },
+  {
+   "key": "brasilia",
+   "name": "Brasília",
+   "lat": -15.7814,
+   "lon": -47.918,
+   "tier": 4,
+   "port": false,
+   "country": "brezilya"
+  },
+  {
+   "key": "curitiba",
+   "name": "Curitiba",
+   "lat": -25.4181,
+   "lon": -49.3219,
+   "tier": 4,
+   "port": false,
+   "country": "brezilya"
+  },
+  {
+   "key": "fortaleza",
+   "name": "Fortaleza",
+   "lat": -3.7481,
+   "lon": -38.5819,
+   "tier": 4,
+   "port": true,
+   "country": "brezilya"
+  },
+  {
+   "key": "portoalegre",
+   "name": "Porto Alegre",
+   "lat": -30.0481,
+   "lon": -51.202,
+   "tier": 4,
+   "port": true,
+   "country": "brezilya"
+  },
+  {
+   "key": "recife",
+   "name": "Recife",
+   "lat": -8.0737,
+   "lon": -34.9176,
+   "tier": 4,
+   "port": true,
+   "country": "brezilya"
+  },
+  {
+   "key": "salvador",
+   "name": "Salvador",
+   "lat": -12.968,
+   "lon": -38.4819,
+   "tier": 4,
+   "port": true,
+   "country": "brezilya"
+  },
+  {
+   "key": "saopaulo",
+   "name": "São Paulo",
+   "lat": -23.5567,
+   "lon": -46.627,
+   "tier": 4,
+   "port": false,
+   "country": "brezilya"
+  },
+  {
+   "key": "belem",
+   "name": "Belém",
+   "lat": -1.4481,
+   "lon": -48.482,
+   "tier": 3,
+   "port": true,
+   "country": "brezilya"
+  },
+  {
+   "key": "goiania",
+   "name": "Goiânia",
+   "lat": -16.7181,
+   "lon": -49.302,
+   "tier": 3,
+   "port": false,
+   "country": "brezilya"
+  },
+  {
+   "key": "manaus",
+   "name": "Manaus",
+   "lat": -3.0981,
+   "lon": -60.002,
+   "tier": 3,
+   "port": false,
+   "country": "brezilya"
+  },
+  {
+   "key": "vitoria",
+   "name": "Vitória",
+   "lat": -20.322,
+   "lon": -40.3679,
+   "tier": 3,
+   "port": true,
+   "country": "brezilya"
+  },
+  {
+   "key": "buenosaires",
+   "name": "Buenos Aires",
+   "lat": -34.5875,
+   "lon": -58.6725,
+   "tier": 5,
+   "port": false,
+   "country": "arjantin"
+  },
+  {
+   "key": "cordoba",
+   "name": "Córdoba",
+   "lat": -31.398,
+   "lon": -64.1842,
+   "tier": 3,
+   "port": false,
+   "country": "arjantin"
+  },
+  {
+   "key": "mendoza",
+   "name": "Mendoza",
+   "lat": -32.8814,
+   "lon": -68.8186,
+   "tier": 3,
+   "port": false,
+   "country": "arjantin"
+  },
+  {
+   "key": "rosario",
+   "name": "Rosario",
+   "lat": -32.9492,
+   "lon": -60.6683,
+   "tier": 3,
+   "port": false,
+   "country": "arjantin"
+  },
+  {
+   "key": "tucuman",
+   "name": "Tucumán",
+   "lat": -26.8141,
+   "lon": -65.2186,
+   "tier": 3,
+   "port": false,
+   "country": "arjantin"
+  },
+  {
+   "key": "mardelplata",
+   "name": "Mar del Plata",
+   "lat": -38.0,
+   "lon": -57.58,
+   "tier": 2,
+   "port": true,
+   "country": "arjantin"
+  },
+  {
+   "key": "salta",
+   "name": "Salta",
+   "lat": -24.7834,
+   "lon": -65.4166,
+   "tier": 2,
+   "port": false,
+   "country": "arjantin"
+  },
+  {
+   "key": "santafe",
+   "name": "Santa Fe",
+   "lat": -31.6239,
+   "lon": -60.69,
+   "tier": 2,
+   "port": false,
+   "country": "arjantin"
+  },
+  {
+   "key": "santiago",
+   "name": "Santiago",
+   "lat": -33.45,
+   "lon": -70.6667,
+   "tier": 5,
+   "port": false,
+   "country": "sili"
+  },
+  {
+   "key": "concepcion",
+   "name": "Concepción",
+   "lat": -36.83,
+   "lon": -73.05,
+   "tier": 3,
+   "port": true,
+   "country": "sili"
+  },
+  {
+   "key": "valparaiso",
+   "name": "Valparaíso",
+   "lat": -33.0458,
+   "lon": -71.623,
+   "tier": 3,
+   "port": true,
+   "country": "sili"
+  },
+  {
+   "key": "antofagasta",
+   "name": "Antofagasta",
+   "lat": -23.65,
+   "lon": -70.4,
+   "tier": 2,
+   "port": true,
+   "country": "sili"
+  },
+  {
+   "key": "temuco",
+   "name": "Temuco",
+   "lat": -38.73,
+   "lon": -72.58,
+   "tier": 2,
+   "port": false,
+   "country": "sili"
+  },
+  {
+   "key": "lapaz",
+   "name": "La Paz",
+   "lat": -16.5,
+   "lon": -68.15,
+   "tier": 5,
+   "port": false,
+   "country": "bolivya"
+  },
+  {
+   "key": "cochabamba",
+   "name": "Cochabamba",
+   "lat": -17.41,
+   "lon": -66.17,
+   "tier": 3,
+   "port": false,
+   "country": "bolivya"
+  },
+  {
+   "key": "santacruz",
+   "name": "Santa Cruz",
+   "lat": -17.752,
+   "lon": -63.2279,
+   "tier": 3,
+   "port": false,
+   "country": "bolivya"
+  },
+  {
+   "key": "oruro",
+   "name": "Oruro",
+   "lat": -17.9799,
+   "lon": -67.13,
+   "tier": 2,
+   "port": false,
+   "country": "bolivya"
+  },
+  {
+   "key": "santaana",
+   "name": "Santa Ana",
+   "lat": -13.76,
+   "lon": -65.58,
+   "tier": 2,
+   "port": false,
+   "country": "bolivya"
+  },
+  {
+   "key": "montevideo",
+   "name": "Montevideo",
+   "lat": -34.8581,
+   "lon": -56.1708,
+   "tier": 5,
+   "port": true,
+   "country": "uruguay"
+  },
+  {
+   "key": "puntadeleste",
+   "name": "Punta del Este",
+   "lat": -34.97,
+   "lon": -54.95,
+   "tier": 2,
+   "port": true,
+   "country": "uruguay"
+  },
+  {
+   "key": "rivera",
+   "name": "Rivera",
+   "lat": -30.8996,
+   "lon": -55.56,
+   "tier": 2,
+   "port": false,
+   "country": "uruguay"
+  },
+  {
+   "key": "monrovia",
+   "name": "Monrovia",
+   "lat": 6.3106,
+   "lon": -10.8047,
+   "tier": 5,
+   "port": true,
+   "country": "liberya"
+  },
+  {
+   "key": "addisababa",
+   "name": "Addis Ababa",
+   "lat": 9.0139,
+   "lon": 38.7751,
+   "tier": 5,
+   "port": false,
+   "country": "etiyopya"
+  },
+  {
+   "key": "bahirdar",
+   "name": "Bahir Dar",
+   "lat": 11.6001,
+   "lon": 37.3833,
+   "tier": 2,
+   "port": false,
+   "country": "etiyopya"
+  },
+  {
+   "key": "dese",
+   "name": "Dese",
+   "lat": 11.13,
+   "lon": 39.63,
+   "tier": 2,
+   "port": false,
+   "country": "etiyopya"
+  },
+  {
+   "key": "diredawa",
+   "name": "Dire Dawa",
+   "lat": 9.59,
+   "lon": 41.86,
+   "tier": 2,
+   "port": false,
+   "country": "etiyopya"
+  },
+  {
+   "key": "gondar",
+   "name": "Gondar",
+   "lat": 12.61,
+   "lon": 37.46,
+   "tier": 2,
+   "port": false,
+   "country": "etiyopya"
+  },
+  {
+   "key": "pretorya",
+   "name": "Pretorya",
+   "lat": -25.7069,
+   "lon": 28.2294,
+   "tier": 5,
+   "port": false,
+   "country": "guneyafrika"
+  },
+  {
+   "key": "windhoek",
+   "name": "Windhoek",
+   "lat": -22.57,
+   "lon": 17.0836,
+   "tier": 3,
+   "port": false,
+   "country": "guneyafrika"
+  },
+  {
+   "key": "kapsehri",
+   "name": "Kap Şehri",
+   "lat": -33.9181,
+   "lon": 18.433,
+   "tier": 4,
+   "port": true,
+   "country": "guneyafrika"
+  },
+  {
+   "key": "durban",
+   "name": "Durban",
+   "lat": -29.8631,
+   "lon": 30.9781,
+   "tier": 3,
+   "port": true,
+   "country": "guneyafrika"
+  },
+  {
+   "key": "portelizabeth",
+   "name": "Port Elizabeth",
+   "lat": -33.9681,
+   "lon": 25.5981,
+   "tier": 3,
+   "port": true,
+   "country": "guneyafrika"
+  },
+  {
+   "key": "vereeniging",
+   "name": "Vereeniging",
+   "lat": -26.6477,
+   "lon": 27.958,
+   "tier": 3,
+   "port": false,
+   "country": "guneyafrika"
+  },
+  {
+   "key": "bloemfontein",
+   "name": "Bloemfontein",
+   "lat": -29.12,
+   "lon": 26.2299,
+   "tier": 2,
+   "port": false,
+   "country": "guneyafrika"
+  },
+  {
+   "key": "riyad",
+   "name": "Riyad",
+   "lat": 24.6408,
+   "lon": 46.7728,
+   "tier": 5,
+   "port": false,
+   "country": "suudi"
+  },
+  {
+   "key": "jeddah",
+   "name": "Jeddah",
+   "lat": 21.5188,
+   "lon": 39.2173,
+   "tier": 4,
+   "port": true,
+   "country": "suudi"
+  },
+  {
+   "key": "dammam",
+   "name": "Dammam",
+   "lat": 26.4301,
+   "lon": 50.0977,
+   "tier": 3,
+   "port": true,
+   "country": "suudi"
+  },
+  {
+   "key": "medine",
+   "name": "Medine",
+   "lat": 24.5019,
+   "lon": 39.5781,
+   "tier": 3,
+   "port": false,
+   "country": "suudi"
+  },
+  {
+   "key": "attaif",
+   "name": "At Taif",
+   "lat": 21.2622,
+   "lon": 40.3823,
+   "tier": 2,
+   "port": false,
+   "country": "suudi"
+  },
+  {
+   "key": "hofuf",
+   "name": "Hofuf",
+   "lat": 25.3487,
+   "lon": 49.5856,
+   "tier": 2,
+   "port": false,
+   "country": "suudi"
+  },
+  {
+   "key": "sana",
+   "name": "San'a",
+   "lat": 15.2833,
+   "lon": 44.1833,
+   "tier": 5,
+   "port": false,
+   "country": "yemen"
+  },
+  {
+   "key": "alhudaydah",
+   "name": "Al Hudaydah",
+   "lat": 14.7999,
+   "lon": 42.951,
+   "tier": 2,
+   "port": true,
+   "country": "yemen"
+  },
+  {
+   "key": "taizz",
+   "name": "Taizz",
+   "lat": 13.6064,
+   "lon": 44.0375,
+   "tier": 2,
+   "port": false,
+   "country": "yemen"
+  },
+  {
+   "key": "kabil",
+   "name": "Kabil",
+   "lat": 34.5167,
+   "lon": 69.1833,
+   "tier": 5,
+   "port": false,
+   "country": "afganistan"
+  },
+  {
+   "key": "herat",
+   "name": "Herat",
+   "lat": 34.33,
+   "lon": 62.17,
+   "tier": 2,
+   "port": false,
+   "country": "afganistan"
+  },
+  {
+   "key": "jalalabad",
+   "name": "Jalalabad",
+   "lat": 34.4415,
+   "lon": 70.4361,
+   "tier": 2,
+   "port": false,
+   "country": "afganistan"
+  },
+  {
+   "key": "kandahar",
+   "name": "Kandahar",
+   "lat": 31.61,
+   "lon": 65.6949,
+   "tier": 2,
+   "port": false,
+   "country": "afganistan"
+  },
+  {
+   "key": "mazarisharif",
+   "name": "Mazar-i-Sharif",
+   "lat": 36.7,
+   "lon": 67.1,
+   "tier": 2,
+   "port": false,
+   "country": "afganistan"
+  },
+  {
+   "key": "nankin",
+   "name": "Nankin",
+   "lat": 32.06,
+   "lon": 118.78,
+   "tier": 5,
+   "port": false,
+   "country": "cin"
+  },
+  {
+   "key": "changchun",
+   "name": "Changchun",
+   "lat": 43.867,
+   "lon": 125.338,
+   "tier": 4,
+   "port": false,
+   "country": "cin"
+  },
+  {
+   "key": "chengdu",
+   "name": "Chengdu",
+   "lat": 30.6719,
+   "lon": 104.0681,
+   "tier": 4,
+   "port": false,
+   "country": "cin"
+  },
+  {
+   "key": "cungking",
+   "name": "Çungking",
+   "lat": 29.5669,
+   "lon": 106.593,
+   "tier": 4,
+   "port": false,
+   "country": "cin"
+  },
+  {
+   "key": "dalian",
+   "name": "Dalian",
+   "lat": 38.9248,
+   "lon": 121.6279,
+   "tier": 4,
+   "port": true,
+   "country": "cin"
+  },
+  {
+   "key": "guiyang",
+   "name": "Guiyang",
+   "lat": 26.582,
+   "lon": 106.7181,
+   "tier": 4,
+   "port": false,
+   "country": "cin"
+  },
+  {
+   "key": "hangzhou",
+   "name": "Hangzhou",
+   "lat": 30.2519,
+   "lon": 120.1681,
+   "tier": 4,
+   "port": true,
+   "country": "cin"
+  },
+  {
+   "key": "hankou",
+   "name": "Hankou",
+   "lat": 30.582,
+   "lon": 114.2681,
+   "tier": 4,
+   "port": false,
+   "country": "cin"
+  },
+  {
+   "key": "harbin",
+   "name": "Harbin",
+   "lat": 45.7519,
+   "lon": 126.648,
+   "tier": 4,
+   "port": false,
+   "country": "cin"
+  },
+  {
+   "key": "hechi",
+   "name": "Hechi",
+   "lat": 24.6953,
+   "lon": 108.083,
+   "tier": 4,
+   "port": false,
+   "country": "cin"
+  },
+  {
+   "key": "kanton",
+   "name": "Kanton",
+   "lat": 23.1469,
+   "lon": 113.3231,
+   "tier": 4,
+   "port": false,
+   "country": "cin"
+  },
+  {
+   "key": "pekin",
+   "name": "Pekin",
+   "lat": 39.9308,
+   "lon": 116.3863,
+   "tier": 4,
+   "port": false,
+   "country": "cin"
+  },
+  {
+   "key": "sanghay",
+   "name": "Şanghay",
+   "lat": 31.2184,
+   "lon": 121.4346,
+   "tier": 4,
+   "port": false,
+   "country": "cin"
+  },
+  {
+   "key": "shenyeng",
+   "name": "Shenyeng",
+   "lat": 41.8069,
+   "lon": 123.448,
+   "tier": 4,
+   "port": false,
+   "country": "cin"
+  },
+  {
+   "key": "shenzhen",
+   "name": "Shenzhen",
+   "lat": 22.5543,
+   "lon": 114.1202,
+   "tier": 4,
+   "port": true,
+   "country": "cin"
+  },
+  {
+   "key": "sian",
+   "name": "Şian",
+   "lat": 34.277,
+   "lon": 108.8931,
+   "tier": 4,
+   "port": false,
+   "country": "cin"
+  },
+  {
+   "key": "tiencin",
+   "name": "Tiencin",
+   "lat": 39.132,
+   "lon": 117.1981,
+   "tier": 4,
+   "port": false,
+   "country": "cin"
+  },
+  {
+   "key": "urumqi",
+   "name": "Ürümqi",
+   "lat": 43.807,
+   "lon": 87.5731,
+   "tier": 4,
+   "port": false,
+   "country": "cin"
+  },
+  {
+   "key": "zhangzhou",
+   "name": "Zhangzhou",
+   "lat": 24.5204,
+   "lon": 117.67,
+   "tier": 4,
+   "port": true,
+   "country": "cin"
+  },
+  {
+   "key": "zibo",
+   "name": "Zibo",
+   "lat": 36.8019,
+   "lon": 118.048,
+   "tier": 4,
+   "port": false,
+   "country": "cin"
+  },
+  {
+   "key": "kunming",
+   "name": "Kunming",
+   "lat": 25.0719,
+   "lon": 102.678,
+   "tier": 3,
+   "port": false,
+   "country": "cin"
+  },
+  {
+   "key": "ulanbator",
+   "name": "Ulan Bator",
+   "lat": 47.9167,
+   "lon": 106.917,
+   "tier": 5,
+   "port": false,
+   "country": "mogolistan"
+  },
+  {
+   "key": "tokyo",
+   "name": "Tokyo",
+   "lat": 35.685,
+   "lon": 139.751,
+   "tier": 5,
+   "port": true,
+   "country": "japonya"
+  },
+  {
+   "key": "keijoseul",
+   "name": "Keijō (Seul)",
+   "lat": 37.5664,
+   "lon": 127,
+   "tier": 3,
+   "port": false,
+   "country": "japonya"
+  },
+  {
+   "key": "taihokutaipei",
+   "name": "Taihoku (Taipei)",
+   "lat": 25.0392,
+   "lon": 121.525,
+   "tier": 3,
+   "port": true,
+   "country": "japonya"
+  },
+  {
+   "key": "toyohara",
+   "name": "Toyohara",
+   "lat": 46.965,
+   "lon": 142.74,
+   "tier": 3,
+   "port": false,
+   "country": "japonya"
+  },
+  {
+   "key": "fusanpusan",
+   "name": "Fusan (Pusan)",
+   "lat": 35.097,
+   "lon": 129.0081,
+   "tier": 4,
+   "port": true,
+   "country": "japonya"
+  },
+  {
+   "key": "heijopyongyang",
+   "name": "Heijō (Pyongyang)",
+   "lat": 39.0214,
+   "lon": 125.7527,
+   "tier": 4,
+   "port": false,
+   "country": "japonya"
+  },
+  {
+   "key": "nagoya",
+   "name": "Nagoya",
+   "lat": 35.1569,
+   "lon": 136.913,
+   "tier": 4,
+   "port": true,
+   "country": "japonya"
+  },
+  {
+   "key": "osaka",
+   "name": "Ōsaka",
+   "lat": 34.752,
+   "lon": 135.4582,
+   "tier": 4,
+   "port": true,
+   "country": "japonya"
+  },
+  {
+   "key": "fukuoka",
+   "name": "Fukuoka",
+   "lat": 33.597,
+   "lon": 130.4081,
+   "tier": 3,
+   "port": true,
+   "country": "japonya"
+  },
+  {
+   "key": "katmandu",
+   "name": "Katmandu",
+   "lat": 27.7167,
+   "lon": 85.3167,
+   "tier": 5,
+   "port": false,
+   "country": "nepal"
+  },
+  {
+   "key": "biratnagar",
+   "name": "Biratnagar",
+   "lat": 26.4837,
+   "lon": 87.2833,
+   "tier": 2,
+   "port": false,
+   "country": "nepal"
+  },
+  {
+   "key": "pokhara",
+   "name": "Pokhara",
+   "lat": 28.264,
+   "lon": 83.972,
+   "tier": 2,
+   "port": false,
+   "country": "nepal"
+  },
+  {
+   "key": "bangkok",
+   "name": "Bangkok",
+   "lat": 13.75,
+   "lon": 100.517,
+   "tier": 5,
+   "port": false,
+   "country": "tayland"
+  },
+  {
+   "key": "chiangmai",
+   "name": "Chiang Mai",
+   "lat": 18.8,
+   "lon": 98.98,
+   "tier": 2,
+   "port": false,
+   "country": "tayland"
+  },
+  {
+   "key": "hatyai",
+   "name": "Hat Yai",
+   "lat": 6.9964,
+   "lon": 100.4714,
+   "tier": 2,
+   "port": true,
+   "country": "tayland"
+  },
+  {
+   "key": "nakhonratchasima",
+   "name": "Nakhon Ratchasima",
+   "lat": 15.0,
+   "lon": 102.1,
+   "tier": 2,
+   "port": false,
+   "country": "tayland"
+  },
+  {
+   "key": "ubonratchathani",
+   "name": "Ubon Ratchathani",
+   "lat": 15.25,
+   "lon": 104.83,
+   "tier": 2,
+   "port": false,
+   "country": "tayland"
+  },
+  {
+   "key": "canberra",
+   "name": "Canberra",
+   "lat": -35.28,
+   "lon": 149.13,
+   "tier": 5,
+   "port": false,
+   "country": "avustralya"
+  },
+  {
+   "key": "portmoresby",
+   "name": "Port Moresby",
+   "lat": -9.4647,
+   "lon": 147.193,
+   "tier": 3,
+   "port": true,
+   "country": "avustralya"
+  },
+  {
+   "key": "rabaul",
+   "name": "Rabaul",
+   "lat": -4.2055,
+   "lon": 152.143,
+   "tier": 3,
+   "port": true,
+   "country": "avustralya"
+  },
+  {
+   "key": "melburn",
+   "name": "Melburn",
+   "lat": -37.8181,
+   "lon": 144.9731,
+   "tier": 4,
+   "port": true,
+   "country": "avustralya"
+  },
+  {
+   "key": "sidney",
+   "name": "Sidney",
+   "lat": -33.9181,
+   "lon": 151.1832,
+   "tier": 4,
+   "port": true,
+   "country": "avustralya"
+  },
+  {
+   "key": "adelaide",
+   "name": "Adelaide",
+   "lat": -34.933,
+   "lon": 138.5981,
+   "tier": 3,
+   "port": true,
+   "country": "avustralya"
+  },
+  {
+   "key": "brisbane",
+   "name": "Brisbane",
+   "lat": -27.4531,
+   "lon": 153.0331,
+   "tier": 3,
+   "port": true,
+   "country": "avustralya"
+  },
+  {
+   "key": "perth",
+   "name": "Perth",
+   "lat": -31.9531,
+   "lon": 115.8381,
+   "tier": 3,
+   "port": true,
+   "country": "avustralya"
+  },
+  {
+   "key": "cairns",
+   "name": "Cairns",
+   "lat": -16.8878,
+   "lon": 145.7633,
+   "tier": 2,
+   "port": true,
+   "country": "avustralya"
+  },
+  {
+   "key": "newcastle",
+   "name": "Newcastle",
+   "lat": -32.8453,
+   "lon": 151.815,
+   "tier": 2,
+   "port": true,
+   "country": "avustralya"
+  },
+  {
+   "key": "wellington",
+   "name": "Wellington",
+   "lat": -41.3,
+   "lon": 174.783,
+   "tier": 5,
+   "port": true,
+   "country": "yenizelanda"
+  },
+  {
+   "key": "auckland",
+   "name": "Auckland",
+   "lat": -36.8481,
+   "lon": 174.763,
+   "tier": 3,
+   "port": true,
+   "country": "yenizelanda"
+  },
+  {
+   "key": "christchurch",
+   "name": "Christchurch",
+   "lat": -43.535,
+   "lon": 172.63,
+   "tier": 2,
+   "port": true,
+   "country": "yenizelanda"
+  },
+  {
+   "key": "riga",
+   "name": "Riga",
+   "lat": 56.9667,
+   "lon": 24.1333,
+   "tier": 5,
+   "port": true,
+   "country": "letonya"
+  },
+  {
+   "key": "kaunas",
+   "name": "Kaunas",
+   "lat": 54.9,
+   "lon": 23.9,
+   "tier": 5,
+   "port": false,
+   "country": "litvanya"
+  },
+  {
+   "key": "klaipeda",
+   "name": "Klaipėda",
+   "lat": 55.7204,
+   "lon": 21.1199,
+   "tier": 2,
+   "port": true,
+   "country": "litvanya"
+  },
+  {
+   "key": "portauprince",
+   "name": "Port-au-Prince",
+   "lat": 18.5392,
+   "lon": -72.335,
+   "tier": 5,
+   "port": true,
+   "country": "haiti"
+  },
+  {
+   "key": "caphaitien",
+   "name": "Cap-Haïtien",
+   "lat": 19.7592,
+   "lon": -72.2125,
+   "tier": 2,
+   "port": true,
+   "country": "haiti"
+  },
+  {
+   "key": "santodomingo",
+   "name": "Santo Domingo",
+   "lat": 18.4667,
+   "lon": -69.9,
+   "tier": 5,
+   "port": true,
+   "country": "dominik"
+  },
+  {
+   "key": "santiago2",
+   "name": "Santiago",
+   "lat": 19.5,
+   "lon": -70.67,
+   "tier": 3,
+   "port": false,
+   "country": "dominik"
+  },
+  {
+   "key": "tegucigalpa",
+   "name": "Tegucigalpa",
+   "lat": 14.1,
+   "lon": -87.2167,
+   "tier": 5,
+   "port": false,
+   "country": "honduras"
+  },
+  {
+   "key": "sanpedrosula",
+   "name": "San Pedro Sula",
+   "lat": 15.5,
+   "lon": -88.03,
+   "tier": 2,
+   "port": false,
+   "country": "honduras"
+  },
+  {
+   "key": "sansalvador",
+   "name": "San Salvador",
+   "lat": 13.7086,
+   "lon": -89.2031,
+   "tier": 5,
+   "port": false,
+   "country": "elsalvador"
+  },
+  {
+   "key": "sanmiguel",
+   "name": "San Miguel",
+   "lat": 13.4833,
+   "lon": -88.1833,
+   "tier": 2,
+   "port": false,
+   "country": "elsalvador"
+  },
+  {
+   "key": "managua",
+   "name": "Managua",
+   "lat": 12.1508,
+   "lon": -86.2683,
+   "tier": 5,
+   "port": false,
+   "country": "nikaragua"
+  },
+  {
+   "key": "sanjose",
+   "name": "San José",
+   "lat": 9.9333,
+   "lon": -84.0833,
+   "tier": 5,
+   "port": false,
+   "country": "kostarika"
+  },
+  {
+   "key": "panama",
+   "name": "Panama",
+   "lat": 8.9667,
+   "lon": -79.5333,
+   "tier": 5,
+   "port": true,
+   "country": "panama"
+  },
+  {
+   "key": "karakas",
+   "name": "Karakas",
+   "lat": 10.5,
+   "lon": -66.9167,
+   "tier": 5,
+   "port": true,
+   "country": "venezuela"
+  },
+  {
+   "key": "barquisimeto",
+   "name": "Barquisimeto",
+   "lat": 10.0519,
+   "lon": -69.3019,
+   "tier": 3,
+   "port": false,
+   "country": "venezuela"
+  },
+  {
+   "key": "maracaibo",
+   "name": "Maracaibo",
+   "lat": 10.7319,
+   "lon": -71.6619,
+   "tier": 3,
+   "port": true,
+   "country": "venezuela"
+  },
+  {
+   "key": "valencia",
+   "name": "Valencia",
+   "lat": 10.2319,
+   "lon": -67.982,
+   "tier": 3,
+   "port": false,
+   "country": "venezuela"
+  },
+  {
+   "key": "ciudadguayana",
+   "name": "Ciudad Guayana",
+   "lat": 8.37,
+   "lon": -62.62,
+   "tier": 2,
+   "port": false,
+   "country": "venezuela"
+  },
+  {
+   "key": "kito",
+   "name": "Kito",
+   "lat": -0.2167,
+   "lon": -78.5,
+   "tier": 5,
+   "port": false,
+   "country": "ekvador"
+  },
+  {
+   "key": "guayaquil",
+   "name": "Guayaquil",
+   "lat": -2.2181,
+   "lon": -79.922,
+   "tier": 3,
+   "port": true,
+   "country": "ekvador"
+  },
+  {
+   "key": "cuenca",
+   "name": "Cuenca",
+   "lat": -2.9,
+   "lon": -79.0,
+   "tier": 2,
+   "port": false,
+   "country": "ekvador"
+  },
+  {
+   "key": "asuncion",
+   "name": "Asunción",
+   "lat": -25.2667,
+   "lon": -57.6667,
+   "tier": 5,
+   "port": false,
+   "country": "paraguay"
+  },
+  {
+   "key": "ciudaddeleste",
+   "name": "Ciudad del Este",
+   "lat": -25.5167,
+   "lon": -54.6161,
+   "tier": 2,
+   "port": false,
+   "country": "paraguay"
+  },
+  {
+   "key": "encarnacion",
+   "name": "Encarnación",
+   "lat": -27.3472,
+   "lon": -55.8739,
+   "tier": 2,
+   "port": false,
+   "country": "paraguay"
+  },
+  {
+   "key": "maskat",
+   "name": "Maskat",
+   "lat": 23.6133,
+   "lon": 58.5933,
+   "tier": 5,
+   "port": true,
+   "country": "umman"
+  },
+  {
+   "key": "salalah",
+   "name": "Salalah",
+   "lat": 17.0255,
+   "lon": 54.0852,
+   "tier": 2,
+   "port": true,
+   "country": "umman"
+  },
+  {
+   "key": "suhar",
+   "name": "Suhar",
+   "lat": 24.362,
+   "lon": 56.7344,
+   "tier": 2,
+   "port": true,
+   "country": "umman"
+  },
+  {
+   "key": "thimphu",
+   "name": "Thimphu",
+   "lat": 27.4833,
+   "lon": 89.6,
+   "tier": 5,
+   "port": false,
+   "country": "bhutan"
+  },
+  {
+   "key": "luksemburg",
+   "name": "Lüksemburg",
+   "lat": 49.6117,
+   "lon": 6.13,
+   "tier": 5,
+   "port": false,
+   "country": "luksemburg"
+  },
+  {
+   "key": "reykjavik",
+   "name": "Reykjavik",
+   "lat": 64.15,
+   "lon": -21.95,
+   "tier": 5,
+   "port": true,
+   "country": "izlanda"
+  },
+  {
+   "key": "lhasa",
+   "name": "Lhasa",
+   "lat": 29.645,
+   "lon": 91.1,
+   "tier": 5,
+   "port": false,
+   "country": "tibet"
+  }
+ ],
+ "rails": [],
+ "keyPrefix": "d1936",
+ "maxRoadKm": 1200,
+ "portLinkDegrees": 4.5,
+ "portLandCrossing": 1.5,
+ "gridPrecision": 0.12
+}

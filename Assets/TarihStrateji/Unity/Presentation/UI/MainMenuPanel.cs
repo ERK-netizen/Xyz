@@ -68,6 +68,7 @@ namespace TarihStrateji.Unity.Presentation.UI
             about.Add(Paragraph("arayuz.hakkinda.oyun"));
             about.Add(Paragraph("arayuz.hakkinda.harita"));
             about.Add(Paragraph("arayuz.hakkinda.lisans"));
+            about.Add(Paragraph("arayuz.hakkinda.sehirler"));
             about.Add(Paragraph("arayuz.hakkinda.motor"));
             Root.Add(_about);
 

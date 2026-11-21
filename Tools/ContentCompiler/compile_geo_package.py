@@ -34,7 +34,7 @@ import struct
 import sys
 import urllib.request
 
-from shapely import delaunay_triangles, voronoi_polygons
+from shapely import delaunay_triangles, make_valid, prepare, set_precision, voronoi_polygons
 from shapely.geometry import LineString, MultiPoint, MultiPolygon, Point, Polygon, box, shape
 from shapely.ops import nearest_points, unary_union
 
@@ -85,7 +85,9 @@ def ring_e6(coords):
     """Halkayı E6'ya yuvarlar; kapanış tekrarını ve ardışık tekrarları atar."""
     pts = []
     for x, y in list(coords)[:-1]:
-        p = (e6(y), e6(x))  # (enlem, boylam)
+        # Çekirdek boylamı (−180, 180] aralığına normalleştirir: −180 köşesi +180 olur ve kenar dikişi geçmiş sayılır.
+        # Dünya paketinde kapsam kutusunun batı kenarı −180 olduğundan bu köşeler bir mikro derece içeri alınır.
+        p = (e6(y), max(e6(x), -179_999_999))  # (enlem, boylam)
         if not pts or pts[-1] != p:
             pts.append(p)
     while len(pts) > 1 and pts[0] == pts[-1]:
@@ -286,6 +288,16 @@ def build_countries(cfg, data):
         g = countries[c["key"]].difference(taken).buffer(0)
         countries[c["key"]] = g
         taken = unary_union([taken, g])
+    # Dünya paketi: köşeler ızgaraya oturtulur (gridPrecision derece). Komşu ülkelerin ortak sınır köşeleri aynı
+    # ızgara noktasına düştüğünden sınırlar birbirine yapışık kalır; köşe sayısı (sunumda üçgenleme) belirgin azalır.
+    precision = cfg.get("gridPrecision")
+    if precision:
+        for k in list(countries):
+            if not countries[k].is_empty:
+                valid = make_valid(countries[k].buffer(0))
+                valid = unary_union([q for q in polygons_of(valid)]) if not isinstance(valid, (Polygon, MultiPolygon)) else valid
+                snapped = make_valid(set_precision(valid, precision, mode="pointwise"))
+                countries[k] = unary_union(polygons_of(snapped)).buffer(0)
     # Kırıntıları at (≈ 2 km²'den küçük parçalar).
     for k, g in countries.items():
         countries[k] = MultiPolygon([p for p in polygons_of(g) if p.area > 2e-4]) if not g.is_empty else g
@@ -355,10 +367,21 @@ def to_rings(region):
                 log("uyarı: geçersiz halka atlandı (alan", round(poly.area, 4), ")")
                 continue
         holes = []
+        kept = []
+        outer_shape = None
         for interior in poly.interiors:
             h = ring_e6(interior.coords)
-            if ring_ok(h):
-                holes.append(h)
+            if not ring_ok(h):
+                continue
+            # Yuvarlama/ızgara sonrası deliğin dış halkanın içinde kalması denetlenir (çekirdek aksi hâlde reddeder).
+            if outer_shape is None:
+                outer_shape = Polygon([(lon / 1e6, lat / 1e6) for lat, lon in outer])
+            hp = Polygon([(lon / 1e6, lat / 1e6) for lat, lon in h])
+            if not outer_shape.contains(hp) or outer_shape.exterior.intersects(hp.exterior) or any(hp.intersects(k) for k in kept):
+                log("uyarı: dış halkaya ya da başka deliğe değen delik atlandı")
+                continue
+            kept.append(hp)
+            holes.append(h)
         out.append((outer, holes))
     return out
 
@@ -376,13 +399,20 @@ def compile_package(cfg, cache_dir):
             raise SystemExit("Bölge geometrisi boş: " + city["key"])
         regions.append({"id": i + 1, "owner": country_ids[city["country"]], "city": city, "geom": geom, "rings": rings})
     land = unary_union([r["geom"] for r in regions])
+    prepare(land)  # yalnız hız: hazırlanmış geometri aynı sonucu verir
 
     # Kara komşuluğu: paylaşılan sınır uzunluğu (≈ metre).
     borders = []
+    # Hız: tamponlar bir kez hesaplanır, sınır kutuları kesişmeyen çiftler geometriye bakılmadan elenir (sonuç aynı).
+    buffered = [r["geom"].buffer(0.01) for r in regions]
+    boxes = [g.bounds for g in buffered]
     for i in range(len(regions)):
         for j in range(i + 1, len(regions)):
             a, b = regions[i], regions[j]
-            if not a["geom"].buffer(0.01).intersects(b["geom"]):
+            bi, bj = boxes[i], boxes[j]
+            if bi[2] < bj[0] or bj[2] < bi[0] or bi[3] < bj[1] or bj[3] < bi[1]:
+                continue
+            if not buffered[i].intersects(b["geom"]):
                 continue
             shared = a["geom"].boundary.intersection(b["geom"].buffer(0.005))
             length_deg = shared.length
@@ -447,7 +477,7 @@ def compile_package(cfg, cache_dir):
         na, nb = nodes[a - 1], nodes[b - 1]
         if not over_land(na["lon"], na["lat"], nb["lon"], nb["lat"]):
             continue
-        if haversine_m(na["lon"], na["lat"], nb["lon"], nb["lat"]) > 450_000:
+        if haversine_m(na["lon"], na["lat"], nb["lon"], nb["lat"]) > cfg.get("maxRoadKm", 450) * 1000:
             continue
         kind = EDGE_RAIL if tuple(sorted((key_of_node[a], key_of_node[b]))) in rail_set else EDGE_ROAD
         ra, rb = na["region"], nb["region"]
@@ -503,6 +533,8 @@ def compile_package(cfg, cache_dir):
     lon0, lat0, lon1, lat1 = cfg["bbox"]
     coast = unary_union([land, all_land]).buffer(0.12)
     world_land = unary_union([land, all_land])
+    prepare(coast)
+    prepare(world_land)
     grid = {}
     gy = 0
     lat = lat0 + step / 2
@@ -518,13 +550,24 @@ def compile_package(cfg, cache_dir):
             lon += step
         gy += 1
         lat += step
+    # Tam dünya kapsamında (360° boylam) ızgara ±180°'de sarmalanır: son sütun ilk sütuna bağlanır; kara denetimi
+    # dikişin iki yanındaki yarım kenarlarla yapılır (kenar uzunluğu büyük çemberdir, dikişi geçer).
+    columns = max(gx for gx, _ in grid) + 1 if grid else 0
+    wraps = lon1 - lon0 >= 360.0
     for (gx, gy), j in sorted(grid.items()):
         for dx, dy in ((1, 0), (0, 1), (1, 1), (1, -1)):
-            k = grid.get((gx + dx, gy + dy))
+            tx = gx + dx
+            seam = wraps and tx >= columns
+            k = grid.get((tx % columns if seam else tx, gy + dy))
             if k is None:
                 continue
             a, b = nodes[j - 1], nodes[k - 1]
-            if not LineString([(a["lon"], a["lat"]), (b["lon"], b["lat"])]).intersects(world_land):
+            if seam:
+                halves = [LineString([(a["lon"], a["lat"]), (180.0, (a["lat"] + b["lat"]) / 2)]),
+                          LineString([(-180.0, (a["lat"] + b["lat"]) / 2), (b["lon"], b["lat"])])]
+                if not any(world_land.intersects(h) for h in halves):
+                    add_edge(j, k, EDGE_SEA)
+            elif not world_land.intersects(LineString([(a["lon"], a["lat"]), (b["lon"], b["lat"])])):
                 add_edge(j, k, EDGE_SEA)
     # Elle deniz bağlantıları (dar boğazlar; kaba kıyı verisinde ızgara geçemez).
     sea_nodes = [n for n in nodes if n["kind"] == NODE_SEA]
@@ -544,19 +587,25 @@ def compile_package(cfg, cache_dir):
     sea_nodes = [n for n in nodes if n["kind"] == NODE_SEA]
 
     # Limanlar: en az kara geçen en yakın 2 deniz düğümüne bağlanır (körfez limanları kıyı verisi kaba
-    # olduğundan ≤ 0,6° kara geçişine izin verilir); bağlanamayan liman şehir olur.
+    # olduğundan ≤ 0,6° kara geçişine izin verilir); bağlanamayan liman şehir olur. Kaba ızgaralı dünya paketinde
+    # arama yarıçapı ve kara geçişi yapılandırmadan (portLinkDegrees, portLandCrossing).
+    link_radius = cfg.get("portLinkDegrees", 2.2)
+    land_crossing = cfg.get("portLandCrossing", 0.6)
     for n in nodes:
         if n["kind"] != NODE_PORT:
             continue
         harbour = Point(n["lon"], n["lat"]).buffer(0.2)
+        # Hız: kara, limanın arama kutusuna kırpılır (dünya paketinde tüm karayla kesişim çok yavaş).
+        reach = link_radius + 0.5
+        local_land = land.intersection(box(n["lon"] - reach, n["lat"] - reach, n["lon"] + reach, n["lat"] + reach))
         options = []
         for s in sea_nodes:
             dist = math.hypot(s["lon"] - n["lon"], s["lat"] - n["lat"])
-            if dist > 2.2:
+            if dist > link_radius:
                 continue
             line = LineString([(n["lon"], n["lat"]), (s["lon"], s["lat"])])
-            crossing = line.difference(harbour).intersection(land).length
-            if crossing <= 0.6:
+            crossing = line.difference(harbour).intersection(local_land).length
+            if crossing <= land_crossing:
                 options.append((round(crossing, 6), round(dist, 6), s["id"]))
         options.sort()
         linked = 0
@@ -565,6 +614,8 @@ def compile_package(cfg, cache_dir):
                 linked += 1
         if linked == 0:
             n["kind"] = NODE_CITY
+            # Şehir kaydı da liman sayılmaz (pakette düğüm türüyle tutarlı; tersane yalnız limana kurulur).
+            next(r["city"] for r in regions if r["city"]["key"] == key_of_node[n["id"]])["port"] = False
             log("uyarı: liman deniz yoluna bağlanamadı, şehir yapıldı:", key_of_node[n["id"]])
 
     # Bağlantısız deniz düğümlerini at (yalnız kullanılanlar pakete girer).

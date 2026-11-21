@@ -14,3 +14,6 @@ python3 -m venv .venv && .venv/bin/pip install -r Tools/ContentCompiler/requirem
 
 Paket değişirse headless testler (`GeoPackageTests`, `Scenario1914Tests`, `Campaign1914Tests`) ve
 `GoldenValues.Scenario1914Day180` yeniden doğrulanır; altın değer yalnız gerekçesi commit'te yazılarak güncellenir.
+
+Dünya paketi (Adım 21) aynı komutla `data/dunya1936.json`'dan derlenir (masaüstünde ≈ 2–3 dk). Yalnız bu yapılandırmanın açtığı
+ayarlar: `gridPrecision`, `maxRoadKm`, `portLinkDegrees`, `portLandCrossing`; 360° kapsamda deniz ızgarası ±180°'de sarmalanır.

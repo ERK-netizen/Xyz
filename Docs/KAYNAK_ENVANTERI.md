@@ -110,3 +110,26 @@ Kaynak, lisans, kapsam ve şehir listesi 1939 ile aynıdır; seçim tarihi 07.03
 
 Derleyici notu: ham halkası E6 yuvarlamasında kendini kesen bölge (Antakya'nın kaynak sınırındaki ince çıkıntı) kapanışla
 (dışa + içe tampon) giderilip sadeleştirilir; bu yol yalnız ham halka geçersizken çalışır, 1914 ve 1939 paketleri bayt bayt aynı kalır.
+
+## Dünya 1936 senaryosu (`Assets/TarihStrateji/Unity/Bootstrap/Resources/Senaryolar/dunya1936.bytes`)
+
+| Veri | Kaynak | Lisans |
+|---|---|---|
+| Ülke, sömürge ve manda sınırları (07.03.1936) | CShapes 2.0 (yukarıdaki SHA-256) | CC BY-NC-SA 4.0 |
+| Şehir konumları ve sıralaması | Natural Earth 10m `ne_10m_populated_places_simple` (GitHub `nvkelso/natural-earth-vector`, SHA-256 `fd3fa867a320cbd5c5b6bb5bc550afeec2939fb2cef688e508007282a55ac42f`) | Kamu malı |
+
+Yapılandırma `Tools/ContentCompiler/data/dunya1936.json` (üreteç mantığı aşağıda); kapsam 180° B–180° D, 56° G–84° K; ad öneki
+`d1936`. CShapes'in o gün geçerli 170 biriminin her biri yöneten egemen devlete bağlıdır (71 devlet; tablo `sources`):
+Britanya İmparatorluğu (Hindistan, Afrika ve Karayip sömürgeleri, Malaya, Filistin, Sudan…), Fransa (Kuzey ve Batı Afrika,
+Çinhindi, Levant…), Hollanda (Doğu Hint Adaları, Surinam), Belçika (Kongo, Ruanda-Urundi), Portekiz, İspanya, İtalya (Libya,
+Eritre, Somali), Japonya (Kore, Tayvan, Güney Sahalin), ABD (Alaska, Hawaii, Porto Riko, Filipinler). Dominyonlar ayrı devlettir.
+Danzig Almanya'ya, Namibya Güney Afrika'ya, Yeni Gine Avustralya'ya bağlanır; Mançukuo ayrı tutulmaz (CShapes Çin'de gösterir).
+
+Şehirler (418): her birimin başkenti (1936 başkentleriyle düzeltilmiş: Ankara, Rio de Janeiro, Nankin, Lagos, Kaunas…) ve Natural
+Earth listesinden ülke kotasıyla (alan ve nüfusla) en büyük şehirler; aynı ülkede ≥ 0,9°, farklı ülkede ≥ 0,4° aralık. Adlar 1936
+kullanımı ve Türkçe karşılıklarla (Leningrad, Stalingrad, Batavya, Leopoldville, Saygon…); kademe modern nüfustan tahmindir.
+
+Derleyici dünya ayarları: `gridPrecision` 0,12° (köşeler ızgaraya oturtulur; ortak sınırlar yapışık kalır, 71 bin köşe),
+`seaGridStep` 3° (±180°'de sarmalanan deniz ızgarası), `maxRoadKm` 1200, `portLinkDegrees` 4,5, `portLandCrossing` 1,5; dar boğazlar
+elle (`seaLinks`: Boğazlar, Cebelitarık, Süveyş ve Panama kanalları, Danimarka boğazları, Malakka, Kerç, Hürmüz, Babülmendep, Manş).
+Bu ayarlar olmadan bölgesel paketler bayt bayt aynı kalır.

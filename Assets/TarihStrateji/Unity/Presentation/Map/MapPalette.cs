@@ -48,7 +48,18 @@ namespace TarihStrateji.Unity.Presentation.Map
                 return new Color32(128, 128, 128, 255);
             }
 
-            return CountryColors[(int)((country.Value - 1UL) % (ulong)CountryColors.Length)];
+            if (country.Value <= (ulong)CountryColors.Length)
+            {
+                return CountryColors[(int)(country.Value - 1UL)];
+            }
+
+            // Dünya senaryosu (Adım 21, 71 ülke): 16'dan sonraki kimlikler altın açıyla dağılan tonlardan; doygunluk ve
+            // parlaklık kimlikle hafifçe değişir, komşu kimlikler birbirinden belirgin ayrılır.
+            ulong id = country.Value;
+            float hue = (id * 0.618034f) % 1f;
+            float saturation = 0.42f + ((id % 3UL) * 0.12f);
+            float value = 0.62f + ((id % 2UL) * 0.16f);
+            return Color.HSVToRGB(hue, saturation, value);
         }
 
         /// <summary>Bölge dolgusu: kontrolcü rengi; işgalde sahibin rengiyle karışık ve koyu.</summary>

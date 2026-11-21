@@ -42,7 +42,7 @@ namespace TarihStrateji.Unity.Bootstrap
 
             public string PackageResource { get; }
 
-            /// <summary>Senaryo durumu kurucusu (ScenarioFactory.Create1914/Create1936/Create1939; Bootstrap'in başvurduğu türlerle).</summary>
+            /// <summary>Senaryo durumu kurucusu (ScenarioFactory.Create1914/Create1936/Create1939/CreateWorld1936; Bootstrap'in başvurduğu türlerle).</summary>
             public Func<GameContent, GeoPackage, ulong, GameMode, CountryId, GameState> Create { get; }
 
             public string[] CapitalCityKeys { get; }
@@ -57,6 +57,7 @@ namespace TarihStrateji.Unity.Bootstrap
             new Entry("1914", "senaryo.1914", "Senaryolar/1914_mvp", ScenarioFactory.Create1914, Scenario1914.CapitalCityKeys, Scenario1914.AiEarliestWar, Scenario1914.Ottoman),
             new Entry("1936", "senaryo.1936", "Senaryolar/1936_mvp", ScenarioFactory.Create1936, Scenario1936.CapitalCityKeys, Scenario1936.AiEarliestWar, Scenario1936.Turkey),
             new Entry("1939", "senaryo.1939", "Senaryolar/1939_mvp", ScenarioFactory.Create1939, Scenario1939.CapitalCityKeys, Scenario1939.AiEarliestWar, Scenario1939.Turkey),
+            new Entry("dunya1936", "senaryo.dunya1936", "Senaryolar/dunya1936", ScenarioFactory.CreateWorld1936, ScenarioWorld1936.CapitalCityKeys, ScenarioWorld1936.AiEarliestWar, ScenarioWorld1936.Turkey),
         };
 
         private readonly Dictionary<string, GeoPackage> _packages = new Dictionary<string, GeoPackage>(StringComparer.Ordinal);
